@@ -6,12 +6,15 @@
   "author": "Jur de Vries <info@jurdevries.nl>",
   "license": "MIT",
   "dependencies": {
-    "p5": "^1.11.2"
+    "p5": "^1.11.2",
+    "vite": "^6.0.3"
   },
   "devDependencies": {
     "serve": "^14.2.4"
   },
   "scripts": {
-    "start": "serve ."
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview"
   }
 }
