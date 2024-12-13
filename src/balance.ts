@@ -9,22 +9,18 @@ class Transaction {
     debit: { type: string };
     credit: { type: string };
 
-    constructor() {
-        this.description = 'Test';
-        this.amount = 100;
-        this.debit = {
-            type: 'cash',
-        };
-        this.credit = {
-            type: 'equity',
-        };
+    constructor(description: string, amount: number, debit: { type: string }, credit: { type: string }) {
+        this.description = 'description';
+        this.amount = amount;
+        this.debit = debit;
+        this.credit = credit;
     }
 }
 
 class Balance {
-    private name: string;
-    private debit: { [key: string]: number };
-    private credit: { [key: string]: number };
+    public name: string;
+    public debit: { [key: string]: number };
+    public credit: { [key: string]: number };
     private transactions: Transaction[];
 
     constructor(name: string) {
