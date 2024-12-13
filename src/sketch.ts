@@ -1,8 +1,8 @@
 import p5 from "p5";
 import {Balance, Transaction} from "./balance";
-import BalanceDrawer from "./balanceDrawer";
+import BalanceDrawer from "./BalanceDrawer";
 
-const sketch = (p) => {
+const sketch = (p: p5) => {
     let canvas;
 
     p.setup = () => {
