@@ -32,8 +32,8 @@ class Balance {
 
     addTransaction(transaction: Transaction) {
         this.transactions.push(transaction);
-        this.debit[transaction.debit.type] = transaction.getAmount();
-        this.credit[transaction.credit.type] = transaction.getAmount();
+        this.debit[transaction.debit.type] = (this.debit[transaction.debit.type] || 0) + transaction.getAmount();
+        this.credit[transaction.credit.type] = (this.credit[transaction.credit.type] || 0) + transaction.getAmount();
     }
 
     getLastTransaction() {

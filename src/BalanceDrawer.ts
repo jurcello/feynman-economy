@@ -33,6 +33,8 @@ class BalanceDrawer {
         let totalBalanceY = this.offsetY - 20 - totalDebits;
         p.text('Debit', this.offsetX, totalBalanceY - 10);
         p.rect(this.offsetX, totalBalanceY, this.debitCreditWiths, totalDebits);
+        p.fill(255, 255, 255);
+        p.text(`Total: ${this.formatNumber(totalDebits)}`, this.offsetX + 10, this.offsetY - 30);
     }
 
     private drawCredit() {
@@ -43,6 +45,16 @@ class BalanceDrawer {
         p.fill(0, 100, 0);
         p.text('Credit', creditLeft, totalBalanceY - 10);
         p.rect(creditLeft, totalBalanceY, this.debitCreditWiths, totalCredits);
+        p.fill(255, 255, 255);
+        p.text(`Total: ${(this.formatNumber(totalCredits))}`, creditLeft + 10, this.offsetY - 30);
+    }
+
+    private formatNumber(totalCredits: number) {
+        const formattedCredits = new Intl.NumberFormat('nl-NL', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(totalCredits);
+        return formattedCredits;
     }
 }
 

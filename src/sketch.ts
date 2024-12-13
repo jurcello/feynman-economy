@@ -15,13 +15,26 @@ const sketch = (p: p5) => {
     };
 
     let personBalance = new Balance('John');
-    let transaction: Transaction = new Transaction('Initial', 200, { type: 'cash'}, {type: 'Eigen vermogen'});
+    let transaction: Transaction = new Transaction('Initial', 10, { type: 'cash'}, {type: 'Eigen vermogen'});
     personBalance.addTransaction(transaction);
     let balanceDrawer  = new BalanceDrawer(p, personBalance);
 
     p.draw = () => {
         p.fill(100);
+        p.background(220);
         balanceDrawer.draw();
+    };
+
+
+    p.keyPressed = () => {
+        if (p.key === 'a' || p.key === 'A') {
+            // Create and add a new transaction when 'a' is pressed
+            const newTransaction = new Transaction('New Transaction', Math.random() * 100, {type: 'cash'}, {type: 'Eigen vermogen'});
+            personBalance.addTransaction(newTransaction);
+
+            // Optionally, update the display or log the transaction
+            console.log('Transaction added:', newTransaction);
+        }
     };
 };
 
