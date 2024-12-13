@@ -4,5 +4,14 @@
   "description": "Easy tools for explaining money and economy",
   "main": "index.js",
   "author": "Jur de Vries <info@jurdevries.nl>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "p5": "^1.11.2"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  },
+  "scripts": {
+    "start": "serve ."
+  }
 }
