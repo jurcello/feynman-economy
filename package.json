@@ -1,0 +1,8 @@
+{
+  "name": "Feynman_Economy",
+  "version": "1.0.0",
+  "description": "Easy tools for explaining money and economy",
+  "main": "index.js",
+  "author": "Jur de Vries <info@jurdevries.nl>",
+  "license": "MIT"
+}
