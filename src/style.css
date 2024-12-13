@@ -1,0 +1,3 @@
+@tailwind base;     /* Resets styles and adds base utility classes */
+@tailwind components; /* Includes core Tailwind CSS components */
+@tailwind utilities;  /* Includes utility classes like margins, paddings, etc. */
