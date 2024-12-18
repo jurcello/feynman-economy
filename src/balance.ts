@@ -1,3 +1,14 @@
+enum DebitTypes {
+    cash = 'Cash',
+    backAccount = 'Back account'
+}
+
+enum CreditTypes {
+    equity = 'Eigen vermogen',
+}
+
+
+
 class Transaction {
     private description: string;
     private amount: number;
@@ -6,10 +17,10 @@ class Transaction {
         return this.amount;
     }
 
-    debit: { type: string };
-    credit: { type: string };
+    debit: { type: DebitTypes };
+    credit: { type: CreditTypes };
 
-    constructor(description: string, amount: number, debit: { type: string }, credit: { type: string }) {
+    constructor(description: string, amount: number, debit: { type: DebitTypes }, credit: { type: CreditTypes }) {
         this.description = description;
         this.amount = amount;
         this.debit = debit;
@@ -41,4 +52,4 @@ class Balance {
     }
 }
 
-export { Balance, Transaction };
+export { Balance, Transaction, DebitTypes, CreditTypes };

@@ -1,12 +1,12 @@
 import p5 from "p5";
-import {Balance, Transaction} from "./balance";
+import {Balance, CreditTypes, DebitTypes, Transaction} from "./balance";
 import BalanceDrawer from "./BalanceDrawer";
 
 const sketch = (p: p5) => {
     let canvas;
 
     p.setup = () => {
-        canvas = p.createCanvas(600, 400);
+        canvas = p.createCanvas(800, 400);
 
         // Attach the canvas to a container (use `#p5-container`)
         canvas.parent("p5-container");
@@ -15,8 +15,9 @@ const sketch = (p: p5) => {
     };
 
     let personBalance = new Balance('John');
-    let transaction: Transaction = new Transaction('Initial', 50, { type: 'cash'}, {type: 'Eigen vermogen'});
+    let transaction: Transaction = new Transaction('Initial', 50, { type: DebitTypes.cash}, {type: CreditTypes.equity});
     personBalance.addTransaction(transaction);
+    personBalance.addTransaction(new Transaction('second', 20, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
     let balanceDrawer  = new BalanceDrawer(p, personBalance);
 
     p.draw = () => {
@@ -29,7 +30,7 @@ const sketch = (p: p5) => {
     p.keyPressed = () => {
         if (p.key === 'a' || p.key === 'A') {
             // Create and add a new transaction when 'a' is pressed
-            const newTransaction = new Transaction('New Transaction', Math.random() * 100, {type: 'cash'}, {type: 'Eigen vermogen'});
+            const newTransaction = new Transaction('New Transaction', Math.random() * 100, { type: DebitTypes.cash}, {type: CreditTypes.equity});
             personBalance.addTransaction(newTransaction);
 
             // Optionally, update the display or log the transaction

@@ -1,5 +1,12 @@
 import p5 from "p5";
-import {Balance, Transaction} from "./balance";
+import {Balance, CreditTypes, DebitTypes, Transaction} from "./balance";
+import Colors from "./colors";
+
+const colorMappings = {
+    [DebitTypes.cash]: Colors.green,
+    [DebitTypes.backAccount]: Colors.blue,
+    [CreditTypes.equity]: Colors.red
+}
 
 class BalanceDrawer {
     private p: p5;
@@ -59,6 +66,8 @@ class BalanceDrawer {
         const p = this.p;
         let currentY = this.offsetY - 20 - totalDebits;
 
+        p.fill(Colors.green);
+
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
         p.rect(this.offsetX, currentY, this.debitCreditWiths, totalDebits);
@@ -92,7 +101,7 @@ class BalanceDrawer {
         const creditLeft = this.offsetX + this.debitCreditWiths + 10;
         let currentY = this.offsetY - 20 - totalCredits;
 
-        p.fill(0, 100, 0);
+        p.fill(Colors.red);
 
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
