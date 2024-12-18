@@ -62,69 +62,49 @@ class BalanceDrawer {
         const p = this.p;
         let currentY = Y;
 
-        currentY = this.drawDebits(p, currentY);
-        p.text('Debit / bezittingen', this.offsetX, currentY);
+        let xPosition = this.offsetX;
+        currentY = this.drawDebits(p, currentY, xPosition);
+        currentY -= 10;
+        p.text('Debit / bezittingen', xPosition, currentY);
         p.fill(255, 255, 255);
     }
 
-    private drawDebits(p: p5, currentY: number) {
+    private drawCredit(Y: number) {
+        const p = this.p;
+        let currentY = Y;
+
+        let xPosition = this.offsetX + this.debitCreditWiths + 10;
+        currentY = this.drawCredits(p, currentY, xPosition);
+        currentY -= 10;
+        p.text('Credit / Verplichtingen', xPosition, currentY);
+        p.fill(255, 255, 255);
+    }
+
+    private drawDebits(p: p5, currentY: number, xPosition: number) {
         let Y = currentY;
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
         let debitOrCredit = this.balance.debit;
         let type = this.lastTransaction?.debit.type;
-        Y = this.drawItems(Y, debitOrCredit, type);
-
-        Y -= 10;
+        Y = this.drawItems(Y, debitOrCredit, type, xPosition);
 
         p.strokeWeight(0);
         return Y;
     }
 
-        private getTotalDebits() {
-        let debit = Object.values(this.balance.debit).reduce((sum, value) => sum + value, 0);
-        if (this.fading && this.lastTransaction) {
-            debit -= this.lastTransaction?.getAmount();
-        }
-        return debit;
-    }
-
-    private drawCredit(Y: number) {
-        const totalCredits = this.getTotalCredits();
-        const p = this.p;
-        const creditLeft = this.offsetX + this.debitCreditWiths + 10;
-        let currentY = Y - totalCredits;
-
-        p.fill(Colors.red);
-
+    private drawCredits(p: p5, currentY: number, xPosition: number) {
+        let Y = currentY;
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
-        p.rect(creditLeft, currentY, this.debitCreditWiths, totalCredits);
-
-
-        if (this.fading && this.lastTransaction) {
-            const height = this.fadeValue * this.lastTransaction?.getAmount();
-            currentY -= height;
-            p.rect(creditLeft, currentY, this.debitCreditWiths, height);
-        }
+        let debitOrCredit = this.balance.credit;
+        let type = this.lastTransaction?.credit.type;
+        Y = this.drawItems(Y, debitOrCredit, type, xPosition);
 
         p.strokeWeight(0);
-        currentY -= 10;
-        p.text('Credit / Verplichtingen', creditLeft, currentY);
-        p.fill(255, 255, 255);
-        p.text(`Total: ${(this.formatNumber(totalCredits))}`, creditLeft + 10, this.offsetY - 30);
-        p.text(`${this.balance.getLastTransaction().credit.type}`, creditLeft + 10, this.offsetY - 45);
+        return Y;
     }
 
-    private getTotalCredits() {
-        let credit = Object.values(this.balance.credit).reduce((sum, value) => sum + value, 0);
-        if (this.fading && this.lastTransaction) {
-            credit -= this.lastTransaction?.getAmount();
-        }
-        return credit;
-    }
-
-    private drawItems(Y: number, debitOrCredit: { [p: string]: number }, type: DebitTypes | undefined) {
+    private drawItems(Y: number, debitOrCredit: { [p: string]: number }, type: DebitTypes | CreditTypes | undefined, xPosition: number) {
         const p = this.p;
         Object.entries(debitOrCredit).forEach(([key, value]) => {
             p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
@@ -133,12 +113,12 @@ class BalanceDrawer {
                 const correction = this.lastTransaction?.getAmount();
                 let correctedValue = value - correction;
                 Y -= correctedValue
-                p.rect(this.offsetX, Y, this.debitCreditWiths, correctedValue);
+                p.rect(xPosition, Y, this.debitCreditWiths, correctedValue);
 
                 Y -= height;
-                p.rect(this.offsetX, Y, this.debitCreditWiths, height);
+                p.rect(xPosition, Y, this.debitCreditWiths, height);
             } else {
-                p.rect(this.offsetX, Y - value, this.debitCreditWiths, value);
+                p.rect(xPosition, Y - value, this.debitCreditWiths, value);
                 Y -= value; // Adjusting currentY for the next debit block
             }
         });

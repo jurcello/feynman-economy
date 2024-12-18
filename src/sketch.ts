@@ -18,7 +18,7 @@ const sketch = (p: p5) => {
     let transaction: Transaction = new Transaction('Initial', 100, { type: DebitTypes.cash}, {type: CreditTypes.equity});
     personBalance.addTransaction(transaction);
     personBalance.addTransaction(new Transaction('second', 50, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
-    let balanceDrawer  = new BalanceDrawer(p, personBalance, 50, 380);
+    let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, 380);
 
     p.draw = () => {
         p.fill(100);
