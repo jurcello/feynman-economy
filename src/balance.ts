@@ -10,7 +10,7 @@ class Transaction {
     credit: { type: string };
 
     constructor(description: string, amount: number, debit: { type: string }, credit: { type: string }) {
-        this.description = 'description';
+        this.description = description;
         this.amount = amount;
         this.debit = debit;
         this.credit = credit;

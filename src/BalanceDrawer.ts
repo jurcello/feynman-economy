@@ -19,7 +19,7 @@ class BalanceDrawer {
         this.debitCreditWiths = 100;
         this.offsetX = 50;
         this.offsetY = 50;
-        this.fadeTime = 1000;
+        this.fadeTime = 600;
     }
 
 
@@ -57,32 +57,66 @@ class BalanceDrawer {
     private drawDebit() {
         const totalDebits = this.getTotalDebits();
         const p = this.p;
-        let totalBalanceY = this.offsetY - 20 - totalDebits;
-        p.text('Debit', this.offsetX, totalBalanceY - 10);
-        p.rect(this.offsetX, totalBalanceY, this.debitCreditWiths, totalDebits);
+        let currentY = this.offsetY - 20 - totalDebits;
+
+        p.stroke(255, 255, 255);
+        p.strokeWeight(2);
+        p.rect(this.offsetX, currentY, this.debitCreditWiths, totalDebits);
+
+        if (this.fading && this.lastTransaction) {
+            const height = this.fadeValue * this.lastTransaction?.getAmount();
+            currentY -= height;
+            p.rect(this.offsetX, currentY, this.debitCreditWiths, height);
+        }
+
+        p.strokeWeight(0);
+
+        currentY -= 10;
+        p.text('Debit', this.offsetX, currentY);
         p.fill(255, 255, 255);
         p.text(`Total: ${this.formatNumber(totalDebits)}`, this.offsetX + 10, this.offsetY - 30);
     }
 
     private getTotalDebits() {
-        return Object.values(this.balance.debit).reduce((sum, value) => sum + value, 0);
+        let debit = Object.values(this.balance.debit).reduce((sum, value) => sum + value, 0);
+        if (this.fading && this.lastTransaction) {
+            debit -= this.lastTransaction?.getAmount();
+        }
+        return debit;
     }
 
     private drawCredit() {
         const totalCredits = this.getTotalCredits();
         const p = this.p;
         const creditLeft = this.offsetX + this.debitCreditWiths + 10;
-        let totalBalanceY = this.offsetY - 20 - totalCredits;
+        let currentY = this.offsetY - 20 - totalCredits;
 
         p.fill(0, 100, 0);
-        p.text('Credit', creditLeft, totalBalanceY - 10);
-        p.rect(creditLeft, totalBalanceY, this.debitCreditWiths, totalCredits);
+
+        p.stroke(255, 255, 255);
+        p.strokeWeight(2);
+        p.rect(creditLeft, currentY, this.debitCreditWiths, totalCredits);
+
+
+        if (this.fading && this.lastTransaction) {
+            const height = this.fadeValue * this.lastTransaction?.getAmount();
+            currentY -= height;
+            p.rect(creditLeft, currentY, this.debitCreditWiths, height);
+        }
+
+        p.strokeWeight(0);
+        currentY -= 10;
+        p.text('Credit', creditLeft, currentY);
         p.fill(255, 255, 255);
         p.text(`Total: ${(this.formatNumber(totalCredits))}`, creditLeft + 10, this.offsetY - 30);
     }
 
     private getTotalCredits() {
-        return Object.values(this.balance.credit).reduce((sum, value) => sum + value, 0);
+        let credit = Object.values(this.balance.credit).reduce((sum, value) => sum + value, 0);
+        if (this.fading && this.lastTransaction) {
+            credit -= this.lastTransaction?.getAmount();
+        }
+        return credit;
     }
 
     private formatNumber(totalCredits: number) {
