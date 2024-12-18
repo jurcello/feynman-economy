@@ -59,7 +59,6 @@ class BalanceDrawer {
     }
 
     private drawDebit(Y: number) {
-        const totalDebits = this.getTotalDebits();
         const p = this.p;
         let currentY = Y;
 
@@ -72,33 +71,17 @@ class BalanceDrawer {
         let Y = currentY;
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
-        Object.entries(this.balance.debit).forEach(([key, value]) => {
-            p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
-
-            if (this.fading && this.lastTransaction && key === this.lastTransaction?.debit.type) {
-                const height = this.fadeValue * this.lastTransaction?.getAmount();
-                const correction =  this.lastTransaction?.getAmount();
-                let correctedValue = value - correction;
-                Y -= correctedValue
-                p.rect(this.offsetX, Y, this.debitCreditWiths, correctedValue);
-
-                Y -= height;
-                p.rect(this.offsetX, Y, this.debitCreditWiths, height);
-            }
-            else {
-                p.rect(this.offsetX, Y - value, this.debitCreditWiths, value);
-                Y -= value; // Adjusting currentY for the next debit block
-            }
-        });
-
-
-        p.strokeWeight(0);
+        let debitOrCredit = this.balance.debit;
+        let type = this.lastTransaction?.debit.type;
+        Y = this.drawItems(Y, debitOrCredit, type);
 
         Y -= 10;
+
+        p.strokeWeight(0);
         return Y;
     }
 
-    private getTotalDebits() {
+        private getTotalDebits() {
         let debit = Object.values(this.balance.debit).reduce((sum, value) => sum + value, 0);
         if (this.fading && this.lastTransaction) {
             debit -= this.lastTransaction?.getAmount();
@@ -140,6 +123,28 @@ class BalanceDrawer {
         }
         return credit;
     }
+
+    private drawItems(Y: number, debitOrCredit: { [p: string]: number }, type: DebitTypes | undefined) {
+        const p = this.p;
+        Object.entries(debitOrCredit).forEach(([key, value]) => {
+            p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
+            if (this.fading && this.lastTransaction && key === type) {
+                const height = this.fadeValue * this.lastTransaction?.getAmount();
+                const correction = this.lastTransaction?.getAmount();
+                let correctedValue = value - correction;
+                Y -= correctedValue
+                p.rect(this.offsetX, Y, this.debitCreditWiths, correctedValue);
+
+                Y -= height;
+                p.rect(this.offsetX, Y, this.debitCreditWiths, height);
+            } else {
+                p.rect(this.offsetX, Y - value, this.debitCreditWiths, value);
+                Y -= value; // Adjusting currentY for the next debit block
+            }
+        });
+        return Y;
+    }
+
 
     private formatNumber(totalCredits: number) {
         const formattedCredits = new Intl.NumberFormat('nl-NL', {
