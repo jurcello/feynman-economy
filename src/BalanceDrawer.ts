@@ -72,9 +72,10 @@ class BalanceDrawer {
         p.strokeWeight(0);
 
         currentY -= 10;
-        p.text('Debit', this.offsetX, currentY);
+        p.text('Debit / bezittingen', this.offsetX, currentY);
         p.fill(255, 255, 255);
         p.text(`Total: ${this.formatNumber(totalDebits)}`, this.offsetX + 10, this.offsetY - 30);
+        p.text(`${this.balance.getLastTransaction().debit.type}`, this.offsetX + 10, this.offsetY - 45);
     }
 
     private getTotalDebits() {
@@ -106,9 +107,10 @@ class BalanceDrawer {
 
         p.strokeWeight(0);
         currentY -= 10;
-        p.text('Credit', creditLeft, currentY);
+        p.text('Credit / Verplichtingen', creditLeft, currentY);
         p.fill(255, 255, 255);
         p.text(`Total: ${(this.formatNumber(totalCredits))}`, creditLeft + 10, this.offsetY - 30);
+        p.text(`${this.balance.getLastTransaction().credit.type}`, creditLeft + 10, this.offsetY - 45);
     }
 
     private getTotalCredits() {
