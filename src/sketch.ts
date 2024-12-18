@@ -15,7 +15,7 @@ const sketch = (p: p5) => {
     };
 
     let personBalance = new Balance('John');
-    let transaction: Transaction = new Transaction('Initial', 10, { type: 'cash'}, {type: 'Eigen vermogen'});
+    let transaction: Transaction = new Transaction('Initial', 50, { type: 'cash'}, {type: 'Eigen vermogen'});
     personBalance.addTransaction(transaction);
     let balanceDrawer  = new BalanceDrawer(p, personBalance);
 
