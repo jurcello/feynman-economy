@@ -20,30 +20,27 @@ class BalanceDrawer {
     private fadeStartTime: number = 0;
     private lastTransaction?: Transaction;
 
-    constructor(p: p5, balance: Balance) {
+    constructor(p: p5, balance: Balance, offsetX: number = 50, offsetY: number = 50) {
         this.p = p;
         this.balance = balance;
         this.debitCreditWiths = 100;
-        this.offsetX = 50;
-        this.offsetY = 50;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.fadeTime = 600;
     }
 
 
     draw() {
         const p = this.p;
-        this.offsetY = p.height - 50;
+        const Y = this.offsetY;
 
-        p.text(`Balance: ${this.balance.name}`, this.offsetX, this.offsetY);
+        p.text(`Balance: ${this.balance.name}`, this.offsetX, Y);
 
-        if (this.fading) {
-            p.rect(this.offsetX + 100, this.offsetY, this.fadeValue * 200, 20);
-        }
 
         this.handleFading();
 
-        this.drawDebit();
-        this.drawCredit();
+        this.drawDebit(Y - 20);
+        this.drawCredit(Y - 20);
     }
 
     private handleFading(): void {
@@ -61,30 +58,44 @@ class BalanceDrawer {
         this.lastTransaction = this.balance.getLastTransaction();
     }
 
-    private drawDebit() {
+    private drawDebit(Y: number) {
         const totalDebits = this.getTotalDebits();
         const p = this.p;
-        let currentY = this.offsetY - 20 - totalDebits;
+        let currentY = Y;
 
-        p.fill(Colors.green);
+        currentY = this.drawDebits(p, currentY);
+        p.text('Debit / bezittingen', this.offsetX, currentY);
+        p.fill(255, 255, 255);
+    }
 
+    private drawDebits(p: p5, currentY: number) {
+        let Y = currentY;
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
-        p.rect(this.offsetX, currentY, this.debitCreditWiths, totalDebits);
+        Object.entries(this.balance.debit).forEach(([key, value]) => {
+            p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
 
-        if (this.fading && this.lastTransaction) {
-            const height = this.fadeValue * this.lastTransaction?.getAmount();
-            currentY -= height;
-            p.rect(this.offsetX, currentY, this.debitCreditWiths, height);
-        }
+            if (this.fading && this.lastTransaction && key === this.lastTransaction?.debit.type) {
+                const height = this.fadeValue * this.lastTransaction?.getAmount();
+                const correction =  this.lastTransaction?.getAmount();
+                let correctedValue = value - correction;
+                Y -= correctedValue
+                p.rect(this.offsetX, Y, this.debitCreditWiths, correctedValue);
+
+                Y -= height;
+                p.rect(this.offsetX, Y, this.debitCreditWiths, height);
+            }
+            else {
+                p.rect(this.offsetX, Y - value, this.debitCreditWiths, value);
+                Y -= value; // Adjusting currentY for the next debit block
+            }
+        });
+
 
         p.strokeWeight(0);
 
-        currentY -= 10;
-        p.text('Debit / bezittingen', this.offsetX, currentY);
-        p.fill(255, 255, 255);
-        p.text(`Total: ${this.formatNumber(totalDebits)}`, this.offsetX + 10, this.offsetY - 30);
-        p.text(`${this.balance.getLastTransaction().debit.type}`, this.offsetX + 10, this.offsetY - 45);
+        Y -= 10;
+        return Y;
     }
 
     private getTotalDebits() {
@@ -95,11 +106,11 @@ class BalanceDrawer {
         return debit;
     }
 
-    private drawCredit() {
+    private drawCredit(Y: number) {
         const totalCredits = this.getTotalCredits();
         const p = this.p;
         const creditLeft = this.offsetX + this.debitCreditWiths + 10;
-        let currentY = this.offsetY - 20 - totalCredits;
+        let currentY = Y - totalCredits;
 
         p.fill(Colors.red);
 

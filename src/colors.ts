@@ -10,5 +10,28 @@ const lightOrange = '#c9991e';
 const blue = '#1e4ca9';
 const darkBlue = '#1e1e5e';
 const lightBlue = '#1e5ec9';
+const grey = '#5e5e5e';
+const darkGrey = '#1e1e1e';
+const lightGrey = '#999999';
+const white = '#ffffff';
+const black = '#000000';
 
-export default { green, red, orange, blue };
+export default {
+    green,
+    darkGreen,
+    lightGreen,
+    red,
+    darkRed,
+    lightRed,
+    orange,
+    darkOrange,
+    lightOrange,
+    blue,
+    darkBlue,
+    lightBlue,
+    grey,
+    darkGrey,
+    lightGrey,
+    white,
+    black,
+};
