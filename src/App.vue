@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <h1>Welcome to Vue 3 with Vite!</h1>
+    <p>This is so fancy</p>
     <P5Sketch />
   </div>
 </template>
