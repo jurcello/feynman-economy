@@ -16,9 +16,9 @@ const sketch = (p: p5) => {
     };
 
     let personBalance = new Balance('John');
-    let transaction: Transaction = new Transaction('Initial', 100, { type: DebitTypes.cash}, {type: CreditTypes.equity});
+    let transaction: Transaction = new Transaction('Initial', 250, { type: DebitTypes.cash}, {type: CreditTypes.equity});
     personBalance.addTransaction(transaction);
-    personBalance.addTransaction(new Transaction('second', 50, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
+    personBalance.addTransaction(new Transaction('second', 100, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
     let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, height - 20);
 
     p.draw = () => {
@@ -31,7 +31,7 @@ const sketch = (p: p5) => {
     p.keyPressed = () => {
         if (p.key === 'a' || p.key === 'A') {
             // Create and add a new transaction when 'a' is pressed
-            const newTransaction = new Transaction('New Transaction', Math.random() * 100, { type: DebitTypes.cash}, {type: CreditTypes.equity});
+            const newTransaction = new Transaction('New Transaction', - Math.random() * 100, { type: DebitTypes.cash}, {type: CreditTypes.equity});
             personBalance.addTransaction(newTransaction);
 
             // Optionally, update the display or log the transaction

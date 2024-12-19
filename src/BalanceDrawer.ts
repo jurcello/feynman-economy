@@ -111,7 +111,7 @@ class BalanceDrawer {
 
         Object.entries(debitOrCredit).forEach(([key, value]) => {
             p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
-            if (this.fading && this.lastTransaction && key === type) {
+            if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() > 0) {
                 const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
                 const correction = this.lastTransaction?.getAmount();
                 let correctedValue = value - correction;
@@ -121,6 +121,19 @@ class BalanceDrawer {
 
                 Y -= fadeHeight;
                 p.rect(xPosition, Y, this.debitCreditWiths, fadeHeight);
+
+                p.strokeWeight(1);
+                p.fill(Colors.white);
+                p.text(`${key}`, xPosition + 10, textPosition);
+                p.text(this.formatNumber(correctedValue), xPosition + 10, textPosition + 15);
+
+            } else if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() < 0) {
+                const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
+                const correction = this.lastTransaction?.getAmount();
+                let correctedValue = value + fadeHeight - correction;
+                Y -= correctedValue
+                p.rect(xPosition, Y, this.debitCreditWiths, correctedValue);
+                const textPosition = Y + 20;
 
                 p.strokeWeight(1);
                 p.fill(Colors.white);
