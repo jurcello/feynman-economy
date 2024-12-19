@@ -1,5 +1,5 @@
 {
-  "name": "Feynman_Economy",
+  "name": "feynman_economy",
   "version": "1.0.0",
   "description": "Easy tools for explaining money and economy",
   "main": "index.js",
@@ -9,7 +9,8 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "p5": "^1.11.2",
     "vite": "^6.0.3",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

@@ -16,9 +16,9 @@ const createSkatch = (canvasContainer: HTMLDivElement) => (p: p5) => {
     };
 
     let personBalance = new Balance('John');
-    let transaction: Transaction = new Transaction('Initial', 250, { type: DebitTypes.cash}, {type: CreditTypes.equity});
-    personBalance.addTransaction(transaction);
-    personBalance.addTransaction(new Transaction('second', 100, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
+    // let transaction: Transaction = new Transaction('Initial', 250, { type: DebitTypes.cash}, {type: CreditTypes.equity});
+    // personBalance.addTransaction(transaction);
+    // personBalance.addTransaction(new Transaction('second', 100, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
     let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, height - 20);
 
     p.draw = () => {

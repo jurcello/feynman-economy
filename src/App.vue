@@ -1,21 +1,19 @@
 <template>
   <div id="app">
-    <h1>Welcome to Vue 3 with Vite!</h1>
-    <p>This is so fancy</p>
-    <P5Sketch />
+    <h1>Feynman economics</h1>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/balans">Balans</router-link>
+    </nav>
+    <router-view /> <!-- Render the active route's component here -->
   </div>
 </template>
 
 <script>
-import P5Sketch from './components/P5Sketch.vue';
-
 export default {
   name: 'App',
-  components: {
-    P5Sketch,
-  },
 };
-
 </script>
 
 <style>
