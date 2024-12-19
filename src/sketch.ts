@@ -2,7 +2,7 @@ import p5 from "p5";
 import {Balance, CreditTypes, DebitTypes, Transaction} from "./balance";
 import BalanceDrawer from "./BalanceDrawer";
 
-const sketch = (p: p5) => {
+const createSkatch = (canvasContainer: HTMLDivElement) => (p: p5) => {
     let canvas;
 
     const height = 500;
@@ -10,7 +10,7 @@ const sketch = (p: p5) => {
         canvas = p.createCanvas(800, height);
 
         // Attach the canvas to a container (use `#p5-container`)
-        canvas.parent("p5-container");
+        canvas.parent(canvasContainer);
 
         p.background(220);
     };
@@ -40,5 +40,4 @@ const sketch = (p: p5) => {
     };
 };
 
-// Initialize p5 instance
-new p5(sketch);
+export default createSkatch;
