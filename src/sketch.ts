@@ -5,8 +5,9 @@ import BalanceDrawer from "./BalanceDrawer";
 const sketch = (p: p5) => {
     let canvas;
 
+    const height = 500;
     p.setup = () => {
-        canvas = p.createCanvas(800, 400);
+        canvas = p.createCanvas(800, height);
 
         // Attach the canvas to a container (use `#p5-container`)
         canvas.parent("p5-container");
@@ -18,7 +19,7 @@ const sketch = (p: p5) => {
     let transaction: Transaction = new Transaction('Initial', 100, { type: DebitTypes.cash}, {type: CreditTypes.equity});
     personBalance.addTransaction(transaction);
     personBalance.addTransaction(new Transaction('second', 50, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
-    let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, 380);
+    let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, height - 20);
 
     p.draw = () => {
         p.fill(100);

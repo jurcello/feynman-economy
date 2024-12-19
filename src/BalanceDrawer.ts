@@ -65,6 +65,7 @@ class BalanceDrawer {
         let xPosition = this.offsetX;
         currentY = this.drawDebits(p, currentY, xPosition);
         currentY -= 10;
+        p.fill(Colors.darkGreen);
         p.text('Debit / bezittingen', xPosition, currentY);
         p.fill(255, 255, 255);
     }
@@ -76,6 +77,7 @@ class BalanceDrawer {
         let xPosition = this.offsetX + this.debitCreditWiths + 10;
         currentY = this.drawCredits(p, currentY, xPosition);
         currentY -= 10;
+        p.fill(Colors.darkRed);
         p.text('Credit / Verplichtingen', xPosition, currentY);
         p.fill(255, 255, 255);
     }
@@ -94,8 +96,6 @@ class BalanceDrawer {
 
     private drawCredits(p: p5, currentY: number, xPosition: number) {
         let Y = currentY;
-        p.stroke(255, 255, 255);
-        p.strokeWeight(2);
         let debitOrCredit = this.balance.credit;
         let type = this.lastTransaction?.credit.type;
         Y = this.drawItems(Y, debitOrCredit, type, xPosition);
@@ -106,19 +106,35 @@ class BalanceDrawer {
 
     private drawItems(Y: number, debitOrCredit: { [p: string]: number }, type: DebitTypes | CreditTypes | undefined, xPosition: number) {
         const p = this.p;
+        p.stroke(255, 255, 255);
+        p.strokeWeight(2);
+
         Object.entries(debitOrCredit).forEach(([key, value]) => {
             p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
             if (this.fading && this.lastTransaction && key === type) {
-                const height = this.fadeValue * this.lastTransaction?.getAmount();
+                const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
                 const correction = this.lastTransaction?.getAmount();
                 let correctedValue = value - correction;
                 Y -= correctedValue
                 p.rect(xPosition, Y, this.debitCreditWiths, correctedValue);
+                const textPosition = Y + 20;
 
-                Y -= height;
-                p.rect(xPosition, Y, this.debitCreditWiths, height);
+                Y -= fadeHeight;
+                p.rect(xPosition, Y, this.debitCreditWiths, fadeHeight);
+
+                p.strokeWeight(1);
+                p.fill(Colors.white);
+                p.text(`${key}`, xPosition + 10, textPosition);
+                p.text(this.formatNumber(correctedValue), xPosition + 10, textPosition + 15);
+
             } else {
-                p.rect(xPosition, Y - value, this.debitCreditWiths, value);
+                let rectPosition = Y - value;
+                p.rect(xPosition, rectPosition, this.debitCreditWiths, value);
+                const textPosition = rectPosition + 20;
+                p.strokeWeight(1);
+                p.fill(Colors.white);
+                p.text(`${key}`, xPosition + 10, textPosition);
+                p.text(this.formatNumber(value), xPosition + 10, textPosition + 15);
                 Y -= value; // Adjusting currentY for the next debit block
             }
         });
