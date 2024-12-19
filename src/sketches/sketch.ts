@@ -1,6 +1,6 @@
 import p5 from "p5";
-import {Balance, CreditTypes, DebitTypes, Transaction} from "./balance";
-import BalanceDrawer from "./BalanceDrawer";
+import {Balance, CreditTypes, DebitTypes, Transaction} from "../balance";
+import BalanceDrawer from "../BalanceDrawer";
 
 const createSkatch = (canvasContainer: HTMLDivElement) => (p: p5) => {
     let canvas;
@@ -16,8 +16,8 @@ const createSkatch = (canvasContainer: HTMLDivElement) => (p: p5) => {
     };
 
     let personBalance = new Balance('John');
-    // let transaction: Transaction = new Transaction('Initial', 250, { type: DebitTypes.cash}, {type: CreditTypes.equity});
-    // personBalance.addTransaction(transaction);
+    let transaction: Transaction = new Transaction('Initial', 0, { type: DebitTypes.cash}, {type: CreditTypes.equity});
+    personBalance.addTransaction(transaction);
     // personBalance.addTransaction(new Transaction('second', 100, { type: DebitTypes.backAccount}, {type: CreditTypes.equity}));
     let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, height - 20);
 

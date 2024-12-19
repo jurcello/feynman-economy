@@ -1,3 +1,76 @@
 @tailwind base;     /* Resets styles and adds base utility classes */
 @tailwind components; /* Includes core Tailwind CSS components */
 @tailwind utilities;  /* Includes utility classes like margins, paddings, etc. */
+
+/* Add custom styles for headers */
+h1 {
+    @apply text-4xl font-extrabold text-gray-800 mb-4;
+}
+
+h2 {
+    @apply text-3xl font-bold text-gray-700 mb-3;
+}
+
+h3 {
+    @apply text-2xl font-semibold text-gray-600 mb-2;
+}
+
+h4 {
+    @apply text-xl font-medium text-gray-500 mb-1.5;
+}
+
+h5, h6 {
+    @apply text-lg font-light text-gray-400 mb-1;
+}
+
+p {
+    @apply mb-2 mt-2;
+}
+/* Add custom styles for buttons */
+.btn {
+    @apply bg-blue-500 text-white font-medium py-2 px-4 rounded mb-2 cursor-pointer;
+}
+
+.btn:hover {
+    @apply bg-blue-600;
+}
+
+.btn-primary {
+    @apply bg-green-500 text-white font-bold py-2 px-4 rounded-lg;
+}
+
+.btn-primary:hover {
+    @apply bg-green-600;
+}
+
+.btn-secondary {
+    @apply bg-gray-500 text-white font-medium py-2 px-4 rounded;
+}
+
+.btn-secondary:hover {
+    @apply bg-gray-600;
+}
+
+.btn-outline {
+    @apply border border-blue-500 text-blue-500 font-medium py-2 px-4 rounded;
+}
+
+.btn-outline:hover {
+    @apply bg-blue-500 text-white;
+}
+
+.btn:disabled {
+    @apply bg-blue-300 text-white cursor-not-allowed;
+}
+
+.btn-primary:disabled {
+    @apply bg-green-300 text-white cursor-not-allowed;
+}
+
+.btn-secondary:disabled {
+    @apply bg-gray-300 text-white cursor-not-allowed;
+}
+
+.btn-outline:disabled {
+    @apply border border-blue-300 text-blue-300 cursor-not-allowed;
+}

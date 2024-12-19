@@ -1,12 +1,11 @@
 <template>
-  <!-- Container to render the p5 canvas -->
   <div ref="canvasContainer"></div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, onUnmounted } from "vue";
 import p5 from "p5";
-import createSkatch from "../sketch";
+import createSkatch from "../sketches/sketch";
 
 export default defineComponent({
   name: "P5Sketch",
