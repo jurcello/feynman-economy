@@ -56,7 +56,13 @@ class Balance {
         this.balanceStatus = new BalanceStatus();
     }
 
-    addTransaction(transaction: Transaction) {
+    public clear(): void {
+        this.debit = {};
+        this.credit = {};
+        this.transactions = [];
+    }
+
+    public addTransaction(transaction: Transaction) {
         this.transactions.push(transaction);
         if (transaction.debit.type != DebitTypes.none) {
             this.debit[transaction.debit.type] = (this.debit[transaction.debit.type] || 0) + transaction.getAmount();

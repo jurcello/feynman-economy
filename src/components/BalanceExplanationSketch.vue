@@ -1,7 +1,7 @@
 <template>
-  <div class="relative">
+  <div class="explanation">
     <transition>
-      <div v-if="currentStep == Step.STEP1">
+      <div v-if="currentStep == Step.STEP1" class="explanation__item">
         <p>
           Om geldschepping te kunnen begrijpen wordt in de voorbeelden vaak gewerkt met een balans.
           Je moet de balans dus begrijpen om verder te kunnen met de uitleg van geldschepping. We nemen een een persoon als voorbeeld.
@@ -15,7 +15,7 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP2">
+      <div v-if="currentStep == Step.STEP2" class="explanation__item">
         <p>
           Je ziet dat er aan de bezittingen kant € 50,-- is bijgekomen als cash. <br />
           De linkerkant van de balans is de debetkant, ook wel activa of bezittingen genoemd.
@@ -40,7 +40,7 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP3">
+      <div v-if="currentStep == Step.STEP3" class="explanation__item">
         <p>
           Nu we de balans weer in balans hebben, kunnen we verder met de volgende stap: we willen de nieuwste Barbie kopen.
           Die is alleen verschrikkelijk duur: € 150,-.
@@ -54,7 +54,7 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP4">
+      <div v-if="currentStep == Step.STEP4" class="explanation__item">
         <p>
           We hebbenu nu €100,- in cash geleend, maar de balans is weer niet in balans :-(
         </p>
@@ -67,7 +67,7 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP5">
+      <div v-if="currentStep == Step.STEP5" class="explanation__item">
         <p>
           Nu gaan we de Barbie kopen. Dat kost €150,--
         </p>
@@ -77,7 +77,7 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP6">
+      <div v-if="currentStep == Step.STEP6" class="explanation__item">
         <p>
           De barbie is gekocht. Maar nu is de balans weer niet in balans, de hele linkerkant is verdwenen!
         </p>
@@ -90,7 +90,7 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP7">
+      <div v-if="currentStep == Step.STEP7" class="explanation__item">
         <p>
           De balans is nu weer ok. En het is alweer de volgende maand. Dan krijgen we weer zakgeld!
         </p>
@@ -100,9 +100,12 @@
       </div>
     </transition>
     <transition>
-      <div v-if="currentStep == Step.STEP8">
+      <div v-if="currentStep == Step.STEP8" class="explanation__item">
         <p>
           Nu zijn we aan het eind van de uitleg de balans. We hebben gezien hoe de balans is opgebouwd.
+        </p>
+        <p>
+          <button @click="reset" class="btn" :disabled="fading">Opnieuw</button>
         </p>
       </div>
     </transition>
@@ -210,6 +213,11 @@ export default defineComponent({
       advanceToStep(Step.STEP8);
     }
 
+    const reset = () => {
+      balance.clear();
+      advanceToStep(Step.STEP1);
+    }
+
     onMounted(() => {
       if (canvasContainer.value) {
         const sketch = oneBalanceSketch(canvasContainer.value, balance, setBalanceDrawerInstance);
@@ -236,6 +244,7 @@ export default defineComponent({
       buyBarbie,
       addBarbieToProperty,
       addExtraPocketMoney,
+      reset,
       fading,
       Step,
     };
@@ -259,18 +268,32 @@ export default defineComponent({
   top: 10px;
 }
 
+.explanation {
+  min-height: 30vh;
+  height: 30vh;
+  position: relative;
+  @apply mb-8 border-2 border-y-blue-50 rounded-md px-4;
+}
+
+.explanation__item {
+  position: absolute;
+  min-height: 30vh;
+  height: 30vh;
+  overflow: scroll;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
 .v-enter-from {
-  height: 0;
   opacity: 0;
   overflow: hidden;
 }
 
 .v-enter-active,
 .v-leave-active {
-  transition: height 0.2s ease, opacity 1s ease;
+  transition: opacity 1s ease;
 }
 .v-leave-to {
-  height: 0;
   opacity: 0;
 }
 

@@ -19,6 +19,7 @@ class BalanceDrawer {
     private debitCreditWiths: number;
     private offsetX: number;
     private offsetY: number;
+    private scale: number = 1;
     private fadeTime: number;
     private fading: boolean = false;
     private fadeValue: number = 0;
@@ -26,13 +27,14 @@ class BalanceDrawer {
     private lastTransaction?: Transaction;
     private promises: Array<() => void> = [];
 
-    constructor(p: p5, balance: Balance, offsetX: number = 50, offsetY: number = 50) {
+    constructor(p: p5, balance: Balance, offsetX: number = 50, offsetY: number = 50, scale: number = 1) {
         this.p = p;
         this.balance = balance;
         this.debitCreditWiths = 100;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.fadeTime = 600;
+        this.scale = scale;
     }
 
 
@@ -45,8 +47,10 @@ class BalanceDrawer {
 
         this.handleFading();
 
-        this.drawDebit(Y - 20);
-        this.drawCredit(Y - 20);
+        p.scale(this.scale);
+        this.drawDebit((Y - 20) / this.scale);
+        this.drawCredit((Y - 20) / this.scale);
+        p.scale(1 / this.scale);
     }
     
 

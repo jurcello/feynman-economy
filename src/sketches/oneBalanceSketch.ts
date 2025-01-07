@@ -15,7 +15,7 @@ const createSkatch = (canvasContainer: HTMLDivElement, personBalance: Balance, s
         p.background(220);
     };
 
-    let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, height - 20);
+    let balanceDrawer  = new BalanceDrawer(p, personBalance, 120, height - 20, 1.7);
 
     setBalanceDrawer(balanceDrawer);
 
