@@ -63,6 +63,7 @@ import {defineComponent, onMounted, onUnmounted, ref} from "vue";
 import p5 from "p5";
 import oneBalanceSketch from "../sketches/oneBalanceSketch";
 import {Balance, BalanceStatus, CreditTypes, DebitTypes, Transaction} from "../balance";
+import balanceDrawer from "../BalanceDrawer";
 
 enum Step {
   STEP1,
@@ -79,7 +80,12 @@ export default defineComponent({
     let currentStep = ref<Step>(Step.STEP1);
 
     let p5Instance: p5 | null = null;
-    const balance = new Balance("Jantje")
+    const balance = new Balance("Jantje");
+    let balanceDrawerInstance: balanceDrawer | null = null;
+
+    const setBalanceDrawerInstance = (instance: balanceDrawer) => {
+      balanceDrawerInstance = instance;
+    }
 
 
     const hasPocketMoneyBeenGiven = ref<boolean>(false);
@@ -95,7 +101,9 @@ export default defineComponent({
     const addPocketMoney = () => {
       const transaction = new Transaction("First pocket money", 50, { type: DebitTypes.cash }, { type: CreditTypes.none });
       balance.addTransaction(transaction);
-      currentStep.value = Step.STEP2;
+      balanceDrawerInstance?.waitForFadeToEnd().then(() => {
+        currentStep.value = Step.STEP2;
+      });
     }
     const adjustPocketMoneyEquity = () => {
       const transaction = new Transaction("First pocket money equity", 50, { type: DebitTypes.none }, { type: CreditTypes.equity });
@@ -109,7 +117,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (canvasContainer.value) {
-        const sketch = oneBalanceSketch(canvasContainer.value, balance);
+        const sketch = oneBalanceSketch(canvasContainer.value, balance, setBalanceDrawerInstance);
         p5Instance = new p5(sketch, canvasContainer.value); // Attach sketch to div
       }
     });

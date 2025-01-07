@@ -5,8 +5,11 @@ import Colors from "./colors";
 const colorMappings = {
     [DebitTypes.cash]: Colors.green,
     [DebitTypes.backAccount]: Colors.blue,
+    [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
+    [CreditTypes.none]: Colors.grey,
+
 }
 
 class BalanceDrawer {
@@ -20,6 +23,7 @@ class BalanceDrawer {
     private fadeValue: number = 0;
     private fadeStartTime: number = 0;
     private lastTransaction?: Transaction;
+    private promises: Array<() => void> = [];
 
     constructor(p: p5, balance: Balance, offsetX: number = 50, offsetY: number = 50) {
         this.p = p;
@@ -43,6 +47,14 @@ class BalanceDrawer {
         this.drawDebit(Y - 20);
         this.drawCredit(Y - 20);
     }
+    
+
+    public waitForFadeToEnd(): Promise<void> {
+        return new Promise((resolve) => {
+            this.promises = this.promises || [];
+            this.promises.push(resolve);
+        });
+    }
 
     private handleFading(): void {
         if (this.balance.getLastTransaction() && this.lastTransaction != this.balance.getLastTransaction()) {
@@ -57,6 +69,10 @@ class BalanceDrawer {
             }
         }
         this.lastTransaction = this.balance.getLastTransaction();
+        if (this.promises.length > 0 && !this.fading) {
+            this.promises.forEach(promise => promise());
+            this.promises = [];
+        }
     }
 
     private drawDebit(Y: number) {

@@ -2,7 +2,7 @@ import p5 from "p5";
 import {Balance, CreditTypes, DebitTypes, Transaction} from "../balance";
 import BalanceDrawer from "../BalanceDrawer";
 
-const createSkatch = (canvasContainer: HTMLDivElement, personBalance: Balance) => (p: p5) => {
+const createSkatch = (canvasContainer: HTMLDivElement, personBalance: Balance, setBalanceDrawer: (drawer: BalanceDrawer) => void) => (p: p5) => {
     let canvas;
 
     const height = 500;
@@ -16,6 +16,8 @@ const createSkatch = (canvasContainer: HTMLDivElement, personBalance: Balance) =
     };
 
     let balanceDrawer  = new BalanceDrawer(p, personBalance, 20, height - 20);
+
+    setBalanceDrawer(balanceDrawer);
 
     p.draw = () => {
         p.fill(100);

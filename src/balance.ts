@@ -1,13 +1,13 @@
 enum DebitTypes {
     cash = 'Cash',
     backAccount = 'Back account',
-    none = 'None',
+    none = 'NoneDebit',
 }
 
 enum CreditTypes {
     equity = 'Eigen vermogen',
     debt = 'Schulden',
-    none = 'None',
+    none = 'NoneCredit',
 }
 
 
