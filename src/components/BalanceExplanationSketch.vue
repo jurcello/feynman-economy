@@ -104,6 +104,7 @@
         <p>
           Nu zijn we aan het eind van de uitleg de balans. We hebben gezien hoe de balans is opgebouwd.
         </p>
+        <p>Hier volgt een uiteindelijke uitleg van de balans.</p>
         <p>
           <button @click="reset" class="btn" :disabled="fading">Opnieuw</button>
         </p>
@@ -274,7 +275,7 @@ export default defineComponent({
   min-height: 30vh;
   height: 30vh;
   position: relative;
-  @apply mb-8 border-2 border-y-blue-50 rounded-md px-4;
+  @apply mb-8 border-2 border-y-blue-50 rounded-md;
 }
 
 .explanation__item {
@@ -285,6 +286,7 @@ export default defineComponent({
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
+  @apply p-4;
 }
 .v-enter-from {
   opacity: 0;
