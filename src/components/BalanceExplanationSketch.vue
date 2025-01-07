@@ -16,12 +16,26 @@
     </transition>
     <transition>
       <div v-if="currentStep == Step.STEP2">
-        <p>Wat je ziet op de balans zijn twee kanten: de debet en de credit kant. Dat zijn wat moeilijke woorden.
-          <ul>
-            <li>Debet: ook wel activa of bezittingen genoemd: alles wat je (of een bedrijf) bezit</li>
-            <li>Credit: ook wel passiva of verplichtingen genoemd: dit is of eigen vermogen of schulden</li>
-          </ul>
-          <button @click="adjustPocketMoneyEquity" class="btn">Pas balans aan</button>
+        <p>
+          Je ziet dat er aan de bezittingen kant € 50,-- is bijgekomen als cash. <br />
+          De linkerkant van de balans is de debetkant, ook wel activa of bezittingen genoemd.
+          Deze kant laat zien wat je allemaal bezit. Nu je zakgeld gekregen hebt, heb je dus opeens € 50,- in bezit.
+        </p>
+        <p>Er is wel een probleem: de beide zijden van de balans zijn nu niet hetzelfde! En dat is wel de bedoeling.</p>
+        <p>
+          Daarom moet de rechterkant aangepast worden, maar waarmee?
+        </p>
+        <p>
+          De rechterkant van de balans laat zien van welk vermogen het bezit afkomstig is. Dat kan eigen vermogen zijn, maar ook niet eigen vermogen.
+          Niet eigen vermogen wordt ook wel vreemd vermogen genoemd, of nog beter schulden. <br />
+          En een schuld is dan weer een verplichting: je moet de schuld namelijk aflossen op een gegeven moment.
+        </p>
+        <p>
+          Om de balans weer in balans te maken, gaan we aan de rechterkant ook € 50,- toevoegen. Omdat je dit geld gekregen hebt,
+          is dit dus geen schuld, maar eigen vermogen. We voegen dus eigen vermogen toe aan de rechterkant.
+        </p>
+        <p>
+          <button @click="adjustPocketMoneyEquity" class="btn">Voeg € 50,- eigen vermogen toe</button>
         </p>
       </div>
     </transition>
