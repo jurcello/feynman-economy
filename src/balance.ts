@@ -1,10 +1,13 @@
 enum DebitTypes {
     cash = 'Cash',
-    backAccount = 'Back account'
+    backAccount = 'Back account',
+    none = 'None',
 }
 
 enum CreditTypes {
     equity = 'Eigen vermogen',
+    debt = 'Schulden',
+    none = 'None',
 }
 
 
@@ -43,8 +46,12 @@ class Balance {
 
     addTransaction(transaction: Transaction) {
         this.transactions.push(transaction);
-        this.debit[transaction.debit.type] = (this.debit[transaction.debit.type] || 0) + transaction.getAmount();
-        this.credit[transaction.credit.type] = (this.credit[transaction.credit.type] || 0) + transaction.getAmount();
+        if (transaction.debit.type != DebitTypes.none) {
+            this.debit[transaction.debit.type] = (this.debit[transaction.debit.type] || 0) + transaction.getAmount();            
+        }
+        if (transaction.credit.type != CreditTypes.none) {
+            this.credit[transaction.credit.type] = (this.credit[transaction.credit.type] || 0) + transaction.getAmount();
+        }
     }
 
     getLastTransaction() {

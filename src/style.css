@@ -74,3 +74,25 @@ p {
 .btn-outline:disabled {
     @apply border border-blue-300 text-blue-300 cursor-not-allowed;
 }
+
+/* Add custom styles for list items */
+ul {
+    @apply list-disc pl-6 mb-4;
+}
+
+ol {
+    @apply list-decimal pl-6 mb-4;
+}
+
+li {
+    @apply mb-2 text-gray-700;
+}
+
+li:hover {
+    @apply text-gray-900 font-medium;
+}
+
+/* Nested list styles */
+ul ul, ol ol, ul ol, ol ul {
+    @apply list-inside pl-4;
+}

@@ -5,7 +5,8 @@ import Colors from "./colors";
 const colorMappings = {
     [DebitTypes.cash]: Colors.green,
     [DebitTypes.backAccount]: Colors.blue,
-    [CreditTypes.equity]: Colors.red
+    [CreditTypes.equity]: Colors.blue,
+    [CreditTypes.debt]: Colors.red,
 }
 
 class BalanceDrawer {
@@ -44,7 +45,7 @@ class BalanceDrawer {
     }
 
     private handleFading(): void {
-        if (this.lastTransaction && this.lastTransaction != this.balance.getLastTransaction()) {
+        if (this.balance.getLastTransaction() && this.lastTransaction != this.balance.getLastTransaction()) {
             this.fading = true;
             this.fadeStartTime = this.p.millis();
         }
@@ -124,9 +125,10 @@ class BalanceDrawer {
 
                 p.strokeWeight(1);
                 p.fill(Colors.white);
-                p.text(`${key}`, xPosition + 10, textPosition);
-                p.text(this.formatNumber(correctedValue), xPosition + 10, textPosition + 15);
-
+                if (correctedValue > 40) {
+                    p.text(`${key}`, xPosition + 10, textPosition);
+                    p.text(this.formatNumber(correctedValue), xPosition + 10, textPosition + 15);
+                }
             } else if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() < 0) {
                 const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
                 const correction = this.lastTransaction?.getAmount();
@@ -156,11 +158,10 @@ class BalanceDrawer {
 
 
     private formatNumber(totalCredits: number) {
-        const formattedCredits = new Intl.NumberFormat('nl-NL', {
+        return new Intl.NumberFormat('nl-NL', {
             style: 'currency',
             currency: 'EUR'
         }).format(totalCredits);
-        return formattedCredits;
     }
 }
 
