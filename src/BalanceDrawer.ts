@@ -5,6 +5,7 @@ import Colors from "./colors";
 const colorMappings = {
     [DebitTypes.cash]: Colors.green,
     [DebitTypes.backAccount]: Colors.blue,
+    [DebitTypes.property]: Colors.purple,
     [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
@@ -164,9 +165,11 @@ class BalanceDrawer {
                 const textPosition = rectPosition + 20;
                 p.strokeWeight(1);
                 p.fill(Colors.white);
-                p.text(`${key}`, xPosition + 10, textPosition);
-                p.text(this.formatNumber(value), xPosition + 10, textPosition + 15);
-                Y -= value; // Adjusting currentY for the next debit block
+                if (value > 40) {
+                    p.text(`${key}`, xPosition + 10, textPosition);
+                    p.text(this.formatNumber(value), xPosition + 10, textPosition + 15);
+                }
+                Y -= value;
             }
         });
         return Y;

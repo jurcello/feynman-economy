@@ -1,6 +1,7 @@
 enum DebitTypes {
     cash = 'Cash',
     backAccount = 'Back account',
+    property = 'Bezit',
     none = 'NoneDebit',
 }
 

@@ -15,6 +15,7 @@ const darkGrey = '#1e1e1e';
 const lightGrey = '#999999';
 const white = '#ffffff';
 const black = '#000000';
+const purple = '#5e1e5e';
 
 export default {
     green,
@@ -34,4 +35,5 @@ export default {
     lightGrey,
     white,
     black,
+    purple,
 };
