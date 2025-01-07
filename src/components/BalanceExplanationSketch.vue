@@ -49,7 +49,7 @@
           Om de Barbie te kunnen kopen, gaan we bij een vriendje € 100,- lenen.
         </p>
         <p>
-          <button @click="makeAloan" class="btn" :disabled="fading">Leen € 100,- in cash om de Barbie te kopen</button>
+          <button @click="makeAloanFor100DebetOnly" class="btn" :disabled="fading">Leen € 100,- in cash om de Barbie te kopen</button>
         </p>
       </div>
     </transition>
@@ -112,9 +112,11 @@
 
   </div>
   <div class="canvas" ref="canvasContainer">
-    <div v-if="!balanceIsBalanced" class="error balanceError">
-      De balans is niet in balans!
-    </div>
+    <transition name="explanation">
+      <div v-if="!balanceIsBalanced && !fading" class="error balanceError">
+        De balans is niet in balans!
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -238,7 +240,7 @@ export default defineComponent({
       adjustPocketMoneyEquity,
       hasPocketMoneyBeenGiven,
       balanceIsBalanced,
-      makeAloan: makeAloanFor100DebetOnly,
+      makeAloanFor100DebetOnly,
       currentStep,
       addLoanToCreditSide,
       buyBarbie,
@@ -295,6 +297,59 @@ export default defineComponent({
 }
 .v-leave-to {
   opacity: 0;
+}
+
+.explanation-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.explanation-enter-active {
+  animation: explanation 1.5s ease;
+}
+
+@keyframes explanation {
+  /* fade in and slide down */
+  0% {
+    opacity: 0;
+    transform: translateY(-30px)
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(10px)
+  }
+  /* shake from right to left */
+  60% {
+    transform: translateX( 5px) translateY(5px);
+  }
+  65% { transform: translateX(-5px) translateY(0px) }
+  70% {
+    transform: translateX( 4px);
+  }
+  75% { transform: translateX(-4px) }
+  80% { transform: translateX( 3px) }
+  85% { transform: translateX(-3px) }
+  90% { transform: translateX( 2px) }
+  95% { transform: translateX(-2px) }
+  100%{ transform: translateX( 0px) }
+}
+.explanation-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.explanation-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.explanation-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.explanation-leave-to {
+  opacity: 0;
+  transform: scale(0.95) translateX(200%);
 }
 
 </style>
