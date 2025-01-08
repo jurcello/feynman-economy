@@ -893,6 +893,11 @@ glob@^10.3.10:
     package-json-from-dist "^1.0.0"
     path-scurry "^1.11.1"
 
+gsap@^3.12.5:
+  version "3.12.5"
+  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.12.5.tgz#136c02dad4c673b441bdb1ca00104bfcb4eae7f4"
+  integrity sha512-srBfnk4n+Oe/ZnMIOXt3gT605BX9x5+rh/prT2F1SsNJsU1XuMiP0E2aptW481OnonOGACZWBqseH5Z7csHxhQ==
+
 has-flag@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
@@ -1162,11 +1167,6 @@ onetime@^5.1.2:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
-
-p5.tween@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/p5.tween/-/p5.tween-1.2.0.tgz#5e1255884bd61ba9f12f00ad9bc70cb6eb801e82"
-  integrity sha512-SiWf3FXzH0xgP2p/ABElvTWpiTMR24SxdRUVRoPS5cOotocPKj94Mqu8332Nd0iO4ndXZZ35z4LVVPdoAlUuDQ==
 
 p5@^1.11.2:
   version "1.11.2"
