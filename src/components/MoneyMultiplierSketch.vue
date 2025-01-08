@@ -3,6 +3,7 @@
 
   </p>
   <p><button @click="depositToBank1" class="btn">Stort geld in bank 1</button></p>
+  <p><button @click="moveMoneyToBank2" class="btn">Transfer naar bank 2</button></p>
   <div class="canvas" ref="canvasContainer">
   </div>
 </template>
@@ -34,7 +35,7 @@ onMounted(() => {
       bank2 = society.getBalanceDrawer("bank2");
       bank1.properties.positionY = 480;
       bank2.properties.positionY = 480;
-      bank2.properties.positionX = 800;
+      bank2.properties.positionX = 500;
     });
     p5Instance = new p5(sketch, canvasContainer.value);
   }
@@ -57,8 +58,25 @@ const depositToBank1 = () => {
       x: bank1.getPosition().x,
       y: bank1.getPosition().y,
     }).then(() => {
-      const transaction = new Transaction("storting", 200, { type: DebitTypes.cash }, { type: CreditTypes.creditAccount});
+      const transaction = new Transaction("storting", 200, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
       bank1.balance.addTransaction(transaction);
+  })
+}
+
+const moveMoneyToBank2 = () => {
+  let amount = 190;
+  const transaction1 = new Transaction("Lening", - amount, { type: DebitTypes.cash }, { type: CreditTypes.none});
+  const transaction2 = new Transaction("Lening", amount, { type: DebitTypes.loan }, { type: CreditTypes.none});
+  const transaction3 = new Transaction("storting", amount, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
+
+  bank1.balance.addTransaction(transaction1);
+  bank1.waitForFadeToEnd().then(() => {
+    bank1.balance.addTransaction(transaction2);
+    return bank1.waitForFadeToEnd();
+  }).then(() => {
+    money.moveFromTo(bank1.getPosition(), bank2.getPosition()).then(() => {
+      bank2.balance.addTransaction(transaction3);
+    })
   })
 }
 

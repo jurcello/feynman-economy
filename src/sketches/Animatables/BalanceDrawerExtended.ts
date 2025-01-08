@@ -7,9 +7,11 @@ const colorMappings = {
     [DebitTypes.cash]: Colors.green,
     [DebitTypes.backAccount]: Colors.blue,
     [DebitTypes.property]: Colors.purple,
+    [DebitTypes.loan]: Colors.lightPurple,
     [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
+    [CreditTypes.savingsAccount]: Colors.lightOrange,
     [CreditTypes.none]: Colors.grey,
 
 }
@@ -65,7 +67,7 @@ class BalanceDrawerExtended {
     public getPosition(): { x: number, y: number} {
         return {
             x: this.properties.positionX + this.debitCreditWiths + this.gutter / 2,
-            y: this.properties.positionY - 20,
+            y: this.properties.positionY - 60,
         }
     }
 
@@ -149,6 +151,7 @@ class BalanceDrawerExtended {
         p.strokeWeight(2);
 
         Object.entries(debitOrCredit).forEach(([key, value]) => {
+            console.log("Drawing item", key, value);
             p.fill(colorMappings[key as keyof typeof colorMappings] || Colors.grey);
             if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() > 0) {
                 const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();

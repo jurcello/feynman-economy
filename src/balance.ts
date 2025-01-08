@@ -2,6 +2,7 @@ enum DebitTypes {
     cash = 'Cash',
     backAccount = 'Back account',
     property = 'Bezit',
+    loan = 'Leningen',
     none = 'NoneDebit',
 }
 
@@ -9,6 +10,7 @@ enum CreditTypes {
     equity = 'Eigen vermogen',
     debt = 'Schulden',
     creditAccount = 'Credit account',
+    savingsAccount = 'Spaarrekeningen',
     none = 'NoneCredit',
 }
 

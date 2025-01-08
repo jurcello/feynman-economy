@@ -6,6 +6,7 @@ const colorMappings = {
     [DebitTypes.cash]: Colors.green,
     [DebitTypes.backAccount]: Colors.blue,
     [DebitTypes.property]: Colors.purple,
+    [DebitTypes.loan]: Colors.lightPurple,
     [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
