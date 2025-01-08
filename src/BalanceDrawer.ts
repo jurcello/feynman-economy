@@ -9,6 +9,7 @@ const colorMappings = {
     [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
+    [CreditTypes.creditAccount]: Colors.darkGreen,
     [CreditTypes.none]: Colors.grey,
 
 }

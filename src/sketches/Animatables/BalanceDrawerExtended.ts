@@ -1,6 +1,7 @@
 import p5 from "p5";
 import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import Colors from "@/colors";
+import colors from "@/colors";
 
 const colorMappings = {
     [DebitTypes.cash]: Colors.green,
@@ -17,8 +18,7 @@ class BalanceDrawerExtended {
     private p: p5;
     public balance: Balance;
     private debitCreditWiths: number;
-    private offsetX: number;
-    private offsetY: number;
+    private gutter: number = 10;
     private scale: number = 1;
     private fadeTime: number;
     private fading: boolean = false;
@@ -27,6 +27,8 @@ class BalanceDrawerExtended {
     private lastTransaction?: Transaction;
     public properties: {
         opacity: number,
+        positionX: number,
+        positionY: number,
     }
     private promises: Array<() => void> = [];
 
@@ -34,21 +36,22 @@ class BalanceDrawerExtended {
         this.p = p;
         this.balance = balance;
         this.debitCreditWiths = 100;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
         this.fadeTime = 600;
         this.scale = scale;
         this.properties = {
             opacity: 0,
+            positionX: offsetX,
+            positionY: offsetY,
         }
     }
 
 
     draw() {
         const p = this.p;
-        const Y = this.offsetY;
+        const Y = this.properties.positionY;
 
-        p.text(`Balance: ${this.balance.name}`, this.offsetX, Y);
+        p.fill(colors.black);
+        p.text(`Balance: ${this.balance.name}`, this.properties.positionX, Y);
 
 
         this.handleFading();
@@ -58,7 +61,13 @@ class BalanceDrawerExtended {
         this.drawCredit((Y - 20) / this.scale);
         p.scale(1 / this.scale);
     }
-    
+
+    public getPosition(): { x: number, y: number} {
+        return {
+            x: this.properties.positionX + this.debitCreditWiths + this.gutter / 2,
+            y: this.properties.positionY - 20,
+        }
+    }
 
     public waitForFadeToEnd(): Promise<void> {
         return new Promise((resolve) => {
@@ -90,7 +99,7 @@ class BalanceDrawerExtended {
         const p = this.p;
         let currentY = Y;
 
-        let xPosition = this.offsetX;
+        let xPosition = this.properties.positionX;
         currentY = this.drawDebits(p, currentY, xPosition);
         currentY -= 10;
         p.fill(Colors.darkGreen);
@@ -102,7 +111,7 @@ class BalanceDrawerExtended {
         const p = this.p;
         let currentY = Y;
 
-        let xPosition = this.offsetX + this.debitCreditWiths + 10;
+        let xPosition = this.properties.positionX + this.debitCreditWiths + this.gutter;
         currentY = this.drawCredits(p, currentY, xPosition);
         currentY -= 10;
         p.fill(Colors.darkRed);
@@ -132,13 +141,15 @@ class BalanceDrawerExtended {
         return Y;
     }
 
-    private drawItems(Y: number, debitOrCredit: { [p: string]: number }, type: DebitTypes | CreditTypes | undefined, xPosition: number) {
+    private drawItems(Y: number, debitOrCredit: {
+        [p: string]: number
+    }, type: DebitTypes | CreditTypes | undefined, xPosition: number) {
         const p = this.p;
         p.stroke(255, 255, 255);
         p.strokeWeight(2);
 
         Object.entries(debitOrCredit).forEach(([key, value]) => {
-            p.fill(colorMappings[key as DebitTypes | CreditTypes] || Colors.grey);
+            p.fill(colorMappings[key as keyof typeof colorMappings] || Colors.grey);
             if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() > 0) {
                 const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
                 const correction = this.lastTransaction?.getAmount();

@@ -39,7 +39,33 @@ class Money {
         })
     }
 
-    moveToAndDisappear(x: number, y: number) {
+    moveFromTo(from: { x: number, y: number }, to: { x: number, y: number }) {
+        this.tl.clear();
+        this.properties.opacity = 0;
+        this.position.x = from.x - this.width / 2;
+        this.position.y = from.y - this.width / 2;
+        this.tl.to(this.properties,
+            {
+                opacity: 1,
+                duration: 0.5,
+                ease: "sine.inOut",
+            });
+        this.tl.to(this.position, {
+            x: to.x - this.width / 2,
+            y: to.y - this.width / 2,
+            duration: 1,
+            ease: "sine.inOut",
+        })
+        return this.tl.to(this.properties,
+            {
+                opacity: 0,
+                duration: 1,
+                ease: "sine.inOut",
+                delay: 0.4,
+            });
+    }
+
+    moveToAndDisappear() {
         this.tl.clear();
         this.properties.opacity = 0;
         this.tl.to(this.properties,

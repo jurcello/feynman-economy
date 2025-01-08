@@ -22,8 +22,12 @@ class Society {
         });
     }
 
-    public getBalanceDrawer(bank: string): BalanceDrawerExtended | undefined {
-        return this.banksBalances.get(bank);
+    public getBalanceDrawer(bank: string): BalanceDrawerExtended {
+        const balanceDrawer = this.banksBalances.get(bank);
+        if (!balanceDrawer) {
+            throw new Error(`BalanceDrawer not found: ${bank}`);
+        }
+        return balanceDrawer;
     }
 }
 

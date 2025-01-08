@@ -25,18 +25,12 @@ const createSketch = (canvasContainer: HTMLDivElement, banks: Array<string>, cre
 
     p.draw = () => {
         p.background(220);
-        money.draw();
         society.draw();
+        money.draw();
 
     };
 
     createCallback({society, money});
-
-    p.mousePressed = () => {
-        money.moveToAndDisappear(p.mouseX, p.mouseY).then(() => {
-            console.log("done");
-        });
-    }
 };
 
 export default createSketch;

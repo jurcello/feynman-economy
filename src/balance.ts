@@ -8,6 +8,7 @@ enum DebitTypes {
 enum CreditTypes {
     equity = 'Eigen vermogen',
     debt = 'Schulden',
+    creditAccount = 'Credit account',
     none = 'NoneCredit',
 }
 
