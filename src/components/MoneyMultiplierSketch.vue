@@ -2,9 +2,10 @@
   <p>Hi all
 
   </p>
-  <p><button @click="depositToBank1" class="btn">Stort geld in bank 1</button></p>
-  <p><button @click="moveMoneyToBank2" class="btn">Transfer naar bank 2</button></p>
-  <p><button @click="moveMoneyToBank3from2" class="btn">Transfer € 180 van bank 2 naar bank 3</button></p>
+  <p><button @click="depositToBank1" class="btn">Stort geld op de {{ Banks.bank1 }}</button></p>
+  <p><button @click="moveMoneyToBank2" class="btn">Transfer naar de {{ Banks.bank2 }}</button></p>
+  <p><button @click="moveMoneyToBank3from2" class="btn">Transfer € 180 van de {{ Banks.bank2 }} naar de {{ Banks.bank3}}</button></p>
+  <p><button @click="moveMoneyToBank4from3" class="btn">Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}</button></p>
   <p>
     De totale geldhoeveelheid:
     <ul>
@@ -26,6 +27,13 @@ import Society from "@/sketches/Animatables/Society";
 import BalanceDrawerExtended from "@/sketches/Animatables/BalanceDrawerExtended";
 import {CreditTypes, DebitTypes, Transaction} from "@/balance";
 
+enum Banks {
+  bank1 = "Rabobank",
+  bank2 = "Asn bank",
+  bank3 = "Triodos bank",
+  bank4 = "ING bank",
+}
+
 const canvasContainer = ref<HTMLDivElement | null>(null);
 let p5Instance: p5 | null = null;
 
@@ -34,6 +42,7 @@ let society: Society;
 let bank1: BalanceDrawerExtended;
 let bank2: BalanceDrawerExtended;
 let bank3: BalanceDrawerExtended;
+let bank4: BalanceDrawerExtended;
 let totalMoney = ref<number>(0);
 let totalCash = ref<number>(0);
 let percentageCash = ref<number>(0);
@@ -47,18 +56,21 @@ const updateTotals = () => {
 
 onMounted(() => {
   if (canvasContainer.value) {
-    const sketch = moneyMultiplier(canvasContainer.value, ["bank1", "bank2", "bank3"], (result) => {
+    const sketch = moneyMultiplier(canvasContainer.value, [Banks.bank1, Banks.bank2, Banks.bank3, Banks.bank4], (result) => {
       money = result.money;
       society = result.society;
 
-      bank1 = society.getBalanceDrawer("bank1");
-      bank2 = society.getBalanceDrawer("bank2");
-      bank3 = society.getBalanceDrawer("bank3");
+      bank1 = society.getBalanceDrawer(Banks.bank1);
+      bank2 = society.getBalanceDrawer(Banks.bank2);
+      bank3 = society.getBalanceDrawer(Banks.bank3);
+      bank4 = society.getBalanceDrawer(Banks.bank4);
       bank1.properties.positionY = 480;
       bank2.properties.positionY = 480;
       bank3.properties.positionY = 480;
+      bank4.properties.positionY = 480;
       bank2.properties.positionX = 300;
       bank3.properties.positionX = 550;
+      bank4.properties.positionX = 800;
     });
     p5Instance = new p5(sketch, canvasContainer.value);
   }
@@ -119,6 +131,24 @@ const moveMoneyToBank3from2 = () => {
     money.moveFromTo(bank2.getPosition(), bank3.getPosition()).then(() => {
       bank3.balance.addTransaction(transaction3);
       return bank3.waitForFadeToEnd();
+    }).then(updateTotals);
+  })
+}
+
+const moveMoneyToBank4from3 = () => {
+  let amount = 170;
+  const transaction1 = new Transaction("Lening", - amount, { type: DebitTypes.cash }, { type: CreditTypes.none});
+  const transaction2 = new Transaction("Lening", amount, { type: DebitTypes.loan }, { type: CreditTypes.none});
+  const transaction3 = new Transaction("storting", amount, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
+
+  bank3.balance.addTransaction(transaction1);
+  bank3.waitForFadeToEnd().then(() => {
+    bank3.balance.addTransaction(transaction2);
+    return bank3.waitForFadeToEnd();
+  }).then(() => {
+    money.moveFromTo(bank3.getPosition(), bank4.getPosition()).then(() => {
+      bank4.balance.addTransaction(transaction3);
+      return bank4.waitForFadeToEnd();
     }).then(updateTotals);
   })
 }
