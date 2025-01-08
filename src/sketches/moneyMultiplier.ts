@@ -3,42 +3,55 @@ import gsap from "gsap";
 
 import moneyIMage from "@/assets/images/money.png";
 
+class Money {
+    private p: p5;
+    public position: { x: number; y: number } = { x: 0, y: 0 };
+    private image: p5.Image;
+    private width: number = 70;
+
+    constructor(p: p5, x: number, y: number) {
+        this.p = p;
+        this.position.x = x - this.width / 2;
+        this.position.y = y - this.width / 2;
+        this.image = p.loadImage(moneyIMage, () => {
+            this.image.resize(this.width, 0);
+        });
+    }
+
+    draw() {
+        this.p.image(this.image, this.position.x, this.position.y);
+    }
+
+    moveTo(x: number, y: number) {
+        gsap.to(this.position, {
+            x: this.p.mouseX - this.width / 2,
+            y: this.p.mouseY - this.width / 2,
+            duration: 1,
+            ease: "power2.inOut",
+        })
+    }
+}
 const createSketch = (canvasContainer: HTMLDivElement) => (p: p5) => {
     let canvas;
 
-    let img: p5.Image;
-    let imagePosition = {
-        x: 10,
-        y: 10,
-    }
+    const money = new Money(p, 50, 50);
 
-    p.preload = () => {
-        img = p.loadImage(moneyIMage);
-
-    };
     const height = 500;
     p.setup = () => {
         canvas = p.createCanvas(800, height);
 
         canvas.parent(canvasContainer);
         p.background(220);
-        img.resize(100, 0);
     }
 
     p.draw = () => {
         p.background(220);
-        p.image(img, imagePosition.x, imagePosition.y);
+        money.draw();
 
     };
 
     p.mousePressed = () => {
-        console.log(p.mouseX, p.mouseY);
-        gsap.to(imagePosition, {
-            x: p.mouseX,
-            y: p.mouseY,
-            duration: 1,
-            ease: "power2.inOut",
-        })
+        money.moveTo(p.mouseX, p.mouseY);
     }
 };
 
