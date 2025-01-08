@@ -36,7 +36,7 @@ class BalanceStatus {
     public inBalance: boolean = true;
 }
 
-type BalanceStatusCallback = (status: BalanceStatus) => void;
+export type BalanceStatusCallback = (status: BalanceStatus) => void;
 
 class Balance {
     public name: string;
@@ -88,4 +88,4 @@ class Balance {
     }
 }
 
-export { Balance, Transaction, DebitTypes, CreditTypes, BalanceStatus, BalanceStatusCallback };
+export { Balance, Transaction, DebitTypes, CreditTypes, BalanceStatus };

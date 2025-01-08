@@ -1,6 +1,6 @@
 import p5 from "p5";
-import {Balance, CreditTypes, DebitTypes, Transaction} from "./balance";
-import Colors from "./colors";
+import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
+import Colors from "@/colors";
 
 const colorMappings = {
     [DebitTypes.cash]: Colors.green,
@@ -13,7 +13,7 @@ const colorMappings = {
 
 }
 
-class BalanceDrawer {
+class BalanceDrawerExtended {
     private p: p5;
     public balance: Balance;
     private debitCreditWiths: number;
@@ -25,6 +25,9 @@ class BalanceDrawer {
     private fadeValue: number = 0;
     private fadeStartTime: number = 0;
     private lastTransaction?: Transaction;
+    public properties: {
+        opacity: number,
+    }
     private promises: Array<() => void> = [];
 
     constructor(p: p5, balance: Balance, offsetX: number = 50, offsetY: number = 50, scale: number = 1) {
@@ -35,6 +38,9 @@ class BalanceDrawer {
         this.offsetY = offsetY;
         this.fadeTime = 600;
         this.scale = scale;
+        this.properties = {
+            opacity: 0,
+        }
     }
 
 
@@ -188,4 +194,4 @@ class BalanceDrawer {
     }
 }
 
-export default BalanceDrawer;
+export default BalanceDrawerExtended;
