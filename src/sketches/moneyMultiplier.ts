@@ -10,7 +10,7 @@ class Money {
     public properties: { opacity: number } = {opacity: 0};
     private image: p5.Image;
     private width: number = 70;
-    private tl?: Timeline;
+    private tl: Timeline;
 
     constructor(p: p5, x: number, y: number) {
         this.p = p;
@@ -32,7 +32,7 @@ class Money {
 
     moveTo(x: number, y: number) {
         const tl = gsapinstance.timeline();
-        this.tl?.to(this.position, {
+        this.tl.to(this.position, {
             x: this.p.mouseX - this.width / 2,
             y: this.p.mouseY - this.width / 2,
             duration: 1,
@@ -41,28 +41,27 @@ class Money {
     }
 
     moveToAndDisappear(x: number, y: number) {
-        this.tl?.clear();
+        this.tl.clear();
         this.properties.opacity = 0;
-        this.tl?.to(this.properties,
+        this.tl.to(this.properties,
             {
                 opacity: 1,
                 duration: 0.5,
                 ease: "sine.inOut",
             });
-        this.tl?.to(this.position, {
+        this.tl.to(this.position, {
             x: this.p.mouseX - this.width / 2,
             y: this.p.mouseY - this.width / 2,
             duration: 1,
             ease: "sine.inOut",
         })
-        this.tl?.to(this.properties,
+        return this.tl.to(this.properties,
             {
                 opacity: 0,
                 duration: 1,
                 ease: "sine.inOut",
                 delay: 0.4,
-            });
-
+        });
     }
 }
 
@@ -86,7 +85,9 @@ const createSketch = (canvasContainer: HTMLDivElement) => (p: p5) => {
     };
 
     p.mousePressed = () => {
-        money.moveToAndDisappear(p.mouseX, p.mouseY);
+        money.moveToAndDisappear(p.mouseX, p.mouseY).then(() => {
+            console.log("done");
+        });
     }
 };
 

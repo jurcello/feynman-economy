@@ -125,7 +125,7 @@
 import {defineComponent, onMounted, onUnmounted, ref} from "vue";
 import p5 from "p5";
 import oneBalanceSketch from "../sketches/oneBalanceSketch";
-import {Balance, BalanceStatus, CreditTypes, DebitTypes, Transaction} from "../balance";
+import {Balance, BalanceStatus, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import balanceDrawer from "../BalanceDrawer";
 
 enum Step {
