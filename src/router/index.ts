@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import About from '../views/About.vue';
 import Balance from "../views/Balance.vue";
+import MoneyMultiplier from "../views/MoneyMultiplier.vue";
 
 // Define routes for your app
 const routes = [
@@ -19,6 +20,12 @@ const routes = [
     path: '/balans',
     name: 'Balance',
     component: Balance, // The component for the About page
+  },
+
+  {
+    path: '/money-multiplier',
+    name: 'MoneyMultiplier',
+    component: MoneyMultiplier,
   },
 ];
 
