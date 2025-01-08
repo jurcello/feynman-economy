@@ -41,6 +41,11 @@ class BalanceStatus {
 
 export type BalanceStatusCallback = (status: BalanceStatus) => void;
 
+export type MoneyAggregates = {
+    total: number,
+    cash: number,
+};
+
 class Balance {
     public name: string;
     public debit: { [key: string]: number };
@@ -79,6 +84,13 @@ class Balance {
         if (this.balanceStatusCallback != null) {
             this.balanceStatusCallback(this.balanceStatus);
         }
+    }
+
+    getTotalMoneyAggregates(): MoneyAggregates {
+        return {
+            total: this.totalDebit,
+            cash: this.debit[DebitTypes.cash] || 0,
+        };
     }
 
     getLastTransaction() {

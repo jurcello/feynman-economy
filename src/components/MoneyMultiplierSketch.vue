@@ -4,6 +4,15 @@
   </p>
   <p><button @click="depositToBank1" class="btn">Stort geld in bank 1</button></p>
   <p><button @click="moveMoneyToBank2" class="btn">Transfer naar bank 2</button></p>
+  <p><button @click="moveMoneyToBank3from2" class="btn">Transfer € 180 van bank 2 naar bank 3</button></p>
+  <p>
+    De totale geldhoeveelheid:
+    <ul>
+      <li>Totaal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}</li>
+      <li>Cash: {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}</li>
+      <li>Percentagec cash: {{ percentageCash.toFixed(1) }} %</li>
+    </ul>
+  </p>
   <div class="canvas" ref="canvasContainer">
   </div>
 </template>
@@ -24,18 +33,32 @@ let money: Money;
 let society: Society;
 let bank1: BalanceDrawerExtended;
 let bank2: BalanceDrawerExtended;
+let bank3: BalanceDrawerExtended;
+let totalMoney = ref<number>(0);
+let totalCash = ref<number>(0);
+let percentageCash = ref<number>(0);
+
+const updateTotals = () => {
+  const totals = society.getMoneyAggregates();
+  totalMoney.value = totals.total;
+  totalCash.value = totals.cash;
+  percentageCash.value = totals.cash / totals.total * 100;
+};
 
 onMounted(() => {
   if (canvasContainer.value) {
-    const sketch = moneyMultiplier(canvasContainer.value, ["bank1", "bank2"], (result) => {
+    const sketch = moneyMultiplier(canvasContainer.value, ["bank1", "bank2", "bank3"], (result) => {
       money = result.money;
       society = result.society;
 
       bank1 = society.getBalanceDrawer("bank1");
       bank2 = society.getBalanceDrawer("bank2");
+      bank3 = society.getBalanceDrawer("bank3");
       bank1.properties.positionY = 480;
       bank2.properties.positionY = 480;
-      bank2.properties.positionX = 500;
+      bank3.properties.positionY = 480;
+      bank2.properties.positionX = 300;
+      bank3.properties.positionX = 550;
     });
     p5Instance = new p5(sketch, canvasContainer.value);
   }
@@ -60,7 +83,8 @@ const depositToBank1 = () => {
     }).then(() => {
       const transaction = new Transaction("storting", 200, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
       bank1.balance.addTransaction(transaction);
-  })
+      return bank1.waitForFadeToEnd();
+  }).then(updateTotals)
 }
 
 const moveMoneyToBank2 = () => {
@@ -76,7 +100,26 @@ const moveMoneyToBank2 = () => {
   }).then(() => {
     money.moveFromTo(bank1.getPosition(), bank2.getPosition()).then(() => {
       bank2.balance.addTransaction(transaction3);
-    })
+      return bank2.waitForFadeToEnd();
+    }).then(updateTotals);
+  })
+}
+
+const moveMoneyToBank3from2 = () => {
+  let amount = 180;
+  const transaction1 = new Transaction("Lening", - amount, { type: DebitTypes.cash }, { type: CreditTypes.none});
+  const transaction2 = new Transaction("Lening", amount, { type: DebitTypes.loan }, { type: CreditTypes.none});
+  const transaction3 = new Transaction("storting", amount, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
+
+  bank2.balance.addTransaction(transaction1);
+  bank2.waitForFadeToEnd().then(() => {
+    bank2.balance.addTransaction(transaction2);
+    return bank2.waitForFadeToEnd();
+  }).then(() => {
+    money.moveFromTo(bank2.getPosition(), bank3.getPosition()).then(() => {
+      bank3.balance.addTransaction(transaction3);
+      return bank3.waitForFadeToEnd();
+    }).then(updateTotals);
   })
 }
 

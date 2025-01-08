@@ -1,6 +1,7 @@
 import BalanceDrawerExtended from "@/sketches/Animatables/BalanceDrawerExtended";
 import p5 from "p5";
-import {Balance} from "@/balance";
+import {Balance, MoneyAggregates} from "@/balance";
+
 
 class Society {
     public banksBalances: Map<string,BalanceDrawerExtended>;
@@ -20,6 +21,19 @@ class Society {
         this.banksBalances.forEach((balanceDrawer) => {
             balanceDrawer.draw();
         });
+    }
+    
+    getMoneyAggregates(): MoneyAggregates {
+        let total = 0;
+        let cash = 0;
+
+        this.banksBalances.forEach((balanceDrawer) => {
+            const moneyAggregates = balanceDrawer.balance.getTotalMoneyAggregates();
+            total += moneyAggregates.total;
+            cash += moneyAggregates.cash;
+        });
+
+        return {total, cash};
     }
 
     public getBalanceDrawer(bank: string): BalanceDrawerExtended {
