@@ -1163,6 +1163,11 @@ onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
+p5.tween@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/p5.tween/-/p5.tween-1.2.0.tgz#5e1255884bd61ba9f12f00ad9bc70cb6eb801e82"
+  integrity sha512-SiWf3FXzH0xgP2p/ABElvTWpiTMR24SxdRUVRoPS5cOotocPKj94Mqu8332Nd0iO4ndXZZ35z4LVVPdoAlUuDQ==
+
 p5@^1.11.2:
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/p5/-/p5-1.11.2.tgz#3e3fc70fd20fc9e12135089b7f0f13e21acbf2df"

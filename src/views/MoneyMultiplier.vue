@@ -1,14 +1,13 @@
 <template>
   <div>
     <h2>De money multiplier</h2>
-    <p>Een leuk verhaaltje over de money multiplyer</p>
+    <MoneyMultiplierSketch/>
   </div>
+
 </template>
 
-<script>
-export default {
-  name: 'MoneyMultiplier',
-}
+<script setup lang="ts">
+import MoneyMultiplierSketch from "../components/MoneyMultiplierSketch.vue";
 </script>
 
 <style scoped>
