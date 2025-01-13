@@ -4,10 +4,29 @@
     - Cash: oftewel basis geld <br />
     - Giraal geld: dit geld zie je op je bankrekening. <br />
   </p>
-  <p><button v-show="totalMoney < 200" @click="depositToBank1" class="btn">Stort geld op de {{ Banks.bank1 }}</button></p>
-  <p><button v-show="totalMoney >= 200 && totalMoney < 390" @click="moveMoneyToBank2" class="btn">Transfer naar de {{ Banks.bank2 }}</button></p>
-  <p><button v-show="totalMoney >= 390 && totalMoney < 570" @click="moveMoneyToBank3from2" class="btn">Transfer € 180 van de {{ Banks.bank2 }} naar de {{ Banks.bank3}}</button></p>
-  <p><button v-show="totalMoney >= 570" @click="moveMoneyToBank4from3" class="btn">Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}</button></p>
+  <p><button
+      v-show="totalMoney < 200" @click="depositToBank1"
+      class="btn"
+  >Stort geld op de {{ Banks.bank1 }}
+  </button></p>
+  <p><button
+      v-show="totalMoney >= 200 && totalMoney < 390"
+      @click="moveMoneyToBank2"
+      class="btn"
+  >Transfer naar de {{ Banks.bank2 }}
+  </button></p>
+  <p><button
+      v-show="totalMoney >= 390 && totalMoney < 570"
+      @click="moveMoneyToBank3from2"
+      class="btn"
+  >Transfer € 180 van de {{ Banks.bank2 }} naar de {{ Banks.bank3}}
+  </button></p>
+  <p><button
+      v-show="totalMoney >= 570"
+      @click="moveMoneyToBank4from3"
+      class="btn"
+  >Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}
+  </button></p>
   <p>
     De totale geldhoeveelheid:
   </p>
@@ -28,7 +47,7 @@
 import {onMounted, onUnmounted, ref} from "vue";
 import p5 from "p5";
 import moneyMultiplier from "@/sketches/moneyMultiplier";
-import Money from "@/sketches/Animatables/Money";
+import MovableImage from "@/sketches/Animatables/MovableImage";
 import Society from "@/sketches/Animatables/Society";
 import BalanceDrawerExtended from "@/sketches/Animatables/BalanceDrawerExtended";
 import {CreditTypes, DebitTypes, Transaction} from "@/balance";
@@ -47,7 +66,9 @@ const totalMoneyDiv = ref<HTMLDivElement | null>(null);
 const cashPercentageDiv = ref<HTMLDivElement | null>(null);
 let p5Instance: p5 | null = null;
 
-let money: Money;
+let money: MovableImage;
+let person1: MovableImage;
+let person2: MovableImage;
 let society: Society;
 let bank1: BalanceDrawerExtended;
 let bank2: BalanceDrawerExtended;
@@ -82,6 +103,8 @@ onMounted(() => {
   if (canvasContainer.value) {
     const sketch = moneyMultiplier(canvasContainer.value, [Banks.bank1, Banks.bank2, Banks.bank3, Banks.bank4], (result) => {
       money = result.money;
+      person1 = result.person1;
+      person2 = result.person2;
       society = result.society;
 
       bank1 = society.getBalanceDrawer(Banks.bank1);
@@ -107,7 +130,17 @@ onUnmounted(() => {
   }
 });
 
+const personOffsetX = 35;
+const personOffsetY = -10;
 const depositToBank1 = () => {
+  person1.moveFromTo({
+        x: 550 + personOffsetX,
+        y: 10 + personOffsetY,
+      },
+      {
+        x: bank1.getPosition().x + personOffsetX,
+        y: bank1.getPosition().y + personOffsetY,
+      });
   money.moveFromTo(
     {
       x: 550,
@@ -120,7 +153,11 @@ const depositToBank1 = () => {
       const transaction = new Transaction("storting", 200, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
       bank1.balance.addTransaction(transaction);
       return bank1.waitForFadeToEnd();
-  }).then(updateTotals)
+  }).then(() => {
+    updateTotals();
+    person1.disappear();
+    money.disappear();
+  })
 }
 
 const moveMoneyToBank2 = () => {

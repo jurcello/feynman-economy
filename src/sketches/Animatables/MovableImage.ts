@@ -1,9 +1,18 @@
 import p5 from "p5";
 import moneyIMage from "@/assets/images/money.png";
+import person1Image from "@/assets/images/person1.png";
+import person2Image from "@/assets/images/person2.png";
+// import gsap from "gsap";
 import gsapinstance from "gsap";
 import Timeline = gsap.core.Timeline;
 
-class Money {
+export enum MovableImageType {
+    money = "money",
+    person1 = "person1",
+    person2 = "person2",
+}
+
+class MovableImage {
     private p: p5;
     public position: { x: number; y: number } = {x: 0, y: 0};
     public properties: { opacity: number } = {opacity: 0};
@@ -11,11 +20,20 @@ class Money {
     private width: number = 70;
     private tl: Timeline;
 
-    constructor(p: p5, x: number, y: number) {
+    constructor(p: p5, x: number, y: number, type: MovableImageType = MovableImageType.money) {
         this.p = p;
         this.position.x = x - this.width / 2;
         this.position.y = y - this.width / 2;
-        this.image = p.loadImage(moneyIMage, () => {
+        let image = moneyIMage;
+        switch (type) {
+            case MovableImageType.person1:
+                image = person1Image;
+                break;
+            case MovableImageType.person2:
+                image = person2Image;
+                break;
+        }
+        this.image = p.loadImage(image, () => {
             this.image.resize(this.width, 0);
         });
         this.tl = gsapinstance.timeline();
@@ -58,11 +76,20 @@ class Money {
         })
         return this.tl.to(this.properties,
             {
-                opacity: 0,
                 duration: 1,
                 ease: "sine.inOut",
                 delay: 0.4,
             });
+    }
+
+    disappear() {
+        this.tl.clear();
+        this.tl.to(this.properties,
+            {
+                opacity: 0,
+                duration: 1,
+                ease: "sine.inOut",
+            })
     }
 
     moveToAndDisappear() {
@@ -90,4 +117,4 @@ class Money {
     }
 }
 
-export default Money;
+export default MovableImage;
