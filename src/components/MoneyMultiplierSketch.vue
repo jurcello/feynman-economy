@@ -8,12 +8,16 @@
   <p><button @click="moveMoneyToBank4from3" class="btn">Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}</button></p>
   <p>
     De totale geldhoeveelheid:
-    <ul>
-      <li>Totaal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}</li>
-      <li>Cash: {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}</li>
-      <li>Percentagec cash: {{ percentageCash.toFixed(1) }} %</li>
-    </ul>
   </p>
+  <div class="bg-green-400 px-4 py-2" ref="totalCashDiv">
+    Cash: {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+  </div>
+  <div class="bg-blue-400 px-4 py-2" ref="totalMoneyDiv">
+    Totaal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+  </div>
+  <div class="bg-purple-400 px-4 py-2" ref="cashPercentageDiv">
+    Percentagec cash: {{ percentageCash.toFixed(1) }} %
+  </div>
   <div class="canvas" ref="canvasContainer">
   </div>
 </template>
@@ -26,6 +30,7 @@ import Money from "@/sketches/Animatables/Money";
 import Society from "@/sketches/Animatables/Society";
 import BalanceDrawerExtended from "@/sketches/Animatables/BalanceDrawerExtended";
 import {CreditTypes, DebitTypes, Transaction} from "@/balance";
+import {gsap} from "gsap";
 
 enum Banks {
   bank1 = "Rabobank",
@@ -35,6 +40,9 @@ enum Banks {
 }
 
 const canvasContainer = ref<HTMLDivElement | null>(null);
+const totalCashDiv = ref<HTMLDivElement | null>(null);
+const totalMoneyDiv = ref<HTMLDivElement | null>(null);
+const cashPercentageDiv = ref<HTMLDivElement | null>(null);
 let p5Instance: p5 | null = null;
 
 let money: Money;
@@ -47,11 +55,25 @@ let totalMoney = ref<number>(0);
 let totalCash = ref<number>(0);
 let percentageCash = ref<number>(0);
 
+const gsapDuration = 1;
 const updateTotals = () => {
   const totals = society.getMoneyAggregates();
   totalMoney.value = totals.total;
+  console.log('updating', totalMoney.value);
+  gsap.to(totalMoneyDiv.value, {
+    width: totalMoney.value,
+    duration: gsapDuration,
+  });
   totalCash.value = totals.cash;
+  gsap.to(totalCashDiv.value, {
+    width: totalCash.value,
+    duration: gsapDuration,
+  });
   percentageCash.value = totals.cash / totals.total * 100;
+  gsap.to(cashPercentageDiv.value, {
+    width: percentageCash.value + '%',
+    duration: gsapDuration,
+  })
 };
 
 onMounted(() => {
@@ -163,4 +185,13 @@ const moveMoneyToBank4from3 = () => {
   width: 100%;
   height: 100%;
 }
+
+.total-money {
+  width: 0;
+}
+
+.total-cash {
+  width: 0;
+}
+
 </style>

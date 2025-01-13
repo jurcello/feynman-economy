@@ -151,7 +151,6 @@ class BalanceDrawerExtended {
         p.strokeWeight(2);
 
         Object.entries(debitOrCredit).forEach(([key, value]) => {
-            console.log("Drawing item", key, value);
             p.fill(colorMappings[key as keyof typeof colorMappings] || Colors.grey);
             if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() > 0) {
                 const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
