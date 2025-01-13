@@ -1,21 +1,23 @@
 <template>
-  <p>Hi all
-
+  <p>
+    Om geldschepping door commerciele banken te begrijpen, moet je eerst weten dat er 2 types geld zijn: <br />
+    - Cash: oftewel basis geld <br />
+    - Giraal geld: dit geld zie je op je bankrekening. <br />
   </p>
-  <p><button @click="depositToBank1" class="btn">Stort geld op de {{ Banks.bank1 }}</button></p>
-  <p><button @click="moveMoneyToBank2" class="btn">Transfer naar de {{ Banks.bank2 }}</button></p>
-  <p><button @click="moveMoneyToBank3from2" class="btn">Transfer € 180 van de {{ Banks.bank2 }} naar de {{ Banks.bank3}}</button></p>
-  <p><button @click="moveMoneyToBank4from3" class="btn">Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}</button></p>
+  <p><button v-show="totalMoney < 200" @click="depositToBank1" class="btn">Stort geld op de {{ Banks.bank1 }}</button></p>
+  <p><button v-show="totalMoney >= 200 && totalMoney < 390" @click="moveMoneyToBank2" class="btn">Transfer naar de {{ Banks.bank2 }}</button></p>
+  <p><button v-show="totalMoney >= 390 && totalMoney < 570" @click="moveMoneyToBank3from2" class="btn">Transfer € 180 van de {{ Banks.bank2 }} naar de {{ Banks.bank3}}</button></p>
+  <p><button v-show="totalMoney >= 570" @click="moveMoneyToBank4from3" class="btn">Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}</button></p>
   <p>
     De totale geldhoeveelheid:
   </p>
-  <div class="bg-green-400 px-4 py-2" ref="totalCashDiv">
+  <div class="bg-green-400 px-4 py-2 bar" ref="totalCashDiv">
     Cash: {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
   </div>
-  <div class="bg-blue-400 px-4 py-2" ref="totalMoneyDiv">
-    Totaal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+  <div class="bg-blue-400 px-4 py-2 bar" ref="totalMoneyDiv">
+    Totaal giraal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
   </div>
-  <div class="bg-purple-400 px-4 py-2" ref="cashPercentageDiv">
+  <div class="bg-purple-400 px-4 py-2 bar" ref="cashPercentageDiv">
     Percentagec cash: {{ percentageCash.toFixed(1) }} %
   </div>
   <div class="canvas" ref="canvasContainer">
@@ -190,8 +192,8 @@ const moveMoneyToBank4from3 = () => {
   width: 0;
 }
 
-.total-cash {
-  width: 0;
+.bar {
+  width: 30px;
 }
 
 </style>
