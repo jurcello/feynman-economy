@@ -11,7 +11,7 @@
   </button></p>
   <p><button
       v-show="totalMoney >= 200 && totalMoney < 390"
-      @click="moveMoneyToBank2"
+      @click="buyAndmoveMoneyToBank2"
       class="btn"
   >Transfer naar de {{ Banks.bank2 }}
   </button></p>
@@ -52,6 +52,7 @@ import Society from "@/sketches/Animatables/Society";
 import BalanceDrawerExtended from "@/sketches/Animatables/BalanceDrawerExtended";
 import {CreditTypes, DebitTypes, Transaction} from "@/balance";
 import {gsap} from "gsap";
+import PositionMarker from "@/sketches/Animatables/PositionMarker";
 
 enum Banks {
   bank1 = "Rabobank",
@@ -77,6 +78,10 @@ let bank4: BalanceDrawerExtended;
 let totalMoney = ref<number>(0);
 let totalCash = ref<number>(0);
 let percentageCash = ref<number>(0);
+
+const marketPosition1Person1 = new PositionMarker(150, 40);
+const marketPosition2Person2 = marketPosition1Person1.add(50,0);
+
 
 const gsapDuration = 1;
 const updateTotals = () => {
@@ -107,6 +112,9 @@ onMounted(() => {
       person2 = result.person2;
       society = result.society;
 
+      person1.offset.x = 35;
+      person1.offset.y = -10;
+
       bank1 = society.getBalanceDrawer(Banks.bank1);
       bank2 = society.getBalanceDrawer(Banks.bank2);
       bank3 = society.getBalanceDrawer(Banks.bank3);
@@ -130,26 +138,22 @@ onUnmounted(() => {
   }
 });
 
-const personOffsetX = 35;
-const personOffsetY = -10;
 const depositToBank1 = () => {
   person1.moveFromTo({
-        x: 550 + personOffsetX,
-        y: 10 + personOffsetY,
+        x: 550,
+        y: 10,
       },
       {
-        x: bank1.getPosition().x + personOffsetX,
-        y: bank1.getPosition().y + personOffsetY,
+        x: bank1.getPosition().x,
+        y: bank1.getPosition().y,
       });
   money.moveFromTo(
     {
       x: 550,
       y: 10
     },
-    {
-      x: bank1.getPosition().x,
-      y: bank1.getPosition().y,
-    }).then(() => {
+    bank1.getPosition()
+  ).then(() => {
       const transaction = new Transaction("storting", 200, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
       bank1.balance.addTransaction(transaction);
       return bank1.waitForFadeToEnd();
@@ -160,7 +164,7 @@ const depositToBank1 = () => {
   })
 }
 
-const moveMoneyToBank2 = () => {
+const buyAndmoveMoneyToBank2 = () => {
   let amount = 190;
   const transaction1 = new Transaction("Lening", - amount, { type: DebitTypes.cash }, { type: CreditTypes.none});
   const transaction2 = new Transaction("Lening", amount, { type: DebitTypes.loan }, { type: CreditTypes.none});
@@ -170,12 +174,14 @@ const moveMoneyToBank2 = () => {
   bank1.waitForFadeToEnd().then(() => {
     bank1.balance.addTransaction(transaction2);
     return bank1.waitForFadeToEnd();
-  }).then(() => {
-    money.moveFromTo(bank1.getPosition(), bank2.getPosition()).then(() => {
-      bank2.balance.addTransaction(transaction3);
-      return bank2.waitForFadeToEnd();
-    }).then(updateTotals);
   })
+      .then(() => money.moveFromTo(bank1.getPosition(), bank2.getPosition()))
+      .then(() => {
+        bank2.balance.addTransaction(transaction3);
+        return bank2.waitForFadeToEnd();
+      })
+      .then(() => money.disappear())
+      .then(updateTotals);
 }
 
 const moveMoneyToBank3from2 = () => {
@@ -188,12 +194,15 @@ const moveMoneyToBank3from2 = () => {
   bank2.waitForFadeToEnd().then(() => {
     bank2.balance.addTransaction(transaction2);
     return bank2.waitForFadeToEnd();
-  }).then(() => {
-    money.moveFromTo(bank2.getPosition(), bank3.getPosition()).then(() => {
-      bank3.balance.addTransaction(transaction3);
-      return bank3.waitForFadeToEnd();
-    }).then(updateTotals);
   })
+      .then(() => {
+        money.moveFromTo(bank2.getPosition(), bank3.getPosition())
+      })
+      .then(() => {
+          bank3.balance.addTransaction(transaction3);
+          return bank3.waitForFadeToEnd();
+        })
+      .then(updateTotals)
 }
 
 const moveMoneyToBank4from3 = () => {

@@ -15,6 +15,7 @@ export enum MovableImageType {
 class MovableImage {
     private p: p5;
     public position: { x: number; y: number } = {x: 0, y: 0};
+    public offset: { x: number; y: number } = {x: 0, y: 0};
     public properties: { opacity: number } = {opacity: 0};
     private image: p5.Image;
     private width: number = 70;
@@ -42,13 +43,12 @@ class MovableImage {
     draw() {
         if (this.properties.opacity > 0) {
             this.p.tint(255, 255, 255, this.properties.opacity * 255);
-            this.p.image(this.image, this.position.x, this.position.y);
+            this.p.image(this.image, this.position.x + this.offset.x, this.position.y + this.offset.y);
             this.p.tint(255, 255, 255, 255);
         }
     }
 
     moveTo(x: number, y: number) {
-        const tl = gsapinstance.timeline();
         this.tl.to(this.position, {
             x: this.p.mouseX - this.width / 2,
             y: this.p.mouseY - this.width / 2,
@@ -83,8 +83,10 @@ class MovableImage {
     }
 
     disappear() {
-        this.tl.clear();
-        this.tl.to(this.properties,
+        if (this.tl) {
+            this.tl.clear();
+        }
+        return this.tl.to(this.properties,
             {
                 opacity: 0,
                 duration: 1,
