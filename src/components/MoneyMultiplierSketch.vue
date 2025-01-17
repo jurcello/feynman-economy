@@ -70,6 +70,7 @@ let p5Instance: p5 | null = null;
 let money: MovableImage;
 let person1: MovableImage;
 let person2: MovableImage;
+let car: MovableImage;
 let society: Society;
 let bank1: BalanceDrawerExtended;
 let bank2: BalanceDrawerExtended;
@@ -79,8 +80,10 @@ let totalMoney = ref<number>(0);
 let totalCash = ref<number>(0);
 let percentageCash = ref<number>(0);
 
+const speed = 1;
+
 const marketPosition1Person1 = new PositionMarker(150, 40);
-const marketPosition2Person2 = marketPosition1Person1.add(150,0);
+const marketPosition1Person2 = marketPosition1Person1.add(150,0);
 
 
 const gsapDuration = 1;
@@ -111,11 +114,17 @@ onMounted(() => {
       person1 = result.person1;
       person2 = result.person2;
       society = result.society;
+      car = result.car;
 
       person1.offset.x = 35;
       person1.offset.y = -10;
       person2.offset.x = -35;
-      person2.offset.y = -20;
+      person2.offset.y = 0;
+
+      money.speed = speed;
+      person1.speed = speed;
+      person2.speed = speed;
+      car.speed = speed;
 
       bank1 = society.getBalanceDrawer(Banks.bank1);
       bank2 = society.getBalanceDrawer(Banks.bank2);
@@ -181,9 +190,17 @@ const buyAndmoveMoneyToBank2 = () => {
         money.moveFromTo(bank1.getPosition(), marketPosition1Person1);
         return person1.moveFromTo(bank1.getPosition(), marketPosition1Person1);
       })
-      .then(() => person2.moveFromTo({x: 400, y: 10}, marketPosition2Person2))
-      .then(() => money.moveTo(marketPosition2Person2))
-      .then(() => person1.disappear())
+      .then(() => {
+        let from = {x: 400, y: 10};
+        person2.moveFromTo(from, marketPosition1Person2);
+        return car.moveFromTo(from, marketPosition1Person2);
+      })
+      .then(() => money.moveTo(marketPosition1Person2))
+      .then(() => car.moveTo(marketPosition1Person1))
+      .then(() => {
+        person1.disappear();
+        return car.disappear();
+      })
       .then(() => {
         person2.moveTo(bank2.getPosition());
         return money.moveTo(bank2.getPosition());

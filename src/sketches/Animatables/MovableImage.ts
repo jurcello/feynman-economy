@@ -2,6 +2,7 @@ import p5 from "p5";
 import moneyIMage from "@/assets/images/money.png";
 import person1Image from "@/assets/images/person1.png";
 import person2Image from "@/assets/images/person2.png";
+import carImage from "@/assets/images/car.png";
 // import gsap from "gsap";
 import gsapinstance from "gsap";
 import Timeline = gsap.core.Timeline;
@@ -10,6 +11,7 @@ export enum MovableImageType {
     money = "money",
     person1 = "person1",
     person2 = "person2",
+    car = "car",
 }
 
 class MovableImage {
@@ -33,6 +35,9 @@ class MovableImage {
                 break;
             case MovableImageType.person2:
                 image = person2Image;
+                break;
+            case MovableImageType.car:
+                image = carImage;
                 break;
         }
         this.image = p.loadImage(image, () => {
