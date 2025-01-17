@@ -53,7 +53,7 @@ class MovableImage {
         return this.tl.to(this.position, {
             x: to.x - this.width / 2,
             y: to.y - this.width / 2,
-            duration: 1,
+            duration: this.getDuration(1),
             ease: "sine.inOut",
         })
     }
@@ -66,20 +66,20 @@ class MovableImage {
         this.tl.to(this.properties,
             {
                 opacity: 1,
-                duration: 0.5,
+                duration: this.getDuration(0.5),
                 ease: "sine.inOut",
             });
         this.tl.to(this.position, {
             x: to.x - this.width / 2,
             y: to.y - this.width / 2,
-            duration: 1,
+            duration: this.getDuration(1),
             ease: "sine.inOut",
         })
         return this.tl.to(this.properties,
             {
-                duration: 1,
+                duration: this.getDuration(1),
                 ease: "sine.inOut",
-                delay: 0.4,
+                delay: this.getDuration(0.4),
             });
     }
 
@@ -90,7 +90,7 @@ class MovableImage {
         return this.tl.to(this.properties,
             {
                 opacity: 0,
-                duration: 1,
+                duration: this.getDuration(1),
                 ease: "sine.inOut",
             })
     }
@@ -105,21 +105,21 @@ class MovableImage {
         this.tl.to(this.properties,
             {
                 opacity: 1,
-                duration: 0.5,
+                duration: this.getDuration(0.5),
                 ease: "sine.inOut",
             });
         this.tl.to(this.position, {
             x: this.p.mouseX - this.width / 2,
             y: this.p.mouseY - this.width / 2,
-            duration: 1,
+            duration: this.getDuration(1),
             ease: "sine.inOut",
         })
         return this.tl.to(this.properties,
             {
                 opacity: 0,
-                duration: 1,
+                duration: this.getDuration(1),
                 ease: "sine.inOut",
-                delay: 0.4,
+                delay: this.getDuration(0.4),
             });
     }
 }
