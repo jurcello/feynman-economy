@@ -80,7 +80,7 @@ let totalCash = ref<number>(0);
 let percentageCash = ref<number>(0);
 
 const marketPosition1Person1 = new PositionMarker(150, 40);
-const marketPosition2Person2 = marketPosition1Person1.add(50,0);
+const marketPosition2Person2 = marketPosition1Person1.add(150,0);
 
 
 const gsapDuration = 1;
@@ -114,6 +114,8 @@ onMounted(() => {
 
       person1.offset.x = 35;
       person1.offset.y = -10;
+      person2.offset.x = -35;
+      person2.offset.y = -20;
 
       bank1 = society.getBalanceDrawer(Banks.bank1);
       bank2 = society.getBalanceDrawer(Banks.bank2);
@@ -175,11 +177,22 @@ const buyAndmoveMoneyToBank2 = () => {
     bank1.balance.addTransaction(transaction2);
     return bank1.waitForFadeToEnd();
   })
-      .then(() => money.moveFromTo(bank1.getPosition(), bank2.getPosition()))
+      .then(() => {
+        money.moveFromTo(bank1.getPosition(), marketPosition1Person1);
+        return person1.moveFromTo(bank1.getPosition(), marketPosition1Person1);
+      })
+      .then(() => person2.moveFromTo({x: 400, y: 10}, marketPosition2Person2))
+      .then(() => money.moveTo(marketPosition2Person2))
+      .then(() => person1.disappear())
+      .then(() => {
+        person2.moveTo(bank2.getPosition());
+        return money.moveTo(bank2.getPosition());
+      })
       .then(() => {
         bank2.balance.addTransaction(transaction3);
         return bank2.waitForFadeToEnd();
       })
+      .then(() => person2.disappear())
       .then(() => money.disappear())
       .then(updateTotals);
 }

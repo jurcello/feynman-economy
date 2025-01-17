@@ -17,6 +17,7 @@ class MovableImage {
     public position: { x: number; y: number } = {x: 0, y: 0};
     public offset: { x: number; y: number } = {x: 0, y: 0};
     public properties: { opacity: number } = {opacity: 0};
+    public speed: number = 1;
     private image: p5.Image;
     private width: number = 70;
     private tl: Timeline;
@@ -48,10 +49,10 @@ class MovableImage {
         }
     }
 
-    moveTo(x: number, y: number) {
-        this.tl.to(this.position, {
-            x: this.p.mouseX - this.width / 2,
-            y: this.p.mouseY - this.width / 2,
+    moveTo(to: { x: number, y: number }) {
+        return this.tl.to(this.position, {
+            x: to.x - this.width / 2,
+            y: to.y - this.width / 2,
             duration: 1,
             ease: "sine.inOut",
         })
@@ -92,6 +93,10 @@ class MovableImage {
                 duration: 1,
                 ease: "sine.inOut",
             })
+    }
+
+    private getDuration(initialDelay: number) {
+        return initialDelay / this.speed
     }
 
     moveToAndDisappear() {
