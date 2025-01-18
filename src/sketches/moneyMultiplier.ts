@@ -8,6 +8,7 @@ export type MoneyMultiplierSketchCallback = {
     person1: MovableImage,
     person2: MovableImage,
     car: MovableImage,
+    cross: MovableImage,
 };
 
 const createSketch = (canvasContainer: HTMLDivElement, banks: Array<string>, createCallback: (result: MoneyMultiplierSketchCallback) => void) => (p: p5) => {
@@ -17,6 +18,7 @@ const createSketch = (canvasContainer: HTMLDivElement, banks: Array<string>, cre
     const person1 = new MovableImage(p, 100, 100, MovableImageType.person1);
     const person2 = new MovableImage(p, 100, 100, MovableImageType.person2);
     const car = new MovableImage(p, 100, 100, MovableImageType.car);
+    const cross = new MovableImage(p, 100, 100, MovableImageType.cross);
 
     const height = 500;
 
@@ -36,9 +38,10 @@ const createSketch = (canvasContainer: HTMLDivElement, banks: Array<string>, cre
         person2.draw();
         money.draw();
         car.draw();
+        cross.draw();
     };
 
-    createCallback({society, money, person1, person2, car});
+    createCallback({society, money, person1, person2, car, cross});
 };
 
 export default createSketch;

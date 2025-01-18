@@ -3,6 +3,8 @@ import moneyIMage from "@/assets/images/money.png";
 import person1Image from "@/assets/images/person1.png";
 import person2Image from "@/assets/images/person2.png";
 import carImage from "@/assets/images/car.png";
+import crossImage from "@/assets/images/red-cross-mark-on-transparent-background-free-png.png";
+
 // import gsap from "gsap";
 import gsapinstance from "gsap";
 import Timeline = gsap.core.Timeline;
@@ -12,6 +14,7 @@ export enum MovableImageType {
     person1 = "person1",
     person2 = "person2",
     car = "car",
+    cross = "cross",
 }
 
 class MovableImage {
@@ -39,6 +42,9 @@ class MovableImage {
             case MovableImageType.car:
                 image = carImage;
                 break;
+            case MovableImageType.cross:
+                image = crossImage;
+                break;
         }
         this.image = p.loadImage(image, () => {
             this.image.resize(this.width, 0);
@@ -54,11 +60,11 @@ class MovableImage {
         }
     }
 
-    moveTo(to: { x: number, y: number }) {
+    moveTo(to: { x: number, y: number }, duration: number = 1) {
         return this.tl.to(this.position, {
             x: to.x - this.width / 2,
             y: to.y - this.width / 2,
-            duration: this.getDuration(1),
+            duration: this.getDuration(duration),
             ease: "sine.inOut",
         })
     }
@@ -95,6 +101,18 @@ class MovableImage {
         return this.tl.to(this.properties,
             {
                 opacity: 0,
+                duration: this.getDuration(1),
+                ease: "sine.inOut",
+            })
+    }
+
+    appear() {
+        if (this.tl) {
+            this.tl.clear();
+        }
+        return this.tl.to(this.properties,
+            {
+                opacity: 1,
                 duration: this.getDuration(1),
                 ease: "sine.inOut",
             })

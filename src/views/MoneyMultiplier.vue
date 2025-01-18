@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>De money multiplier</h2>
+    <h2>Fractional banking</h2>
     <MoneyMultiplierSketch/>
   </div>
 

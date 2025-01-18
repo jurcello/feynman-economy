@@ -83,6 +83,12 @@
         Laat Alice proberen een lening af te sluiten
       </button>
     </template>
+    <template v-if="currentState == state.loanAtBank1Tried">
+      <p>
+        Dat ging niet zo lekker. Zonder mogelijkheden om zelf te lenen zou de bank geen lening kunnen verstrekken aan Alice.
+        Alice zou dus alleen bij de {{ Banks.bank4 }} een lening kunnen afsluiten.
+      </p>
+    </template>
   </div>
   <h3>
     De totale geldhoeveelheid:
@@ -129,6 +135,7 @@ enum state {
   carBought = 4,
   moneyMovedToBank3 = 5,
   moneyMovedToBank4 = 6,
+  loanAtBank1Tried = 7,
   done = 7,
 }
 
@@ -151,6 +158,7 @@ let money: MovableImage;
 let person1: MovableImage;
 let person2: MovableImage;
 let car: MovableImage;
+let cross: MovableImage;
 let society: Society;
 let bank1: BalanceDrawerExtended;
 let bank2: BalanceDrawerExtended;
@@ -175,7 +183,6 @@ const gsapDuration = 1;
 const updateTotals = () => {
   const totals = society.getMoneyAggregates();
   totalMoney.value = totals.total;
-  console.log('updating', totalMoney.value);
   gsap.to(totalMoneyDiv.value, {
     width: totalMoney.value,
     duration: gsapDuration,
@@ -200,16 +207,19 @@ onMounted(() => {
       person2 = result.person2;
       society = result.society;
       car = result.car;
+      cross = result.cross;
 
       person1.offset.x = 35;
       person1.offset.y = -10;
       person2.offset.x = -35;
       person2.offset.y = 0;
+      cross.offset.y = -100;
 
       money.speed = speed;
       person1.speed = speed;
       person2.speed = speed;
       car.speed = speed;
+      cross.speed = speed;
 
       bank1 = society.getBalanceDrawer(Banks.bank1);
       bank2 = society.getBalanceDrawer(Banks.bank2);
@@ -375,7 +385,21 @@ const moveMoneyToBank4from3 = () => {
 }
 
 const aliceTriesLoan = () => {
-  person2.moveFromTo(spawnPoint, bank1.getPosition()).then(() => {});
+  person2.moveFromTo(spawnPoint, bank1.getPosition())
+      .then(() => {
+        cross.moveTo(bank1.getPosition(), 0);
+        return cross.appear()
+      })
+      .then(() => {
+        return cross.disappear();
+      })
+      .then(() => {
+        return person2.moveTo(spawnPoint);
+      })
+      .then(() => {
+        person2.disappear();
+        currentState.value = state.loanAtBank1Tried;
+      })
 }
 
 </script>
