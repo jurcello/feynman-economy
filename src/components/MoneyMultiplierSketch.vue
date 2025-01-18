@@ -1,43 +1,111 @@
 <template>
-  <p>
-    Om geldschepping door commerciele banken te begrijpen, moet je eerst weten dat er 2 types geld zijn: <br />
-    - Cash: oftewel basis geld <br />
-    - Giraal geld: dit geld zie je op je bankrekening. <br />
-  </p>
-  <p><button
-      v-show="totalMoney < 200" @click="depositToBank1"
-      class="btn"
-  >Stort geld op de {{ Banks.bank1 }}
-  </button></p>
-  <p><button
-      v-show="totalMoney >= 200 && totalMoney < 390"
-      @click="buyAndmoveMoneyToBank2"
-      class="btn"
-  >Transfer naar de {{ Banks.bank2 }}
-  </button></p>
-  <p><button
-      v-show="totalMoney >= 390 && totalMoney < 570"
-      @click="moveMoneyToBank3from2"
-      class="btn"
-  >Transfer € 180 van de {{ Banks.bank2 }} naar de {{ Banks.bank3}}
-  </button></p>
-  <p><button
-      v-show="totalMoney >= 570"
-      @click="moveMoneyToBank4from3"
-      class="btn"
-  >Transfer € 170 van de {{ Banks.bank3 }} naar de {{ Banks.bank4}}
-  </button></p>
-  <p>
+  <div class="explanation">
+    <template  v-if="currentState == state.initial">
+      <p>
+        Om geldschepping door commerciele banken te begrijpen, moet je eerst weten dat er 2 types geld zijn: <br />
+        - Cash: oftewel basis geld <br />
+        - Giraal geld: dit geld zie je op je bankrekening. <br />
+        We hebben in dit voorbeeld 4 banken waar nog geen geld naartoe gegaan is. Laten we eerst een aantal mensen geld op een spaarrekening laten storten.
+      </p>
+      <p><button
+          @click="depositToBank1"
+          class="btn"
+      >Laat mensen geld storten op de {{ Banks.bank1 }}
+      </button></p>
+    </template>
+    <template v-if="currentState == state.moneyDeposited">
+      <p>Alle mensen hebben nu bij elkaar {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }} gestort.
+      Op de balans van de bank zie je bij de rekeningen hetzelfde bedrag staan. Je zou ook kunnen zeggen dat er dus {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+        aan giraal geld is. In de balken hieronder zie je de verschillende geldhoeveelheden in een balk staan.
+      </p>
+      <p>Tegenover {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }} giraal staat hetzelfde bedrag in cash. Je ziet dat al het girale geld is gedekt door cash geld.
+        Het dekken van giraal geld door 'echt' geld noemen de dekkingsgraad.
+        Die dekkingsgraad kunnen we ook in een balk weergeven.
+      </p>
+      <button class="btn"
+          @click="currentState = state.coverageExplained"
+      >
+        Laat dekkingspercentage van giraal geld zien
+      </button>
+    </template>
+    <template v-if="currentState == state.coverageExplained">
+      <p>Als dit alles was, wat banken zouden kunnen doen, zouden ze moeilijk geld kunnen verdienen.
+        Het verhaal in de economsische leerboeken is, dat banken al snel beseften dat niet iedereen tegelijk haar/zijn
+        spaargeld zou opnemen.
+        Het zou dus prima zijn om een deel van het geld weer uit te lenen als iemand iets nodig had en niet direct geld.
+        Stel nou dat iemand een auto wil kopen met geleend geld? Hij heeft € 190,00 nodig. De bank heeft zoveel geld wel
+        in cash en leent hem dit uit.
+        Laten we eens kijken wat er dan gebeurt:</p>
+      <button class="btn"
+          @click="buyAndmoveMoneyToBank2">
+        Laat John een auto kopen van Alice
+      </button>
+
+    </template>
+    <template v-if="currentState == state.carBought">
+      <p>Je zag dat John geld leende van de eerste bank en daarmee Alice betaalde voor de auto.
+        Omdat Alice haar geld niet in een sok bewaard, stort zij op haar beurt het geld weer op een spaarrekening bij
+        een andere bank.
+        Als we nu naar kijken naar de totale hoeveelheid giraal geld, is deze gegroeid (zie balkje). Niet al het geld is
+        nu meer gedekt door cash geld!
+      </p>
+      <p>Dit proces kun je natuurlijk herhalen. Laten we dat een aantal keer doen. Om tijd te winnen zien we niet de koop van iets, maar het idee is hetzelfde.</p>
+      <button
+          @click="moveMoneyToBank3from2"
+          class="btn"
+      >Iemand leent iets bij {{ Banks.bank2}} om iets te kopen. De verkoper zet het geld weer op de {{ Banks.bank3 }}
+      </button>
+
+    </template>
+    <template v-if="currentState == state.moneyMovedToBank3">
+      <p>
+        Natuurlijk kunnen we dit nog een keer herhalen
+      </p>
+      <button
+          @click="moveMoneyToBank4from3"
+          class="btn"
+      >Iemand leent iets bij {{ Banks.bank3}} om iets te kopen. De verkoper zet het geld weer op de {{ Banks.bank4 }}
+      </button>
+    </template>
+    <template v-if="currentState == state.moneyMovedToBank4">
+      <p>Een bank kan natuurlijk niet altijd door blijven gaan geld uit te lenen. Hij moet wel voldoende in cash hebben om, als iemand iets van zijn spaarrekening
+        wil opnemen, dit geld ook beschikbaar te hebben.
+      </p>
+      <p>
+        Er moet dus altijd een minimale reserve cash zijn (ofwel dekkingsgraag). Stel nou dat dit 10%.
+        Laten we eens kijken naar de dekkingsgraad van de {{ Banks.bank1 }}. Deze is op dit moment:
+        {{ bank1.balance.getCoverage().toFixed(1) }} %.
+      </p>
+      <p>Laten we eens kijken wat een bank zou moeten doen als Alice nu een lening zou willen afsluiten</p>
+      <button class="btn"
+          @click="aliceTriesLoan"
+      >
+        Laat Alice proberen een lening af te sluiten
+      </button>
+    </template>
+  </div>
+  <h3>
     De totale geldhoeveelheid:
-  </p>
-  <div class="bg-green-400 px-4 py-2 bar" ref="totalCashDiv">
-    Cash: {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+  </h3>
+  <div class="bar-container">
+    <div class="bg-green-400 bar" ref="totalCashDiv">
+    </div>
+    <div class="bar-text">
+      Cash: {{ totalCash.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+    </div>
   </div>
-  <div class="bg-blue-400 px-4 py-2 bar" ref="totalMoneyDiv">
-    Totaal giraal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+  <div class="bar-container">
+    <div class="bg-blue-400 bar" ref="totalMoneyDiv">
+
+    </div>
+    <div class="bar-text">
+      Totaal giraal: {{ totalMoney.toLocaleString('nl-NL', {style: 'currency', currency: 'EUR'}) }}
+    </div>
   </div>
-  <div class="bg-purple-400 px-4 py-2 bar" ref="cashPercentageDiv">
-    Percentagec cash: {{ percentageCash.toFixed(1) }} %
+  <div class="bar-container" v-show="currentState >= state.coverageExplained">
+    <div class="bg-purple-400 bar" ref="cashPercentageDiv">
+    </div>
+    <div class="bar-text">Dekking van giraal geld: {{ percentageCash.toFixed(1) }} %</div>
   </div>
   <div class="canvas" ref="canvasContainer">
   </div>
@@ -53,6 +121,18 @@ import BalanceDrawerExtended from "@/sketches/Animatables/BalanceDrawerExtended"
 import {CreditTypes, DebitTypes, Transaction} from "@/balance";
 import {gsap} from "gsap";
 import PositionMarker from "@/sketches/Animatables/PositionMarker";
+
+enum state {
+  initial = 1,
+  moneyDeposited = 2,
+  coverageExplained = 3,
+  carBought = 4,
+  moneyMovedToBank3 = 5,
+  moneyMovedToBank4 = 6,
+  done = 7,
+}
+
+let currentState = ref<state>(state.initial);
 
 enum Banks {
   bank1 = "Rabobank",
@@ -81,6 +161,11 @@ let totalCash = ref<number>(0);
 let percentageCash = ref<number>(0);
 
 const speed = 1;
+
+const spawnPoint = {
+  x: 550,
+  y: 10,
+};
 
 const marketPosition1Person1 = new PositionMarker(150, 40);
 const marketPosition1Person2 = marketPosition1Person1.add(150,0);
@@ -150,19 +235,13 @@ onUnmounted(() => {
 });
 
 function depositMoneyToBank(bank: BalanceDrawerExtended, amount: number) {
-  person1.moveFromTo({
-        x: 550,
-        y: 10,
-      },
+  person1.moveFromTo(spawnPoint,
       {
         x: bank.getPosition().x,
         y: bank.getPosition().y,
       });
   return money.moveFromTo(
-      {
-        x: 550,
-        y: 10
-      },
+      spawnPoint,
       bank.getPosition()
   ).then(() => {
 
@@ -203,6 +282,7 @@ const depositToBank1 = () => {
       .then(() => {
         money.speed = 1;
         person1.speed = 1;
+        currentState.value = state.moneyDeposited;
       });
 }
 
@@ -242,7 +322,10 @@ const buyAndmoveMoneyToBank2 = () => {
       })
       .then(() => person2.disappear())
       .then(() => money.disappear())
-      .then(updateTotals);
+      .then(() => {
+        updateTotals();
+        currentState.value = state.carBought;
+      });
 }
 
 const moveMoneyToBank3from2 = () => {
@@ -263,7 +346,10 @@ const moveMoneyToBank3from2 = () => {
           bank3.balance.addTransaction(transaction3);
           return bank3.waitForFadeToEnd();
         })
-      .then(updateTotals)
+      .then(() => {
+        updateTotals();
+        currentState.value = state.moneyMovedToBank3;
+      })
 }
 
 const moveMoneyToBank4from3 = () => {
@@ -280,13 +366,29 @@ const moveMoneyToBank4from3 = () => {
     money.moveFromTo(bank3.getPosition(), bank4.getPosition()).then(() => {
       bank4.balance.addTransaction(transaction3);
       return bank4.waitForFadeToEnd();
-    }).then(updateTotals);
+    }).then(() => {
+      updateTotals();
+      money.disappear();
+      currentState.value = state.moneyMovedToBank4;
+    });
   })
+}
+
+const aliceTriesLoan = () => {
+  person2.moveFromTo(spawnPoint, bank1.getPosition()).then(() => {});
 }
 
 </script>
 
 <style scoped>
+
+.bar-container {
+  @apply relative h-8 flex border border-gray-200 my-2
+}
+.bar-text {
+  @apply absolute top-0 leading-8 px-4;
+}
+
 .canvas {
   display: flex;
   justify-content: center;
@@ -300,7 +402,7 @@ const moveMoneyToBank4from3 = () => {
 }
 
 .bar {
-  width: 30px;
+  @apply leading-8;
 }
 
 </style>

@@ -93,6 +93,10 @@ class Balance {
         };
     }
 
+    public getCoverage() {
+        return (this.debit[DebitTypes.cash] || 0 / this.totalDebit);
+    }
+
     getLastTransaction() {
         return this.transactions[this.transactions.length - 1];
     }
