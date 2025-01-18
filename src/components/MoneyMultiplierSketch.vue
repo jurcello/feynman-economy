@@ -149,30 +149,61 @@ onUnmounted(() => {
   }
 });
 
-const depositToBank1 = () => {
+function depositMoneyToBank(bank: BalanceDrawerExtended, amount: number) {
   person1.moveFromTo({
         x: 550,
         y: 10,
       },
       {
-        x: bank1.getPosition().x,
-        y: bank1.getPosition().y,
+        x: bank.getPosition().x,
+        y: bank.getPosition().y,
       });
-  money.moveFromTo(
-    {
-      x: 550,
-      y: 10
-    },
-    bank1.getPosition()
+  return money.moveFromTo(
+      {
+        x: 550,
+        y: 10
+      },
+      bank.getPosition()
   ).then(() => {
-      const transaction = new Transaction("storting", 200, { type: DebitTypes.cash }, { type: CreditTypes.savingsAccount});
-      bank1.balance.addTransaction(transaction);
-      return bank1.waitForFadeToEnd();
+
+    const transaction = new Transaction("storting", amount, {type: DebitTypes.cash}, {type: CreditTypes.savingsAccount});
+    bank.balance.addTransaction(transaction);
+    return bank.waitForFadeToEnd();
   }).then(() => {
     updateTotals();
     person1.disappear();
     money.disappear();
   })
+}
+
+const depositToBank1 = () => {
+  money.speed = 10;
+  person1.speed = 10;
+  depositMoneyToBank(bank1, 5)
+      .then(() => depositMoneyToBank(bank1, 10))
+      .then(() => depositMoneyToBank(bank1, 5))
+      .then(() => depositMoneyToBank(bank1, 10))
+      .then(() => depositMoneyToBank(bank1, 7))
+      .then(() => depositMoneyToBank(bank1, 9))
+      .then(() => depositMoneyToBank(bank1, 15))
+      .then(() => depositMoneyToBank(bank1, 3))
+      .then(() => depositMoneyToBank(bank1, 9))
+      .then(() => depositMoneyToBank(bank1, 7))
+      .then(() => depositMoneyToBank(bank1, 18))
+      .then(() => depositMoneyToBank(bank1, 15))
+      .then(() => depositMoneyToBank(bank1, 13))
+      .then(() => depositMoneyToBank(bank1, 7))
+      .then(() => depositMoneyToBank(bank1, 4))
+      .then(() => depositMoneyToBank(bank1, 10))
+      .then(() => depositMoneyToBank(bank1, 20))
+      .then(() => depositMoneyToBank(bank1, 13))
+      .then(() => depositMoneyToBank(bank1, 6))
+      .then(() => depositMoneyToBank(bank1, 8))
+      .then(() => depositMoneyToBank(bank1, 6))
+      .then(() => {
+        money.speed = 1;
+        person1.speed = 1;
+      });
 }
 
 const buyAndmoveMoneyToBank2 = () => {
