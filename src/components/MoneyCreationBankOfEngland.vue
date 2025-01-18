@@ -88,11 +88,15 @@ onMounted(() => {
       commercialBank = result.society.getBalanceDrawer(Banks.commercialBank);
       personBalance = result.society.getBalanceDrawer(Banks.personBalance);
 
+      const debitCreditWiths = 150;
       centralBank.properties.positionY = 200;
+      centralBank.debitCreditWiths = debitCreditWiths;
       centralBank.drawAmounts = false;
       commercialBank.properties.positionY = 400;
+      commercialBank.debitCreditWiths = debitCreditWiths;
       commercialBank.drawAmounts = false;
       personBalance.properties.positionY = 600;
+      personBalance.debitCreditWiths = debitCreditWiths;
       personBalance.drawAmounts = false;
 
       createStartSituation()

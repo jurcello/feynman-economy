@@ -25,7 +25,7 @@ class BalanceDrawerExtended {
     private p: p5;
     public balance: Balance;
     public drawAmounts: boolean = true;
-    private debitCreditWiths: number;
+    public debitCreditWiths: number;
     private gutter: number = 10;
     private scale: number = 1;
     private fadeTime: number;
@@ -172,6 +172,7 @@ class BalanceDrawerExtended {
             let textColor = Colors.white;
             if (isAlmostWhite(fillColor)) {
                 textColor = Colors.black;
+                p.stroke('#c6c5c5');
             }
             p.fill(fillColor);
             if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() > 0) {
