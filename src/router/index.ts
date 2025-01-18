@@ -3,6 +3,7 @@ import Home from '../views/Home.vue';
 import About from '../views/About.vue';
 import Balance from "../views/Balance.vue";
 import MoneyMultiplier from "../views/MoneyMultiplier.vue";
+import MoneyCreation from "@/views/MoneyCreation.vue";
 
 // Define routes for your app
 const routes = [
@@ -21,11 +22,15 @@ const routes = [
     name: 'Balance',
     component: Balance, // The component for the About page
   },
-
   {
     path: '/money-multiplier',
     name: 'MoneyMultiplier',
     component: MoneyMultiplier,
+  },
+  {
+    path: '/money-creation',
+    name: 'MoneyCreation',
+    component: MoneyCreation,
   },
 ];
 
