@@ -8,17 +8,23 @@ const colorMappings = {
     [DebitTypes.backAccount]: Colors.blue,
     [DebitTypes.property]: Colors.purple,
     [DebitTypes.loan]: Colors.lightPurple,
+    [DebitTypes.noneMoney]: Colors.white,
     [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
-    [CreditTypes.savingsAccount]: Colors.lightOrange,
+    [CreditTypes.creditAccount]: Colors.darkGreen,
+    [CreditTypes.reserves]: Colors.green,
+    [CreditTypes.currency]: Colors.blue,
+    [CreditTypes.deposits]: Colors.red,
+    [CreditTypes.newDeposits]: Colors.red,
+    [CreditTypes.newLoans]: Colors.white,
     [CreditTypes.none]: Colors.grey,
-
 }
 
 class BalanceDrawerExtended {
     private p: p5;
     public balance: Balance;
+    public drawAmounts: boolean = true;
     private debitCreditWiths: number;
     private gutter: number = 10;
     private scale: number = 1;
@@ -151,7 +157,23 @@ class BalanceDrawerExtended {
         p.strokeWeight(2);
 
         Object.entries(debitOrCredit).forEach(([key, value]) => {
-            p.fill(colorMappings[key as keyof typeof colorMappings] || Colors.grey);
+            const fillColor = colorMappings[key as keyof typeof colorMappings] || Colors.grey;
+
+            const isAlmostWhite = (hexColor: string, threshold: number = 10): boolean => {
+                // Convert hex color to RGB components
+                const bigint = parseInt(hexColor.slice(1), 16);
+                const r = (bigint >> 16) & 255;
+                const g = (bigint >> 8) & 255;
+                const b = bigint & 255;
+
+                // Check if each component is close to 255 within the threshold
+                return Math.abs(255 - r) <= threshold && Math.abs(255 - g) <= threshold && Math.abs(255 - b) <= threshold;
+            };
+            let textColor = Colors.white;
+            if (isAlmostWhite(fillColor)) {
+                textColor = Colors.black;
+            }
+            p.fill(fillColor);
             if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() > 0) {
                 const fadeHeight = this.fadeValue * this.lastTransaction?.getAmount();
                 const correction = this.lastTransaction?.getAmount();
@@ -164,9 +186,11 @@ class BalanceDrawerExtended {
                 p.rect(xPosition, Y, this.debitCreditWiths, fadeHeight);
 
                 p.strokeWeight(1);
-                p.fill(Colors.white);
-                if (correctedValue > 40) {
+                p.fill(textColor);
+                if (correctedValue > 20) {
                     p.text(`${key}`, xPosition + 10, textPosition);
+                }
+                if (correctedValue > 40 && this.drawAmounts) {
                     p.text(this.formatNumber(correctedValue), xPosition + 10, textPosition + 15);
                 }
             } else if (this.fading && this.lastTransaction && key === type && this.lastTransaction.getAmount() < 0) {
@@ -178,7 +202,7 @@ class BalanceDrawerExtended {
                 const textPosition = Y + 20;
 
                 p.strokeWeight(1);
-                p.fill(Colors.white);
+                p.fill(textColor);
                 p.text(`${key}`, xPosition + 10, textPosition);
                 p.text(this.formatNumber(correctedValue), xPosition + 10, textPosition + 15);
 
@@ -187,9 +211,11 @@ class BalanceDrawerExtended {
                 p.rect(xPosition, rectPosition, this.debitCreditWiths, value);
                 const textPosition = rectPosition + 20;
                 p.strokeWeight(1);
-                p.fill(Colors.white);
-                if (value > 40) {
+                p.fill(textColor);
+                if (value > 20) {
                     p.text(`${key}`, xPosition + 10, textPosition);
+                }
+                if (value > 40 && this.drawAmounts) {
                     p.text(this.formatNumber(value), xPosition + 10, textPosition + 15);
                 }
                 Y -= value;

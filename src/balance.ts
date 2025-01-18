@@ -3,6 +3,12 @@ enum DebitTypes {
     backAccount = 'Back account',
     property = 'Bezit',
     loan = 'Leningen',
+    noneMoney = 'Non-Money',
+    reserves = 'Reserves',
+    currency = 'Valuta',
+    deposits = "Deposito's",
+    newDeposits = "Nieuwe Deposito's",
+    newLoans = "Nieuwe Leningen",
     none = 'NoneDebit',
 }
 
@@ -11,6 +17,12 @@ enum CreditTypes {
     debt = 'Schulden',
     creditAccount = 'Credit account',
     savingsAccount = 'Spaarrekeningen',
+    reserves = 'Reserves',
+    currency = 'Valuta',
+    deposits = "Deposito's",
+    newDeposits = "Nieuwe Deposito's",
+    newLoans = "Nieuwe Leningen",
+    noneMoney = 'Non-Money',
     none = 'NoneCredit',
 }
 
@@ -32,6 +44,10 @@ class Transaction {
         this.amount = amount;
         this.debit = debit;
         this.credit = credit;
+    }
+
+    public static create(description: string, amount: number, debit: DebitTypes, credit: CreditTypes): Transaction {
+        return new Transaction(description, amount, { type: debit }, { type: credit });
     }
 }
 

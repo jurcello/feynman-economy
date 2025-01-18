@@ -9,15 +9,17 @@ const createSketch = (canvasContainer: HTMLDivElement, width: number, height: nu
     let canvas;
 
     const society = new Society(p, banks)
+    const grayValue = 230;
 
     p.setup = () => {
         canvas = p.createCanvas(width, height);
         canvas.parent(canvasContainer);
-        p.background(120);
+
+        p.background(grayValue);
     }
 
     p.draw = () => {
-        p.background(120);
+        p.background(grayValue);
         society.draw();
     }
 
