@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div class="px-4 border mr-4">
-      <h3>Geld creatie uitgelegd door de Bank of England</h3>
+      <h3>Geld creatie uitgelegd door de Bank of England (1/3)</h3>
       <p>
           Breed geld is een maatstaf voor de totale
           hoeveelheid geld die door huishoudens en bedrijven in de economie wordt gehouden. Breed geld bestaat uit
@@ -12,17 +12,23 @@
         
       </p>
       <p>
-        <p>
           Commerciële banken creëren geld, in de vorm van bankdeposito's, door nieuwe leningen te verstrekken. Wanneer
           een bank een lening verstrekt, bijvoorbeeld aan iemand die een hypotheek afsluit om een huis te kopen, doet ze
           dat doorgaans niet door hem duizenden euro's aan bankbiljetten te geven. In plaats daarvan crediteert ze zijn
           bankrekening met een bankdeposito ter grootte van de hypotheek. Op dat moment wordt er nieuw geld gecreëerd.
           Om deze reden hebben sommige economen bankdeposito's 'vulpen geld' genoemd, gecreëerd met een pennenstreek van
           bankiers wanneer ze leningen goedkeuren.
-        </p>
-        <button class="btn" @click="createLoan" v-show="!loanHasBeenCreated">
-          Kijk wat er gebeurt als een bank een hypotheek verstrekt
-        </button>
+      </p>
+      <button class="btn" @click="createLoan" :disabled="loanHasBeenCreated">
+        Kijk wat er gebeurt als een bank een hypotheek verstrekt
+      </button>
+      <p v-if="loanAnimationFinished">
+        Zoals je ziet is dit nogal anders dan wat er zou gebeuren volgens de money mulitplier theorie:
+        In veel uitleg van de money multiplier theorie, zie je bij een lening direct het geld dat de bank uitleent verdwijnen (meestal in de vorm van contant geld).
+        In de plaats daarvan komt de lening die de klant met de bank heeft afgesloten. <br/>
+        Hoewel het principe gelijk lijkt, is het toch niet hetzelfde.
+
+
       </p>
     </div>
     <div class="canvas my-4" ref="canvasContainer">
@@ -46,6 +52,7 @@ let centralBank: BalanceDrawerExtended;
 let commercialBank: BalanceDrawerExtended;
 let personBalance: BalanceDrawerExtended;
 const loanHasBeenCreated = ref(false);
+const loanAnimationFinished = ref(false);
 
 enum Banks {
   centralBank = "Centrale bank",
@@ -68,11 +75,15 @@ const createStartSituation = () => {
 }
 
 const createLoan = () => {
+  loanHasBeenCreated.value = true;
   const amount = 60;
   const bankTransaction = Transaction.create("Hypotheek", amount, DebitTypes.newLoans, CreditTypes.newDeposits);
   commercialBank.balance.addTransaction(bankTransaction);
   const personTransaction = Transaction.create("Hypotheek", amount, DebitTypes.newDeposits, CreditTypes.newLoans);
-  personBalance.balance.addTransaction(personTransaction);
+  personBalance.balance.addTransaction(personTransaction)
+  personBalance.waitForFadeToEnd().then(() => {
+    loanAnimationFinished.value = true;
+  })
 
 }
 
