@@ -4,6 +4,7 @@ import About from '../views/About.vue';
 import Balance from "../views/Balance.vue";
 import MoneyMultiplier from "../views/MoneyMultiplier.vue";
 import MoneyCreation from "@/views/MoneyCreation.vue";
+import MoneyCreationPart2 from "@/views/MoneyCreationPart2.vue";
 
 // Define routes for your app
 const routes = [
@@ -31,6 +32,11 @@ const routes = [
     path: '/money-creation',
     name: 'MoneyCreation',
     component: MoneyCreation,
+  },
+  {
+    path: '/money-creation-part-2',
+    name: 'MoneyCreationPart2',
+    component: MoneyCreationPart2,
   },
 ];
 

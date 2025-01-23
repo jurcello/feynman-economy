@@ -3,12 +3,13 @@ import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import Colors from "@/colors";
 import colors from "@/colors";
 
-const colorMappings = {
+export const colorMappings = {
     [DebitTypes.cash]: Colors.green,
     [DebitTypes.backAccount]: Colors.blue,
     [DebitTypes.property]: Colors.purple,
     [DebitTypes.loan]: Colors.lightPurple,
     [DebitTypes.noneMoney]: Colors.white,
+    [DebitTypes.nonMoneyHouse]: Colors.white,
     [DebitTypes.none]: Colors.grey,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,

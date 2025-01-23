@@ -4,6 +4,7 @@ enum DebitTypes {
     property = 'Bezit',
     loan = 'Leningen',
     noneMoney = 'Non-Money',
+    nonMoneyHouse = 'Non-Money (House)',
     reserves = 'Reserves',
     currency = 'Valuta',
     deposits = "Deposito's",

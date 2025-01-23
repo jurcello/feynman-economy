@@ -2,22 +2,7 @@ import p5 from "p5";
 import {Balance, CreditTypes, DebitTypes, Transaction} from "./balance";
 import Colors from "./colors";
 
-const colorMappings = {
-    [DebitTypes.cash]: Colors.green,
-    [DebitTypes.backAccount]: Colors.blue,
-    [DebitTypes.property]: Colors.purple,
-    [DebitTypes.loan]: Colors.lightPurple,
-    [DebitTypes.noneMoney]: Colors.white,
-    [DebitTypes.none]: Colors.grey,
-    [CreditTypes.equity]: Colors.blue,
-    [CreditTypes.debt]: Colors.red,
-    [CreditTypes.creditAccount]: Colors.darkGreen,
-    [CreditTypes.reserves]: Colors.green,
-    [CreditTypes.currency]: Colors.blue,
-    [CreditTypes.deposits]: Colors.red,
-    [CreditTypes.none]: Colors.grey,
-
-}
+import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
 
 class BalanceDrawer {
     private p: p5;
