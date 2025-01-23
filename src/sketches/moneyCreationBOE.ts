@@ -23,6 +23,10 @@ const createSketch = (canvasContainer: HTMLDivElement, width: number, height: nu
         society.draw();
     }
 
+    p.mouseClicked = () => {
+        console.log("mouse position", p.mouseX, p.mouseY);
+    }
+
     createCallback({society});
 }
 
