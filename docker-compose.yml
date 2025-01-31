@@ -1,0 +1,14 @@
+services:
+  html:
+    build: .
+    expose:
+    - "80:80"
+    environment:
+      VIRTUAL_HOST: 'money.thecodingartist.com'
+      LETSENCRYPT_HOST: 'money.thecodingartist.com'
+      LETSENCRYPT_EMAIL: 'info@jurdevries.nl'
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
