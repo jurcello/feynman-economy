@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Fractional banking</h2>
+    <h2>Fractional banking of de Money multiplier myth</h2>
     <MoneyMultiplierSketch/>
   </div>
 
