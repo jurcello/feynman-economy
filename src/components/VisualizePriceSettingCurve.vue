@@ -1,7 +1,9 @@
 <template>
   <p>Dit is de price setting curve</p>
   <div>
+    <div ref="formula">
 
+    </div>
     <div class="slider mb-8">
       <div>Select a variable</div>
       <div>
@@ -17,7 +19,7 @@
       </div>
     </div>
     <div class="slider">
-      <div>Nominaal Salaris</div>
+      <div>Nominaal Salaris (W)</div>
       <div>
         <input type="range" v-model="wage" min="0" max="100" step="0.1"
             :disabled="currentReactable == ReactableValue.wage"
@@ -27,7 +29,7 @@
       <div><span>{{ wage }}</span></div>
     </div>
     <div class="slider">
-      <div>Profit maximizing price</div>
+      <div>Profit maximizing price (P)</div>
       <div><input type="range" v-model="price" min="0" max="100" step="0.1"
           :disabled="currentReactable == ReactableValue.price"
           @change="calculateNewValues"
@@ -36,7 +38,7 @@
       <div><span>{{ price }}</span></div>
     </div>
     <div class="slider">
-      <div>sigma (profit share)</div>
+      <div>sigma (profit share) (σ)</div>
       <div><input type="range" v-model="sigma" min="0" max="1" step="0.01"
           :disabled="currentReactable == ReactableValue.sigma"
           @change="calculateNewValues"
@@ -45,7 +47,7 @@
       <div><span>{{ sigma }}</span></div>
     </div>
     <div class="slider">
-      <div>lambda (output per worker)</div>
+      <div>lambda (output per worker) (𝜆)</div>
       <div><input type="range" v-model="lambda" min="0" max="10" step="0.01"
           :disabled="currentReactable == ReactableValue.lambda"
           @change="calculateNewValues"
@@ -59,6 +61,7 @@
 
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
+import katex from "katex";
 
 enum ReactableValue {
   wage,
@@ -72,7 +75,7 @@ const price = ref(10);
 const sigma = ref(0.1);
 const lambda = ref(10);
 const currentReactable = ref(ReactableValue.wage);
-
+const formula = ref<HTMLDivElement | null>(null);
 
 const calculateNewValues = () => {
   switch (currentReactable.value) {
@@ -95,11 +98,15 @@ const calculateNewValues = () => {
   }
 }
 
+const updateFormula = () => {
+  katex.render("\\dfrac{W}{P} = (1 - \\sigma) \\lambda", formula.value!);
+}
 
 
 
 onMounted(() => {
   calculateNewValues();
+  updateFormula();
 });
 </script>
 
