@@ -24,7 +24,6 @@ const price = ref<number>(10);
 const priceComponent: VariableInformation = {
   name: "Price",
   reCalculator: () => {
-    console.log('recalculating');
     price.value = wage.value / ((1 - sigma.value) * lambda.value);
   },
   value: price,

@@ -15,7 +15,7 @@ class Formula {
     name: string;
     formulaInTex: string;
     private components: Map<string, VariableInformation> = new Map<string, VariableInformation>();
-    public currentReactable: Ref<string>;
+    public currentReactable: string;
 
     public static create(name: string, formulaInTex: string, components: VariableInformation[]): Reactive<Formula> {
         return reactive(new Formula(name, formulaInTex, components));
@@ -27,7 +27,7 @@ class Formula {
             this.components.set(varInfoElement.name, varInfoElement);
         }
         console.log(this.getComponents());
-        this.currentReactable = ref(this.getComponents()[0].name);
+        this.currentReactable = this.getComponents()[0].name;
     }
 
     public getComponents(): VariableInformation[] {

@@ -28,12 +28,12 @@
 
 <script setup lang="ts">
 import Formula from "@/PlainObjects/formulaInformation";
-import {ref, onMounted} from "vue";
+import {ref, onMounted, PropType} from "vue";
 import katex from "katex";
 
 const { formula } = defineProps({
   formula: {
-    type: Formula,
+    type: Object as PropType<Formula>,
     required: true,
   }
 })
