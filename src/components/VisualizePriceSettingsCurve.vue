@@ -53,7 +53,7 @@ const lambdaComponent: VariableInformation = {
     lambda.value = wage.value / (price.value * (1 - sigma.value));
   },
   value: lambda,
-  label: "lambda (economic parameter) (λ)",
+  label: "lambda (output per worker) (λ)",
   min: 0,
   max: 10,
   step: 0.1,

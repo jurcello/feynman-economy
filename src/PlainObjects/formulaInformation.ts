@@ -26,7 +26,6 @@ class Formula {
         for (const varInfoElement of components) {
             this.components.set(varInfoElement.name, varInfoElement);
         }
-        console.log(this.getComponents());
         this.currentReactable = this.getComponents()[0].name;
     }
 
@@ -35,7 +34,6 @@ class Formula {
     }
 
     public calculateNewValues(): void {
-        console.log("calculateNewValues", this.components, this.currentReactable);
         this.components.get(this.currentReactable)?.reCalculator()
     }
 }

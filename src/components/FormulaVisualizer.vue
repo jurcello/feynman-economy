@@ -41,7 +41,6 @@ const { formula } = defineProps({
 const formulaDiv = ref<HTMLDivElement>();
 
 onMounted(() => {
-  console.log(formula);
   formula.calculateNewValues();
   katex.render(formula.formulaInTex, formulaDiv.value!);
 })

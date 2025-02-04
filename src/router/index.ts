@@ -45,11 +45,6 @@ const routes = [
     name: 'PriceSettingCurve',
     component: PriceSettingCurve,
   },
-  {
-    path: '/price-setting-curve-new',
-    name: 'PriceSettingCurveNew',
-    component: PriceSettingCurveNew,
-  },
 ];
 
 // Create router instance

@@ -1,11 +1,9 @@
 <template>
-  <h1>Price setting curve</h1>
-<VisualizePriceSettingCurve/>
+  <VisualizePriceSettingsCurve/>
 </template>
 
 <script setup lang="ts">
-
-import VisualizePriceSettingCurve from "@/components/VisualizePriceSettingCurve.vue";
+import VisualizePriceSettingsCurve from "@/components/VisualizePriceSettingsCurve.vue";
 </script>
 
 <style scoped>
