@@ -42,13 +42,39 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
 }, string>[]) {
   svg.selectAll(`.${balanceType}`)
       .data(stackedData)
-      .join("rect")
-      .attr("class", balanceType)
-      .attr("fill", (d: any) => color(d.key) as string)
-      .attr("x", x(balanceType) as number)
-      .attr("y", (d: any) => y(d[0][1]))
-      .attr("width", x.bandwidth())
-      .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
+      .join(
+          enter => enter
+              .append("rect")
+              .attr("class", balanceType)
+              .attr("fill", (d: any) => color(d.key) as string)
+              .attr("x", x(balanceType) as number)
+              .attr("width", x.bandwidth())
+              // Start with height 0 at the bottom for the entrance animation
+              .attr("y", (d: any) => y(0))
+              .attr("height", 0)
+              // Then transition to the actual values
+              .call(enter => enter.transition()
+                  .duration(750)
+                  .attr("y", (d: any) => y(d[0][1]))
+                  .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
+              ),
+          update => update
+              // For existing elements, animate to their new positions/heights
+              .call(update => update.transition()
+                  .duration(750)
+                  .attr("y", (d: any) => y(d[0][1]))
+                  .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
+                  .attr("fill", (d: any) => color(d.key) as string)
+              ),
+          exit => exit
+              // Animate the exit by shrinking height to 0
+              .call(exit => exit.transition()
+                  .duration(750)
+                  .attr("y", (d: any) => y(0))
+                  .attr("height", 0)
+                  .remove()
+              )
+      )
 
   svg.selectAll(`.${balanceType}-label`)
       .data(stackedData)
