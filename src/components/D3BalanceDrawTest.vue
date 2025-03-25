@@ -25,8 +25,11 @@ const balance = Balance.createFromInitialBalance('Barbie', initialBalance);
 
 const chart = ref<HTMLElement | null>(null);
 
-const WIDTH = 400;
-const HEIGHT = 300;
+const margin = { top: 10, right: 10, bottom: 20, left: 20 };
+const CHART_WIDTH = 400;
+const CHART_HEIGHT = 300;
+const WIDTH = 400 - margin.left - margin.right;
+const HEIGHT = 300 - margin.top - margin.bottom;
 
 const x = d3.scaleBand()
     .domain(Object.keys(initialBalance))
@@ -43,7 +46,7 @@ const color = d3.scaleOrdinal()
     .range(Object.values(colorMappings));
 
 
-function drawBalances(svg: d3.Selection<SVGSVGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
+function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
 }, string>[]) {
   svg.selectAll(`.${balanceType}`)
@@ -80,12 +83,35 @@ onMounted(() => {
 
   const svg = d3.select(chart.value)
       .append("svg")
-      .attr("width", WIDTH)
-      .attr("height", HEIGHT) as d3.Selection<SVGSVGElement, unknown, null | HTMLElement, any>;
+      .attr("width", CHART_WIDTH)
+      .attr("height", CHART_HEIGHT)
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`) as d3.Selection<SVGGElement, unknown, null | HTMLElement, any>;
 
   drawBalances(svg, "debit", stackedDebit);
   drawBalances(svg, "credit", stackedCredit);
 
+  const bottomLabels = [
+    {
+      type: 'debit',
+      label: 'Debit',
+    },
+    {
+      type: 'credit',
+      label: 'Credit',
+    }
+  ]
+  svg.append("g")
+      .attr("transform", `translate(0, ${HEIGHT})`)
+      .selectAll(".bottom-label")
+      .data(bottomLabels)
+      .join("text")
+      .text((d: any) => d.label)
+      .attr("class", "bottom-label")
+      .attr("x", (d: any) => x(d.type) as number + x.bandwidth() / 2)
+      .attr("y", 20)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "12px")
 })
 </script>
 
