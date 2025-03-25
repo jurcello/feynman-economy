@@ -7,6 +7,7 @@ import MoneyCreation from "@/views/MoneyCreation.vue";
 import MoneyCreationPart2 from "@/views/MoneyCreationPart2.vue";
 import PriceSettingCurve from "@/views/PriceSettingCurve.vue";
 import PriceSettingCurveNew from "@/views/PriceSettingCurveNew.vue";
+import BarchartTest from "@/views/BarchartTest.vue";
 
 // Define routes for your app
 const routes = [
@@ -44,6 +45,11 @@ const routes = [
     path: '/price-setting-curve',
     name: 'PriceSettingCurve',
     component: PriceSettingCurve,
+  },
+  {
+    path: '/barchart',
+    name: 'BarchartTest',
+    component: BarchartTest,
   },
 ];
 

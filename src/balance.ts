@@ -3,7 +3,7 @@ enum DebitTypes {
     backAccount = 'Back account',
     property = 'Bezit',
     loan = 'Leningen',
-    noneMoney = 'Non-Money',
+    noneMoney = 'Maakt niet uit',
     nonMoneyHouse = 'Non-Money (House)',
     reserves = 'Reserves',
     currency = 'Valuta',
@@ -23,7 +23,7 @@ enum CreditTypes {
     deposits = "Deposito's",
     newDeposits = "Nieuwe Deposito's",
     newLoans = "Nieuwe Leningen",
-    noneMoney = 'Non-Money',
+    noneMoney = 'Maakt niet uit',
     none = 'NoneCredit',
 }
 
