@@ -19,8 +19,8 @@ const chart = ref<HTMLElement | null>(null);
 const margin = {top: 10, right: 10, bottom: 20, left: 20 };
 const CHART_WIDTH = props.width;
 const CHART_HEIGHT = props.height;
-const WIDTH = 400 - margin.left - margin.right;
-const HEIGHT = 300 - margin.top - margin.bottom;
+const WIDTH = CHART_WIDTH - margin.left - margin.right;
+const HEIGHT = CHART_HEIGHT - margin.top - margin.bottom;
 
 const x = d3.scaleBand()
     .domain(['debit', 'credit'])
@@ -35,7 +35,6 @@ const y = d3.scaleLinear()
 const color = d3.scaleOrdinal()
     .domain(Object.keys(colorMappings))
     .range(Object.values(colorMappings));
-
 
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
@@ -64,13 +63,6 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
 }
 
 onMounted(() => {
-  const stackedDebit = d3
-      .stack()
-      .keys(Object.keys(props.balance.debit))([props.balance.debit]);
-
-  const stackedCredit = d3
-      .stack()
-      .keys(Object.keys(props.balance.credit))([props.balance.credit]);
 
   const svg = d3.select(chart.value)
       .append("svg")
@@ -79,8 +71,26 @@ onMounted(() => {
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`) as d3.Selection<SVGGElement, unknown, null | HTMLElement, any>;
 
-  drawBalances(svg, "debit", stackedDebit);
-  drawBalances(svg, "credit", stackedCredit);
+  const redraw = () => {
+    const stackedDebit = d3
+        .stack()
+        .keys(Object.keys(props.balance.debit))([props.balance.debit]);
+
+    const stackedCredit = d3
+        .stack()
+        .keys(Object.keys(props.balance.credit))([props.balance.credit]);
+
+    drawBalances(svg, "debit", stackedDebit);
+    drawBalances(svg, "credit", stackedCredit);
+  }
+
+  redraw();
+
+  props.balance.registerBalanceStatusCallback((status) => {
+    console.log('Balance status updated:', status.inBalance);
+    redraw();
+  })
+
 
   const bottomLabels = [
     {
