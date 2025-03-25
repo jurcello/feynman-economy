@@ -78,15 +78,48 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
 
   svg.selectAll(`.${balanceType}-label`)
       .data(stackedData)
-      .join("text")
-      .attr("class", `${balanceType}-label`)
-      .attr("x", x(balanceType) as number + x.bandwidth() / 2)
-      .attr("y", (d: any) => y(d[0][0]) - 10)
-      .text((d: any) => `${d.key}: € ${d[0].data[d.key]}`)
-      .attr("text-anchor", "middle")
-      .attr("alignment-baseline", "hanging")
-      .attr("fill", "white")
-      .attr("font-size", "12px")
+      .join(
+          enter => enter
+              .append("text")
+              .attr("class", `${balanceType}-label`)
+              .attr("x", x(balanceType) as number + x.bandwidth() / 2)
+              .attr("y", (d: any) => y(d[0][0]) - 10)
+              .text((d: any) => {
+                const height = y(d[0][0]) - y(d[0][1]);
+
+                return height > 25? `${d.key}: € ${d[0].data[d.key]}`: ""
+              })
+              .attr("text-anchor", "middle")
+              .attr("alignment-baseline", "hanging")
+              .attr("fill", "white")
+              .attr("font-size", "12px")
+              .attr("opacity", "0")
+              .call(enter => enter.transition()
+                  .duration(750)
+                  .delay((d,i) => i*50 + 150)
+                  .attr("opacity", "1")
+                  .attr("y", (d: any) => y(d[0][0]) - 10)
+              ),
+          update => update.text((d: any) => {
+                  const height = y(d[0][0]) - y(d[0][1]);
+                  return height > 25 ? `${d.key}: € ${d[0].data[d.key]}`: ""
+                })
+              .call(update => update.transition()
+                  .duration(750)
+                  .attr("y", (d: any) => (y(d[0][0]) - 10))
+                  .attr("opacity", (d: any) => {
+                    const height = y(d[0][0]) - y(d[0][1]);
+                    return height > 25 ? 1 : 0;
+                  })
+              ),
+          exit => exit
+              .call(exit => exit.transition()
+                  .duration(750)
+                  .attr("opacity", 0)
+                  .remove()
+              )
+      )
+
 }
 
 onMounted(() => {
