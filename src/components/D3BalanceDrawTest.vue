@@ -55,11 +55,21 @@ function drawBalances(svg: d3.Selection<SVGSVGElement, unknown, null | HTMLEleme
       .attr("y", (d: any) => y(d[0][1]))
       .attr("width", x.bandwidth())
       .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
+
+  svg.selectAll(`.${balanceType}-label`)
+      .data(stackedData)
+      .join("text")
+      .attr("class", `${balanceType}-label`)
+      .attr("x", x(balanceType) as number + x.bandwidth() / 2)
+      .attr("y", (d: any) => y(d[0][0]) - 10)
+      .text((d: any) => `${d.key}: € ${d[0].data[d.key]}`)
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "hanging")
+      .attr("fill", "white")
+      .attr("font-size", "12px")
 }
 
 onMounted(() => {
-  const data = balance.getTotalMoneyAggregates();
-
   const stackedDebit = d3
       .stack()
       .keys(Object.keys(balance.debit))([balance.debit]);
