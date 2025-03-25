@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import {Balance, Transaction, CreditTypes, DebitTypes, InitialBalance} from "@/balance";
+import {Balance, CreditTypes, DebitTypes, InitialBalance} from "@/balance";
 import {onMounted, ref} from "vue";
 import * as d3 from "d3"
 import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
@@ -43,6 +43,20 @@ const color = d3.scaleOrdinal()
     .range(Object.values(colorMappings));
 
 
+function drawBalances(svg: d3.Selection<SVGSVGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
+  [p: string]: number
+}, string>[]) {
+  svg.selectAll(`.${balanceType}`)
+      .data(stackedData)
+      .join("rect")
+      .attr("class", balanceType)
+      .attr("fill", (d: any) => color(d.key) as string)
+      .attr("x", x(balanceType) as number)
+      .attr("y", (d: any) => y(d[0][1]))
+      .attr("width", x.bandwidth())
+      .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
+}
+
 onMounted(() => {
   const data = balance.getTotalMoneyAggregates();
 
@@ -57,28 +71,10 @@ onMounted(() => {
   const svg = d3.select(chart.value)
       .append("svg")
       .attr("width", WIDTH)
-      .attr("height", HEIGHT);
+      .attr("height", HEIGHT) as d3.Selection<SVGSVGElement, unknown, null | HTMLElement, any>;
 
-  svg.selectAll(".debit")
-      .data(stackedDebit)
-      .join("rect")
-      .attr("class", "debit")
-      .attr("fill", (d: any) => color(d.key) as string)
-      .attr("x", x('debit') as number)
-      .attr("y", (d: any) => y(d[0][1]))
-      .attr("width", x.bandwidth())
-      .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
-
-  svg.selectAll(".credit")
-      .data(stackedCredit)
-      .join("rect")
-      .attr("class", "debit")
-      .attr("fill", (d: any) => color(d.key) as string)
-      .attr("x", x('credit') as number)
-      .attr("y", (d: any) => y(d[0][1]))
-      .attr("width", x.bandwidth())
-      .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]));
-
+  drawBalances(svg, "debit", stackedDebit);
+  drawBalances(svg, "credit", stackedCredit);
 
 })
 </script>
