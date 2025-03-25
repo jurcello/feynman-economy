@@ -7,6 +7,7 @@ import {Balance} from "@/balance";
 import * as d3 from "d3";
 import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
 import {onMounted, ref} from "vue";
+import balance from "@/views/Balance.vue";
 
 const props = defineProps<{
   balance: Balance;
@@ -80,6 +81,11 @@ onMounted(() => {
         .stack()
         .keys(Object.keys(props.balance.credit))([props.balance.credit]);
 
+
+    const currentDomainY = y.domain()[1];
+    if (props.balance.getTotalMoneyAggregates().total > currentDomainY) {
+      y.domain([0, props.balance.getTotalMoneyAggregates().total * 1.5]);
+    }
     drawBalances(svg, "debit", stackedDebit);
     drawBalances(svg, "credit", stackedCredit);
   }
