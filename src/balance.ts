@@ -63,6 +63,11 @@ export type MoneyAggregates = {
     cash: number,
 };
 
+export type InitialBalance = {
+    debit: { type: DebitTypes, amount: number }[],
+    credit: { type: CreditTypes, amount: number }[]
+}
+
 class Balance {
     public name: string;
     public debit: { [key: string]: number };
@@ -81,6 +86,18 @@ class Balance {
         this.balanceStatus = new BalanceStatus();
     }
 
+    public static createFromInitialBalance(name: string, initialBalance: InitialBalance): Balance {
+        const balance = new Balance(name);
+        for (const debit of initialBalance.debit) {
+            balance.debit[debit.type] = debit.amount;
+            balance.totalDebit += debit.amount;
+        }
+        for (const credit of initialBalance.credit) {
+            balance.credit[credit.type] = credit.amount;
+            balance.totalCredit += credit.amount;
+        }
+        return balance;
+    }
     public clear(): void {
         this.debit = {};
         this.credit = {};
