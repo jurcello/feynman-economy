@@ -8,6 +8,7 @@ import * as d3 from "d3";
 import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
 import {onMounted, ref} from "vue";
 import balance from "@/views/Balance.vue";
+import Colors from "@/colors";
 
 const props = defineProps<{
   balance: Balance;
@@ -48,6 +49,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               .attr("class", balanceType)
               .attr("fill", (d: any) => color(d.key) as string)
               .attr("x", x(balanceType) as number)
+              .attr("stroke", "black")
               .attr("width", x.bandwidth())
               // Start with height 0 at the bottom for the entrance animation
               .attr("y", (d: any) => y(0))
@@ -91,7 +93,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               })
               .attr("text-anchor", "middle")
               .attr("alignment-baseline", "hanging")
-              .attr("fill", "white")
+              .attr("fill", (d: any) => color(d.key) == Colors.white ? "black" : "white")
               .attr("font-size", "12px")
               .attr("opacity", "0")
               .call(enter => enter.transition()

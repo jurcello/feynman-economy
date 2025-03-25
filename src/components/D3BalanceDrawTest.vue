@@ -26,8 +26,8 @@ const addTransaction = () => {
   balance.addTransaction(new Transaction(
       'Test',
       40,
-      { type: DebitTypes.property},
-      { type: CreditTypes.equity},
+      { type: DebitTypes.cash},
+      { type: CreditTypes.noneMoney},
   ));
 }
 </script>
