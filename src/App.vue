@@ -2,7 +2,7 @@
   <div id="app">
     <div class="container mx-auto justify-center flex">
       <div class="w-4/5">
-        <div class="text-center">
+        <div class="header">
           <h1>Feynman economics</h1>
           <Navigation />
         </div>
@@ -23,5 +23,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.header {
+  @apply text-center sticky top-0 mb-6 bg-white border-b border-black z-10 pb-4;
+}
 </style>
