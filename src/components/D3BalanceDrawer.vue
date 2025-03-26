@@ -41,25 +41,33 @@ const color = d3.scaleOrdinal()
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
 }, string>[]) {
+
   svg.selectAll(`.${balanceType}`)
       .data(stackedData)
       .join(
-          enter => enter
-              .append("rect")
-              .attr("class", balanceType)
-              .attr("fill", (d: any) => color(d.key) as string)
-              .attr("x", x(balanceType) as number)
-              .attr("stroke", "black")
-              .attr("width", x.bandwidth())
-              // Start with height 0 at the bottom for the entrance animation
-              .attr("y", (d: any) => y(0))
-              .attr("height", 0)
-              // Then transition to the actual values
-              .call(enter => enter.transition()
-                  .duration(750)
-                  .attr("y", (d: any) => y(d[0][1]))
-                  .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
-              ),
+          enter => {
+            const enterData = enter.data();
+            const startY = enterData.length > 0 ? enterData[0][0][0] : 0;
+            return enter
+                .append("rect")
+                .attr("class", balanceType)
+                .attr("fill", (d: any) => color(d.key) as string)
+                .attr("x", x(balanceType) as number)
+                .attr("stroke", "black")
+                .attr("width", x.bandwidth())
+                // Start with height 0 at the bottom for the entrance animation
+                .attr("y", (d: any) => {
+                  return y(startY);
+                })
+
+                .attr("height", 0)
+                // Then transition to the actual values
+                .call(enter => enter.transition()
+                    .duration(750)
+                    .attr("y", (d: any) => y(d[0][1]))
+                    .attr("height", (d: any) => y(d[0][0]) - y(d[0][1]))
+                )
+          },
           update => update
               // For existing elements, animate to their new positions/heights
               .call(update => update.transition()
