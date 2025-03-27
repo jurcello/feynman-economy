@@ -1,13 +1,23 @@
 <template>
-  <h2 class="text-center">Balance draw test using d3</h2>
   <div class="flex flex-col items-center scroll-container">
-    <div class="explanation-item text-item--top"><p>
-      Dit is een test om te kijken hoe scrollen kan werken met scrolltriggers.
-      Voor nu komt is er nog niet veel te zien.<br>
-      Start met scrollen om de animatie te beginnen.
-    </p></div>
+    <div class="first-page sheet">
+      <h1 class="text-center uppercase">De balans</h1>
+      <div class="explanation-item">
+        <p>
+          Om geldschepping te kunnen begrijpen wordt in de voorbeelden vaak gewerkt met een balans.
+          Je moet de balans dus begrijpen om verder te kunnen met de uitleg van geldschepping.
+        </p>
+        <p>
+          We nemen een een persoon als voorbeeld.
+          In de economie wordt voor personen geen balans gebruikt, maar je kunt het daar net zo goed gebruiken.
+        </p>
+      </div>
+      <div class="explanation-item arrow" id="arrow-animate">
+        <CircleArrow :size="120" />
+      </div>
+    </div>
     <div class="explanation-item" id="balance">
-    <D3BalanceDrawer :balance="balance" :width="400" :height="400" />
+    <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" />
     </div>
     <div class="explanation-item text-item" id="explain-left-and-right">
       <p>Laten we een transactie doen</p>
@@ -27,7 +37,8 @@ import {Balance, CreditTypes, DebitTypes, InitialBalance, Transaction} from "@/b
 import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
 import {gsap} from "gsap";
 import {ScrollTrigger} from "gsap/ScrollTrigger";
-import {onMounted} from "vue";
+import {onMounted, defineProps} from "vue";
+import CircleArrow from "@/components/Svg/CircleArrow.vue";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,37 +51,49 @@ onMounted(() => {
       end: 'bottom top',
       pin: true,
       markers: true,
-    }
+    },
+    opacity: 1,
+    duration: 1,
   });
-  gsap.to('#first-transaction', {
+  gsap.to('#explain-left-and-right', {
     scrollTrigger: {
-      trigger: '#first-transaction',
+      trigger: '#explain-left-and-right',
       start: 'top top+=400',
       end: 'bottom top',
-    },
-    onStart: () => {
-      setTimeout(addTransaction, 1000);
     },
     opacity: 1,
     duration: 1,
 
   })
 
+  gsap.to('#arrow-animate', {
+    transform: "translateY(25px)",
+    repeat: -1,
+    duration: 1,
+    yoyo: true,
+    ease: "sine",
+  })
+
 })
-const initialBalance: InitialBalance = {
-  debit: [
-    { type: DebitTypes.currency, amount: 100 },
-    { type: DebitTypes.deposits, amount: 50 },
-    { type: DebitTypes.property, amount: 100 },
-  ],
-  credit: [
-    { type: CreditTypes.equity, amount: 200 },
-    { type: CreditTypes.debt, amount: 50 },
-  ]
-};
 
 
-const balance = Balance.createFromInitialBalance('Barbie', initialBalance);
+const balance = new Balance('Eerste balans');
+
+// Define props with the correct type structure
+defineProps({
+  width: {
+    type: Number,
+    default: 400
+  },
+  height: {
+    type: Number,
+    default: 400
+  },
+  maxY: {
+    type: Number,
+    default: 200
+  }
+});
 
 const addTransaction = () => {
   balance.addTransaction(new Transaction(
@@ -85,6 +108,17 @@ const addTransaction = () => {
 <style scoped>
 .explanation-item {
   width: 400px;
+}
+
+.sheet {
+  height: calc(100dvh - 100px);
+}
+
+.first-page {
+  @apply flex flex-col justify-around;
+}
+.arrow {
+  @apply flex justify-center;
 }
 .text-item {
   background-color: rgba(255, 255, 255, 0.5);

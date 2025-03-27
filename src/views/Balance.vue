@@ -1,15 +1,14 @@
 <template>
   <div>
-    <h1>De balans</h1>
-    <BalanceExplanationSketch />
+    <D3BalanceExplanation />
   </div>
 </template>
 
 <script>
-import BalanceExplanationSketch from "../components/BalanceExplanationSketch.vue";
+import D3BalanceExplanation from "@/components/D3BalanceExplanation.vue";
 
 export default {
   name: 'Balance',
-  components: {BalanceExplanationSketch},
+  components: {D3BalanceExplanation},
 };
 </script>

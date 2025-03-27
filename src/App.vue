@@ -26,5 +26,6 @@ export default {
 <style scoped>
 .header {
   @apply text-center sticky top-0 mb-6 bg-white border-b border-black z-10 pb-4;
+  height: 100px;
 }
 </style>

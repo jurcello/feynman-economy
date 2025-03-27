@@ -13,6 +13,7 @@ const props = defineProps<{
   balance: Balance;
   width: number;
   height: number;
+  maxY?: number | null,
 }>();
 
 const chart = ref<HTMLElement | null>(null);
@@ -29,7 +30,7 @@ const x = d3.scaleBand()
     .padding(0.1);
 
 const y = d3.scaleLinear()
-    .domain([0, props.balance.getTotalMoneyAggregates().total * 1.5])
+    .domain([0, Number(props.maxY) || props.balance.getTotalMoneyAggregates().total * 1.5])
     .nice()
     .range([HEIGHT, 0]);
 
