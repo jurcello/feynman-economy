@@ -14,6 +14,7 @@ const props = defineProps<{
   width: number;
   height: number;
   maxY?: number | null,
+  debitDescription?: string,
 }>();
 
 const chart = ref<HTMLElement | null>(null);
@@ -170,7 +171,7 @@ onMounted(() => {
   const bottomLabels = [
     {
       type: 'debit',
-      label: 'Debit / Bezittingen',
+      label: props.debitDescription ?? 'Debit / Bezittingen',
     },
     {
       type: 'credit',

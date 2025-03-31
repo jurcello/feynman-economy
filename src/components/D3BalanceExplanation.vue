@@ -1,33 +1,36 @@
 <template>
-    <div class="first-page sheet">
-      <h1 class="text-center uppercase">De balans</h1>
-      <div class="explanation-item">
-        <p>
-          Om geldschepping te kunnen begrijpen wordt in de voorbeelden vaak gewerkt met een balans.
-          Je moet de balans dus begrijpen om verder te kunnen met de uitleg van geldschepping.
-        </p>
-        <p>
-          We nemen een een persoon als voorbeeld.
-          In de economie wordt voor personen geen balans gebruikt, maar je kunt het daar net zo goed gebruiken.
-        </p>
-      </div>
-      <div class="explanation-item arrow" id="arrow-animate">
-        <CircleArrow :size="120" />
-      </div>
+  <div class="first-page sheet">
+    <h1 class="text-center uppercase">De balans</h1>
+    <div class="explanation-item">
+      <p>
+        Om geldschepping te kunnen begrijpen wordt in de voorbeelden vaak gewerkt met een balans.
+        Je moet de balans dus begrijpen om verder te kunnen met de uitleg van geldschepping.
+      </p>
+      <p>
+        We nemen een een persoon als voorbeeld.
+        In de economie wordt voor personen geen balans gebruikt, maar je kunt het daar net zo goed gebruiken.
+      </p>
     </div>
-    <div class="sheet bg-cyan-200" id="balance">
-      <div class="testing">Met inhoed</div>
-      <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" />
+    <div class="explanation-item arrow" id="arrow-animate">
+      <CircleArrow :size="120" />
     </div>
-    <div class="explanation-item text-item" id="explain-left-and-right">
-      <p>Laten we een transactie doen</p>
+  </div>
+  <div class="sheet bg-cyan-200" id="balance">
+    <div class="explanation-item">
+      <p>Hieronder zie je de balans. Je ziet op dit moment alleen maar de beschrijvingen van de balans:</p>
     </div>
-    <div class="explanation-item text-item">
-      <p>Dit is de tweede text.</p>
+    <div>
+      <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" debit-description="Bezittingen"/>
     </div>
-    <div class="explanation-item text-item" id="explanation-end">
-      <p>Dit is de derde text.</p>
+  </div>
+  <div class="explanation-items">
+    <div class="text-item last-explanation" id="scroll-text">
+      Eigenlijk heten de kanten anders...
     </div>
+  </div>
+  <div class="sheet bg-yellow-200 z-10" id="last">
+    <div><p>Hi</p></div>
+  </div>
 
 </template>
 
@@ -42,28 +45,30 @@ import CircleArrow from "@/components/Svg/CircleArrow.vue";
 gsap.registerPlugin(ScrollTrigger);
 
 onMounted(() => {
-  // gsap.to('#balance', {
-  //   scrollTrigger: {
-  //     trigger: '#balance',
-  //     endTrigger: '#explanation-end',
-  //     start: 'top-=40 top',
-  //     end: 'bottom top',
-  //     pin: true,
-  //     markers: true,
-  //   },
-  //   opacity: 1,
-  //   duration: 1,
-  // });
-  // gsap.to('#explain-left-and-right', {
-  //   scrollTrigger: {
-  //     trigger: '#explain-left-and-right',
-  //     start: 'top top+=400',
-  //     end: 'bottom top',
-  //   },
-  //   opacity: 1,
-  //   duration: 1,
-  //
-  // })
+  gsap.to('#balance', {
+    scrollTrigger: {
+      trigger: '#balance',
+      endTrigger: '#last',
+      start: 'top-=100px top',
+      end: 'top bottom',
+      pin: true,
+      pinSpacing: false,
+      markers: false,
+    },
+    opacity: 1,
+    duration: 1,
+  });
+  gsap.to('#scroll-text', {
+    opacity: 1,
+    y: 0,
+    scrollTrigger: {
+      trigger: '#balance',
+      start: 'top+=200 top', // Adjust this to control when the text appears
+      end: 'top+=400 top', // Adjust this to control the scroll range for the animation
+      scrub: true,
+      toggleActions: 'play none none reverse',
+    }
+  });
 
   gsap.to('#arrow-animate', {
     transform: "translateY(25px)",
@@ -71,7 +76,7 @@ onMounted(() => {
     duration: 1,
     yoyo: true,
     ease: "sine",
-  })
+  });
 
 })
 
@@ -120,6 +125,11 @@ const addTransaction = () => {
 .arrow {
   @apply flex justify-center;
 }
+
+.explanation-items {
+  @apply flex flex-col items-center;
+}
+
 .text-item {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid #C3C3C3;
@@ -127,12 +137,10 @@ const addTransaction = () => {
   margin-top: 10px;
   margin-bottom: 300px;
   z-index: 3;
+  width: 400px;
 }
 
-#explain-left-and-right {
-  opacity: 0;
-}
-.scroll-container {
-  height: 500vh;
+.last-explanation {
+  margin-bottom: calc(100vh);
 }
 </style>
