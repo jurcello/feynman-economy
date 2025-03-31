@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center scroll-container">
+  <div class="flex flex-col items-center scroll-container border border-gray-300">
     <div class="first-page sheet">
       <h1 class="text-center uppercase">De balans</h1>
       <div class="explanation-item">
@@ -16,8 +16,9 @@
         <CircleArrow :size="120" />
       </div>
     </div>
-    <div class="explanation-item" id="balance">
-    <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" />
+    <div class="explanation-item sheet bg-cyan-200" id="balance">
+      <div class="testing">Met inhoed</div>
+      <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" />
     </div>
     <div class="explanation-item text-item" id="explain-left-and-right">
       <p>Laten we een transactie doen</p>
@@ -43,28 +44,28 @@ import CircleArrow from "@/components/Svg/CircleArrow.vue";
 gsap.registerPlugin(ScrollTrigger);
 
 onMounted(() => {
-  gsap.to('#balance', {
-    scrollTrigger: {
-      trigger: '#balance',
-      endTrigger: '#explanation-end',
-      start: 'top-=40 top',
-      end: 'bottom top',
-      pin: true,
-      markers: true,
-    },
-    opacity: 1,
-    duration: 1,
-  });
-  gsap.to('#explain-left-and-right', {
-    scrollTrigger: {
-      trigger: '#explain-left-and-right',
-      start: 'top top+=400',
-      end: 'bottom top',
-    },
-    opacity: 1,
-    duration: 1,
-
-  })
+  // gsap.to('#balance', {
+  //   scrollTrigger: {
+  //     trigger: '#balance',
+  //     endTrigger: '#explanation-end',
+  //     start: 'top-=40 top',
+  //     end: 'bottom top',
+  //     pin: true,
+  //     markers: true,
+  //   },
+  //   opacity: 1,
+  //   duration: 1,
+  // });
+  // gsap.to('#explain-left-and-right', {
+  //   scrollTrigger: {
+  //     trigger: '#explain-left-and-right',
+  //     start: 'top top+=400',
+  //     end: 'bottom top',
+  //   },
+  //   opacity: 1,
+  //   duration: 1,
+  //
+  // })
 
   gsap.to('#arrow-animate', {
     transform: "translateY(25px)",
@@ -109,9 +110,14 @@ const addTransaction = () => {
 .explanation-item {
   width: 400px;
 }
-
+.testing {
+  border: 2px solid red;
+}
 .sheet {
   height: calc(100dvh - 100px);
+  margin-left: -100px;
+  margin-right: -100px;
+  padding: 100px;
 }
 
 .first-page {

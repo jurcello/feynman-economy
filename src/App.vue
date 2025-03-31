@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <div class="container mx-auto justify-center flex">
-      <div class="w-4/5">
+    <div class="w-full mx-auto flex">
+      <div class="w-full">
         <div class="header">
           <h1>Feynman economics</h1>
           <Navigation />
