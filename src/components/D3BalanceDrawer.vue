@@ -6,7 +6,7 @@
 import {Balance} from "@/balance";
 import * as d3 from "d3";
 import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import Colors from "@/colors";
 
 const props = defineProps<{
@@ -132,9 +132,13 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
       )
 
 }
+let redraw: () => void;
+
+watch(() => props.debitDescription, (newValue, oldValue) => {
+  redraw();
+});
 
 onMounted(() => {
-
   const svg = d3.select(chart.value)
       .append("svg")
       .attr("width", CHART_WIDTH)
@@ -142,7 +146,19 @@ onMounted(() => {
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`) as d3.Selection<SVGGElement, unknown, null | HTMLElement, any>;
 
-  const redraw = () => {
+  redraw = () => {
+    console.log('redrawing', svg);
+    const bottomLabels = [
+      {
+        type: 'debit',
+        label: props.debitDescription ?? 'Debit / Bezittingen',
+      },
+      {
+        type: 'credit',
+        label: 'Credit / Verplichtingen',
+      }
+    ]
+
     const stackedDebit = d3
         .stack()
         .keys(Object.keys(props.balance.debit))([props.balance.debit]);
@@ -158,6 +174,24 @@ onMounted(() => {
     }
     drawBalances(svg, "debit", stackedDebit);
     drawBalances(svg, "credit", stackedCredit);
+
+    let bottomLabelGroup = svg.select<SVGGElement>(".bottom-label-group");
+    if (bottomLabelGroup.empty()) {
+      bottomLabelGroup = svg.append("g")
+          .attr("class", "bottom-label-group")
+          .attr("transform", `translate(0, ${HEIGHT})`);
+    }
+
+    bottomLabelGroup
+        .selectAll(".bottom-label")
+        .data(bottomLabels)
+        .join("text")
+        .text((d: any) => d.label)
+        .attr("class", "bottom-label")
+        .attr("x", (d: any) => x(d.type) as number + x.bandwidth() / 2)
+        .attr("y", 15)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "12px")
   }
 
   redraw();
@@ -166,29 +200,6 @@ onMounted(() => {
     console.log('Balance status updated:', status.inBalance);
     redraw();
   })
-
-
-  const bottomLabels = [
-    {
-      type: 'debit',
-      label: props.debitDescription ?? 'Debit / Bezittingen',
-    },
-    {
-      type: 'credit',
-      label: 'Credit / Verplichtingen',
-    }
-  ]
-  svg.append("g")
-      .attr("transform", `translate(0, ${HEIGHT})`)
-      .selectAll(".bottom-label")
-      .data(bottomLabels)
-      .join("text")
-      .text((d: any) => d.label)
-      .attr("class", "bottom-label")
-      .attr("x", (d: any) => x(d.type) as number + x.bandwidth() / 2)
-      .attr("y", 15)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "12px")
 })
 </script>
 

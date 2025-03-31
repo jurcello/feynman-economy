@@ -20,7 +20,7 @@
       <p>Hieronder zie je de balans. Je ziet op dit moment alleen maar de beschrijvingen van de balans:</p>
     </div>
     <div>
-      <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" debit-description="Bezittingen"/>
+      <D3BalanceDrawer :balance="balance" :width="400" :height="400" :maxY="200" :debit-description="debitDescription"/>
     </div>
   </div>
   <div class="explanation-items">
@@ -39,8 +39,10 @@ import {Balance, CreditTypes, DebitTypes, InitialBalance, Transaction} from "@/b
 import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
 import {gsap} from "gsap";
 import {ScrollTrigger} from "gsap/ScrollTrigger";
-import {onMounted, defineProps} from "vue";
+import {onMounted, defineProps, ref} from "vue";
 import CircleArrow from "@/components/Svg/CircleArrow.vue";
+
+const debitDescription = ref<string>('Bezittingen');
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -62,11 +64,12 @@ onMounted(() => {
     opacity: 1,
     y: 0,
     scrollTrigger: {
-      trigger: '#balance',
-      start: 'top+=200 top', // Adjust this to control when the text appears
-      end: 'top+=400 top', // Adjust this to control the scroll range for the animation
-      scrub: true,
-      toggleActions: 'play none none reverse',
+      trigger: '#scroll-text',
+      start: 'top center',
+      markers: true,
+      onEnter: () => {
+        debitDescription.value = 'Bezittingenssss';
+      }
     }
   });
 
