@@ -1,5 +1,5 @@
 <template>
-  <div ref="chart"></div>
+  <div ref="chart" class="bg-white"></div>
 </template>
 
 <script setup lang="ts">
@@ -14,7 +14,8 @@ const props = defineProps<{
   width: number;
   height: number;
   maxY?: number | null,
-  debitDescription?: string,
+  debitDescription?: string | null,
+  creditDescription?: string | null,
 }>();
 
 const chart = ref<HTMLElement | null>(null);
@@ -137,6 +138,9 @@ let redraw: () => void;
 watch(() => props.debitDescription, (newValue, oldValue) => {
   redraw();
 });
+watch(() => props.creditDescription, (newValue, oldValue) => {
+  redraw();
+});
 
 onMounted(() => {
   const svg = d3.select(chart.value)
@@ -147,7 +151,6 @@ onMounted(() => {
       .attr("transform", `translate(${margin.left}, ${margin.top})`) as d3.Selection<SVGGElement, unknown, null | HTMLElement, any>;
 
   redraw = () => {
-    console.log('redrawing', svg);
     const bottomLabels = [
       {
         type: 'debit',
@@ -155,7 +158,7 @@ onMounted(() => {
       },
       {
         type: 'credit',
-        label: 'Credit / Verplichtingen',
+        label: props.creditDescription ?? 'Credit / Verplichtingen',
       }
     ]
 
