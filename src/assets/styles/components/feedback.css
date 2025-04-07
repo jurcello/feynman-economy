@@ -1,0 +1,15 @@
+.warning {
+    @apply bg-yellow-100 text-yellow-700 font-medium p-4 rounded mb-4;
+}
+
+.warning:hover {
+    @apply bg-yellow-200;
+}
+
+.error {
+    @apply bg-red-100 text-red-700 font-medium p-4 rounded mb-4;
+}
+
+.error:hover {
+    @apply bg-red-200;
+}

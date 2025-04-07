@@ -1,0 +1,47 @@
+.btn {
+    @apply bg-blue-500 text-white font-medium py-2 px-4 rounded mb-2 cursor-pointer;
+}
+
+.btn:hover {
+    @apply bg-blue-600;
+}
+
+.btn-primary {
+    @apply bg-green-500 text-white font-bold py-2 px-4 rounded-lg;
+}
+
+.btn-primary:hover {
+    @apply bg-green-600;
+}
+
+.btn-secondary {
+    @apply bg-gray-500 text-white font-medium py-2 px-4 rounded;
+}
+
+.btn-secondary:hover {
+    @apply bg-gray-600;
+}
+
+.btn-outline {
+    @apply border border-blue-500 text-blue-500 font-medium py-2 px-4 rounded;
+}
+
+.btn-outline:hover {
+    @apply bg-blue-500 text-white;
+}
+
+.btn:disabled {
+    @apply bg-blue-300 text-white cursor-not-allowed;
+}
+
+.btn-primary:disabled {
+    @apply bg-green-300 text-white cursor-not-allowed;
+}
+
+.btn-secondary:disabled {
+    @apply bg-gray-300 text-white cursor-not-allowed;
+}
+
+.btn-outline:disabled {
+    @apply border border-blue-300 text-blue-300 cursor-not-allowed;
+}

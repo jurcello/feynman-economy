@@ -1,0 +1,9 @@
+@import "tailwindcss/base";
+/* Resets styles and adds base utility classes */
+@import "tailwindcss/components";
+/* Includes core Tailwind CSS components */
+@import "tailwindcss/utilities";
+/* Includes utility classes like margins, paddings, etc. */
+@import "base/base.css";
+@import "components/buttons.css";
+@import "components/feedback.css";
