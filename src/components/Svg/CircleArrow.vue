@@ -1,5 +1,5 @@
 <template>
-  <svg :width="size" :height="size" viewBox="0 0 100 100">
+  <svg :width="size" :height="size" viewBox="0 0 100 100" class="bouncing">
     <!-- Circle -->
     <circle
         cx="50"
@@ -23,10 +23,24 @@
 </template>
 
 <script setup lang="ts">
+import {gsap} from "gsap";
+import {onMounted} from "vue";
+
 defineProps({
   size: {
     type: Number,
     default: 100
   }
 });
+
+onMounted(() => {
+  gsap.to('.bouncing', {
+    transform: "translateY(25px)",
+    repeat: -1,
+    duration: 1,
+    yoyo: true,
+    ease: "sine",
+  });
+})
+
 </script>

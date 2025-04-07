@@ -102,7 +102,6 @@
 import {Balance, CreditTypes, DebitTypes, InitialBalance, Transaction} from "@/balance";
 import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
 import {gsap} from "gsap";
-import {ScrollTrigger} from "gsap/ScrollTrigger";
 import {onMounted, defineProps, ref} from "vue";
 import CircleArrow from "@/components/Svg/CircleArrow.vue";
 
@@ -145,7 +144,6 @@ const addExtraPocketMoney = () => {
   const transaction = new Transaction("Extra pocket money", 50, { type: DebitTypes.cash }, { type: CreditTypes.equity });
   balance.addTransaction(transaction);
 }
-gsap.registerPlugin(ScrollTrigger);
 
 const scrollTriggerDefaults = {
   start: 'top center-=100px',
@@ -232,15 +230,6 @@ onMounted(() => {
       }
     }
   });
-
-  gsap.to('#arrow-animate', {
-    transform: "translateY(25px)",
-    repeat: -1,
-    duration: 1,
-    yoyo: true,
-    ease: "sine",
-  });
-
 })
 
 // Define props with the correct type structure
@@ -272,10 +261,6 @@ defineProps({
 
 .arrow {
   @apply flex justify-center;
-}
-
-.explanation-items {
-  @apply flex flex-col items-center;
 }
 
 .scrolly-text-item {

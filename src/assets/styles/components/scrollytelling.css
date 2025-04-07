@@ -11,3 +11,6 @@
     margin-bottom: 60vh;
     z-index: 3;
 }
+.explanation-items {
+    @apply flex flex-col items-center;
+}
