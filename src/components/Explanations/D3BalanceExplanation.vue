@@ -266,11 +266,6 @@ defineProps({
   width: 400px;
 }
 
-.sheet {
-  height: calc(100dvh - 100px);
-  @apply w-full flex flex-col items-center;
-}
-
 .first-page {
   @apply flex flex-col justify-around;
 }
@@ -284,12 +279,6 @@ defineProps({
 }
 
 .text-item {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid #C3C3C3;
-  padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 60vh;
-  z-index: 3;
   width: 400px;
 }
 
