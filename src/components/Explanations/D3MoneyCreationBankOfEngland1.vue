@@ -40,7 +40,7 @@
     </div>
   </div>
   <div class="explanation-items">
-    <div class="scrolly-text-item">
+    <div class="scrolly-text-item" id="show-central-bank-balance">
       <p>
         Een commerciële bank maakt dus geld door het verstrekken van een lening.
         Omdate de meeste mensen ervan uitgaan dat alleen de centrale bank geld maakt,
@@ -58,6 +58,7 @@ import CircleArrow from "@/components/Svg/CircleArrow.vue";
 import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
 import {onMounted} from "vue";
 import {gsap} from "gsap";
+import {ScrollTrigger} from "@/plugins/gsap";
 
 const initScrollytelling = () => {
   gsap.to('#balances-sheet', {
@@ -68,9 +69,27 @@ const initScrollytelling = () => {
       end: 'top bottom',
       pin: true,
       pinSpacing: false,
-      markers: true,
     }
-  })
+  });
+
+  ScrollTrigger.create({
+    trigger: "#show-central-bank-balance",
+    start: 'top center-=100px',
+    markers: true,
+    onEnter: () => {
+      gsap.set("#central-bank-balance", {
+        display: "flex",
+        width: "0px",
+        opacity: 0,
+      });
+      gsap.to("#central-bank-balance", {
+        width: "100%",
+        opacity: 1,
+        duration: 1,
+        ease: "power2.inOut",
+      })
+    },
+  });
 }
 const balanceWidth = 300;
 const balanceHeight = 400;
@@ -116,6 +135,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+#central-bank-balance {
+  display: none;
+}
+
+#commercial-bank-balance {
+  display: none;
+}
+
+#person-balance {
+  display: none;
+}
+
 .explanation {
   width: 50vw;
 }
@@ -138,9 +170,10 @@ onMounted(() => {
 
 .balance {
   margin-left: 20px;
+  overflow: hidden;
+  justify-content: center;
+
   &:first-child {
     margin-left: 0;
   }
-}
-
-</style>
+}</style>
