@@ -1,7 +1,7 @@
 <template>
   <h2 class="text-center">Balance draw test using d3</h2>
   <div class="flex flex-col items-center scroll-container">
-    <div class="explanation-item text-item--top"><p>
+    <div class="explanation-item scrolly-text-item--top"><p>
       Dit is een test om te kijken hoe scrollen kan werken met scrolltriggers.
       Voor nu komt is er nog niet veel te zien.<br>
       Start met scrollen om de animatie te beginnen.
@@ -9,13 +9,13 @@
     <div class="explanation-item" id="balance">
     <D3BalanceDrawer :balance="balance" :width="400" :height="400" />
     </div>
-    <div class="explanation-item text-item" id="explain-left-and-right">
+    <div class="explanation-item scrolly-text-item" id="explain-left-and-right">
       <p>Laten we een transactie doen</p>
     </div>
-    <div class="explanation-item text-item">
+    <div class="explanation-item scrolly-text-item">
       <p>Dit is de tweede text.</p>
     </div>
-    <div class="explanation-item text-item" id="explanation-end">
+    <div class="explanation-item scrolly-text-item" id="explanation-end">
       <p>Dit is de derde text.</p>
     </div>
 
@@ -86,7 +86,7 @@ const addTransaction = () => {
 .explanation-item {
   width: 400px;
 }
-.text-item {
+.scrolly-text-item {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid #C3C3C3;
   padding: 10px;

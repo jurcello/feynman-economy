@@ -32,11 +32,11 @@
     </div>
   </div>
   <div class="explanation-items">
-    <div class="text-item" id="add-pocket-money">
+    <div class="scrolly-text-item" id="add-pocket-money">
       <p>Nu krijg je je eerste zakgeld. Je ouders geven meteen veel: € 50,00.</p>
       <p>Je hebt dus nu € 50,00 in cash geld! Dit wordt aan de linker kant van de balans gezet</p>
     </div>
-    <div class="text-item" id="fix-pocket-money">
+    <div class="scrolly-text-item" id="fix-pocket-money">
       <p>Er is wel een probleem: de beide zijden van de balans zijn nu niet hetzelfde! En dat is wel de bedoeling.</p>
       <p>
         Daarom moet de rechterkant aangepast worden, maar waarmee? Waar komt het geld vandaan?
@@ -46,7 +46,7 @@
         Laten we dat dan ook aan de rechterkant zetten.
       </p>
     </div>
-    <div class="text-item" id="make-loan-for-barbie">
+    <div class="scrolly-text-item" id="make-loan-for-barbie">
       <p>
         Nu we de balans weer in balans hebben, kunnen we verder met de volgende stap: we willen de nieuwste Barbie kopen.
         Die is alleen verschrikkelijk duur: € 150,-.
@@ -55,7 +55,7 @@
         Om de Barbie te kunnen kopen, gaan we bij een vriendje € 100,- lenen.
       </p>
     </div>
-    <div class="text-item" id="credit-for-loan">
+    <div class="scrolly-text-item" id="credit-for-loan">
       <p>
         We hebben nu €100,- in cash geleend, maar de balans is weer niet in balans :-(
       </p>
@@ -65,12 +65,12 @@
         We hebben nu een lening afgesloten. Die moeten we dus aan de rechterkant toevoegen als schuld.
       </p>
     </div>
-    <div class="text-item" id="buy-barbie">
+    <div class="scrolly-text-item" id="buy-barbie">
       <p>
         Nu gaan we de Barbie kopen. Dat kost €150,--
       </p>
     </div>
-    <div class="text-item" id="add-barbie-to-property">
+    <div class="scrolly-text-item" id="add-barbie-to-property">
       <p>
         De barbie is gekocht. Maar nu is de balans weer niet in balans, de hele linkerkant is verdwenen!
       </p>
@@ -78,12 +78,12 @@
         Dat is niet echt verdwenen: de barbie is nog steeds in je bezit en heeft een waarde van € 150,-. Die zetten we dus bij de bezittingen aan de linkerkant van de balans.
       </p>
     </div>
-    <div class="text-item" id="add-extra-pocket-money">
+    <div class="scrolly-text-item" id="add-extra-pocket-money">
       <p>
         De balans is nu weer ok. En het is alweer de volgende maand. Dan krijgen we weer zakgeld!
       </p>
     </div>
-    <div class="text-item" id="last-explanation">
+    <div class="scrolly-text-item" id="last-explanation">
       <p>Eigenlijk heten de kanten anders: De linkerkant wordt vaak Debet of bezittingen genoemd.</p>
       <p>De rechterkant heet dan Credit / verplichtingen.</p>
       <p>Laten we dit aanpassen.</p>
@@ -278,11 +278,7 @@ defineProps({
   @apply flex flex-col items-center;
 }
 
-.text-item {
+.scrolly-text-item {
   width: 400px;
-}
-
-.last-explanation {
-  margin-bottom: calc(100vh);
 }
 </style>
