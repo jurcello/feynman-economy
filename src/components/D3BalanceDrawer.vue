@@ -20,7 +20,7 @@ const props = defineProps<{
 
 const chart = ref<HTMLElement | null>(null);
 
-const margin = {top: 10, right: 10, bottom: 20, left: 20 };
+const margin = {top: 40, right: 0, bottom: 30, left: 0 };
 const CHART_WIDTH = props.width;
 const CHART_HEIGHT = props.height;
 const WIDTH = CHART_WIDTH - margin.left - margin.right;
@@ -29,7 +29,7 @@ const HEIGHT = CHART_HEIGHT - margin.top - margin.bottom;
 const x = d3.scaleBand()
     .domain(['debit', 'credit'])
     .range([0, WIDTH])
-    .padding(0.1);
+    .padding(0.05);
 
 const y = d3.scaleLinear()
     .domain([0, Number(props.maxY) || props.balance.getTotalMoneyAggregates().total * 1.5])
@@ -150,6 +150,16 @@ onMounted(() => {
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`) as d3.Selection<SVGGElement, unknown, null | HTMLElement, any>;
 
+  svg.append("g")
+      .selectAll("text.title")
+      .data([props.balance.name])
+      .join("text")
+      .attr("class", "title")
+      .text(d => d)
+      .attr("x", WIDTH / 2)
+      .attr("y", -15)
+      .attr("text-anchor", "middle")
+
   redraw = () => {
     const bottomLabels = [
       {
@@ -206,6 +216,9 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-
+<style>
+text.title {
+  font-size: 20px;
+  font-weight: bold;
+}
 </style>

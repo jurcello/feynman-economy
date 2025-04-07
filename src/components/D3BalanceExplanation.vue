@@ -15,8 +15,8 @@
       <CircleArrow :size="120" />
     </div>
   </div>
-  <div class="sheet bg-cyan-200" id="balance">
-    <div class="explanation-item">
+  <div class="sheet bg-gray-200" id="balance">
+    <div class="explanation-item py-8">
       <p>Hieronder zie je de balans. Je ziet op dit moment alleen maar de beschrijvingen van de balans:</p>
       <ul>
         <li>Links: Wat heb je?</li>
@@ -109,7 +109,7 @@ import CircleArrow from "@/components/Svg/CircleArrow.vue";
 const debitDescription = ref<string|null>('Wat heb je');
 const creditDescription = ref<string|null>('Waar komt het geld vandaan');
 
-const balance = new Balance('Eerste balans');
+const balance = new Balance('Jouw persoonlijke balans');
 
 const addPocketMoney = () => {
   const transaction = new Transaction("First pocket money", 50, { type: DebitTypes.cash }, { type: CreditTypes.none });
