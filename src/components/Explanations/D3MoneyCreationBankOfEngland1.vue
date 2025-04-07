@@ -47,6 +47,15 @@
         laten we eerst de balans van de centrale bank zien.
       </p>
     </div>
+    <div class="scrolly-text-item" id="move-central-bank-balance-away">
+      <p>
+        We zien hier de balans van de centrale bank. Alleen de reserves en valuta aan de rechterkant zijn van belang.
+      </p>
+      <p>
+        De reserves zijn namelijk van belang voor de commerciële bank.
+      </p>
+      <p>Laten we nu deze balans even aan de kant zetten</p>
+    </div>
   </div>
   <div class="sheet last-explanation-item">
     <p>Dit was het</p>
@@ -59,6 +68,9 @@ import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
 import {onMounted} from "vue";
 import {gsap} from "gsap";
 import {ScrollTrigger} from "@/plugins/gsap";
+
+const balanceWidth = 300;
+const balanceHeight = 400;
 
 const initScrollytelling = () => {
   gsap.to('#balances-sheet', {
@@ -75,7 +87,6 @@ const initScrollytelling = () => {
   ScrollTrigger.create({
     trigger: "#show-central-bank-balance",
     start: 'top center-=100px',
-    markers: true,
     onEnter: () => {
       gsap.set("#central-bank-balance", {
         display: "flex",
@@ -83,16 +94,37 @@ const initScrollytelling = () => {
         opacity: 0,
       });
       gsap.to("#central-bank-balance", {
-        width: "100%",
+        width: `${balanceWidth}px`,
         opacity: 1,
         duration: 1,
         ease: "power2.inOut",
       })
     },
   });
+
+  ScrollTrigger.create({
+    trigger: "#move-central-bank-balance-away",
+    start: 'top center-=100px',
+    onEnter: () => {
+      const element = document.querySelector("#central-bank-balance");
+
+
+      const viewportWidth = window.innerWidth;
+      const leftPosition = (-viewportWidth/2) + (balanceWidth/2) + 20;
+
+      gsap.set(element, {
+        position: "relative",
+        left: "0",
+      });
+
+      gsap.to(element, {
+            left: leftPosition,
+            ease: "power2.inOut",
+            duration: 1,
+          })
+    },
+  });
 }
-const balanceWidth = 300;
-const balanceHeight = 400;
 
 const centralBank = Balance.createFromInitialBalance(
     "Centrale Bank", {
@@ -138,6 +170,7 @@ onMounted(() => {
 
 #central-bank-balance {
   display: none;
+  position: relative;
 }
 
 #commercial-bank-balance {
