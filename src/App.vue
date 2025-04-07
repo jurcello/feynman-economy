@@ -28,4 +28,9 @@ export default {
   @apply text-center sticky top-0 mb-6 bg-white border-b border-black z-10 pb-4;
   height: 100px;
 }
+
+.sheet {
+  height: calc(100dvh - 100px);
+  @apply w-full flex flex-col items-center;
+}
 </style>
