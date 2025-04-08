@@ -91,10 +91,17 @@
       <p>De enige balans die nog niet goed is, is die van de bank. Deze heeft er ook een bezit bijgekregen:</p>
       <p>De schuld van de persoon aan de bank.</p>
     </div>
+    <div class="scrolly-text-item scrolly-text-item--last" id="focus-central-bank">
+      <p>Als we nu kijken naar de balans van de centrale bank, blijkt dat daar helemaal niets veranderd is!</p>
+    </div>
 
   </div>
   <div class="sheet last-explanation-item">
-    <p>Dit was het</p>
+    <h2>Wat leren we?</h2>
+    <p>
+      Hoewel het verhaal gaat dat of centrale banken geld maken, of dat de commerciele bank eerst op geld moet wachten
+      blijkt dat in de praktijk niet zo te zijn.
+    </p>
   </div>
 </template>
 
@@ -173,7 +180,6 @@ const initScrollytelling = () => {
   ScrollTrigger.create({
     trigger: "#person-debit",
     start: 'top center-=100px',
-    markers: true,
     onEnter: () => {
       personBalance.addTransaction(personDebitTransaction);
     },
@@ -187,7 +193,6 @@ const initScrollytelling = () => {
   ScrollTrigger.create({
     trigger: "#commercial-credit",
     start: 'top center-=100px',
-    markers: true,
     onEnter: () => {
       commercialBank.addTransaction(commercialCreditTransaction);
     },
@@ -201,7 +206,6 @@ const initScrollytelling = () => {
   ScrollTrigger.create({
     trigger: "#person-credit",
     start: 'top center-=100px',
-    markers: true,
     onEnter: () => {
       personBalance.addTransaction(personCreditTransaction);
     },
@@ -215,7 +219,6 @@ const initScrollytelling = () => {
   ScrollTrigger.create({
     trigger: "#commercial-debit",
     start: 'top center-=100px',
-    markers: true,
     onEnter: () => {
       commercialBank.addTransaction(commercialDebitTransaction);
     },
@@ -224,6 +227,33 @@ const initScrollytelling = () => {
     }
   });
 
+  ScrollTrigger.create({
+    trigger: "#focus-central-bank",
+    start: 'top center-=100px',
+    onEnter: () => {
+      const element = document.querySelector("#central-bank-balance");
+
+
+      const viewportWidth = window.innerWidth;
+      const leftPosition = (viewportWidth/2) - (balanceWidth/2);
+
+
+      gsap.to(element, {
+        left: leftPosition,
+        top: '30vh',
+        ease: "power2.inOut",
+        duration: 1,
+      });
+      gsap.to("#commercial-bank-balance", {
+        opacity: 0.2,
+        zIndex: -20,
+      });
+      gsap.to("#person-balance", {
+        opacity: 0.2,
+        zIndex: -20,
+      });
+    },
+  })
 }
 
 
@@ -288,6 +318,10 @@ onMounted(() => {
 
 .scrolly-text-item {
   width: 400px;
+}
+
+.scrolly-text-item--last {
+  margin-bottom: 90vh;
 }
 
 .sheet--first {
