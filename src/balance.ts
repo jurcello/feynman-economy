@@ -50,6 +50,10 @@ class Transaction {
     public static create(description: string, amount: number, debit: DebitTypes, credit: CreditTypes): Transaction {
         return new Transaction(description, amount, { type: debit }, { type: credit });
     }
+
+    public getReverted(): Transaction {
+        return new Transaction(this.description + " reverted", -this.amount, this.debit, this.credit);
+    }
 }
 
 class BalanceStatus {
@@ -118,6 +122,10 @@ class Balance {
         if (this.balanceStatusCallback != null) {
             this.balanceStatusCallback(this.balanceStatus);
         }
+    }
+
+    public revertTransaction(transaction: Transaction) {
+        this.addTransaction(transaction.getReverted());
     }
 
     getTotalMoneyAggregates(): MoneyAggregates {

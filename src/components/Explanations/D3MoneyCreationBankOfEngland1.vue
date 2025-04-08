@@ -168,39 +168,59 @@ const initScrollytelling = () => {
   });
   const transactionAmount = 100;
 
+  const personDebitTransaction = Transaction.create("Hypotheek", transactionAmount, DebitTypes.newDeposits, CreditTypes.none);
+
   ScrollTrigger.create({
     trigger: "#person-debit",
     start: 'top center-=100px',
     markers: true,
     onEnter: () => {
-      personBalance.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.newDeposits, CreditTypes.none))
+      personBalance.addTransaction(personDebitTransaction);
+    },
+    onEnterBack: () => {
+      personBalance.revertTransaction(personDebitTransaction);
     }
   });
+
+  const commercialCreditTransaction = Transaction.create("Hypotheek", transactionAmount, DebitTypes.none, CreditTypes.newDeposits);
 
   ScrollTrigger.create({
     trigger: "#commercial-credit",
     start: 'top center-=100px',
     markers: true,
     onEnter: () => {
-      commercialBank.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.none, CreditTypes.newDeposits))
+      commercialBank.addTransaction(commercialCreditTransaction);
+    },
+    onEnterBack: () => {
+      commercialBank.revertTransaction(commercialCreditTransaction);
     }
   });
+
+  const personCreditTransaction = Transaction.create("Hypotheek", transactionAmount, DebitTypes.none, CreditTypes.newLoans);
 
   ScrollTrigger.create({
     trigger: "#person-credit",
     start: 'top center-=100px',
     markers: true,
     onEnter: () => {
-      personBalance.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.none, CreditTypes.newLoans))
+      personBalance.addTransaction(personCreditTransaction);
+    },
+    onEnterBack: () => {
+      personBalance.revertTransaction(personCreditTransaction);
     }
   });
+
+  const commercialDebitTransaction = Transaction.create("Hypotheek", transactionAmount, DebitTypes.newLoans, CreditTypes.none);
 
   ScrollTrigger.create({
     trigger: "#commercial-debit",
     start: 'top center-=100px',
     markers: true,
     onEnter: () => {
-      commercialBank.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.newLoans, CreditTypes.none))
+      commercialBank.addTransaction(commercialDebitTransaction);
+    },
+    onEnterBack: () => {
+      commercialBank.revertTransaction(commercialDebitTransaction);
     }
   });
 
