@@ -9,14 +9,18 @@ import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
 import {onMounted, ref, watch} from "vue";
 import Colors from "@/colors";
 
-const props = defineProps<{
-  balance: Balance;
-  width: number;
-  height: number;
-  maxY?: number | null,
-  debitDescription?: string | null,
-  creditDescription?: string | null,
-}>();
+const props = withDefaults(
+    defineProps<{
+      balance: Balance;
+      width: number;
+      height: number;
+      maxY?: number | null,
+      showAmounts?: boolean,
+      debitDescription?: string | null,
+      creditDescription?: string | null,
+    }>(), {
+      showAmounts: true,
+    });
 
 const chart = ref<HTMLElement | null>(null);
 
@@ -39,6 +43,10 @@ const y = d3.scaleLinear()
 const color = d3.scaleOrdinal()
     .domain(Object.keys(colorMappings))
     .range(Object.values(colorMappings));
+
+const createBalanceText = (description: string, amount: number) => {
+  return props.showAmounts ? `${description}: € ${amount}` : description
+};
 
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
@@ -99,7 +107,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               .text((d: any) => {
                 const height = y(d[0][0]) - y(d[0][1]);
 
-                return height > 25? `${d.key}: € ${d[0].data[d.key]}`: ""
+                return height > 25? createBalanceText(d.key, d[0].data[d.key]) : "";
               })
               .attr("text-anchor", "middle")
               .attr("alignment-baseline", "hanging")
@@ -114,7 +122,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               ),
           update => update.text((d: any) => {
                   const height = y(d[0][0]) - y(d[0][1]);
-                  return height > 25 ? `${d.key}: € ${d[0].data[d.key]}`: ""
+                  return height > 25 ? createBalanceText(d.key, d[0].data[d.key]) : "";
                 })
               .call(update => update.transition()
                   .duration(750)

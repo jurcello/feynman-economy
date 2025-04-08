@@ -29,13 +29,16 @@
     <h2>Laten we kijken naar de balansen</h2>
     <div class="balances">
       <div class="balance" id="central-bank-balance">
-        <D3BalanceDrawer :balance="centralBank" :width="balanceWidth" :height="balanceHeight" />
+        <D3BalanceDrawer :balance="centralBank" :width="balanceWidth" :height="balanceHeight" :show-amounts="false" :max-y="200" />
       </div>
       <div class="balance" id="commercial-bank-balance">
-        <D3BalanceDrawer :balance="commercialBank" :width="balanceWidth" :height="balanceHeight" />
+        <D3BalanceDrawer :balance="commercialBank" :width="balanceWidth" :height="balanceHeight"
+            :show-amounts="false"
+            :max-y="200"
+        />
       </div>
       <div class="balance" id="person-balance">
-        <D3BalanceDrawer :balance="personBalance" :width="balanceWidth" :height="balanceHeight" />
+        <D3BalanceDrawer :balance="personBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="true" :max-y="200" />
       </div>
     </div>
   </div>
@@ -56,13 +59,46 @@
       </p>
       <p>Laten we nu deze balans even aan de kant zetten</p>
     </div>
+    <div class="scrolly-text-item" id="show-commercial-bank-balance">
+      <p>Laten we nu kijken naar de balans van de commerciele bank. Voor nu is alleen de rechterkant van belang: de depositos</p>
+    </div>
+    <div class="scrolly-text-item" id="show-personal-bank-balance">
+      <p>Dan hebben we ook nog de persoonlijke balans van iemand die een hypotheek wil nemen.</p>
+    </div>
+    <div class="scrolly-text-item" id="person-debit">
+      <p>Het doel van een hypotheek is om uiteindelijk een huis te kopen. Om dat huis te kopen
+      moet je geld op je rekening hebben staan. Dat is dus een nieuw deposito op de persoonlijke balans</p>
+    </div>
+    <div class="scrolly-text-item" id="commercial-credit">
+      <p>
+        Waar staat dat nieuwe geld? Dat staat in eerste instantie op de bank van de persoon.
+      </p>
+      <p>Het is een schuld aan die persoon, want we zien het aan de credit kant van de bank staan!</p>
+    </div>
+    <div class="scrolly-text-item" id="person-credit">
+      <p>
+        De balansen kloppen alleen nog niet. Wat mist er op de persoonlijke balans?
+      </p>
+      <p>
+        Uit waar we het geld vandaan gehaald hebben volgt dat dat een schuld aan de bank is.
+      </p>
+      <p>
+        We zien nu bij de persoon een schuld aan de bank, en bij de bank een schuld aan de persoon. Dit wordt wederzijdse
+        shuldaanvaarding genoemd.
+      </p>
+    </div>
+    <div class="scrolly-text-item" id="commercial-debit">
+      <p>De enige balans die nog niet goed is, is die van de bank. Deze heeft er ook een bezit bijgekregen:</p>
+      <p>De schuld van de persoon aan de bank.</p>
+    </div>
+
   </div>
   <div class="sheet last-explanation-item">
     <p>Dit was het</p>
   </div>
 </template>
 
-<script setup lang="ts">import {Balance, CreditTypes, DebitTypes} from "@/balance";
+<script setup lang="ts">import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import CircleArrow from "@/components/Svg/CircleArrow.vue";
 import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
 import {onMounted} from "vue";
@@ -84,23 +120,29 @@ const initScrollytelling = () => {
     }
   });
 
-  ScrollTrigger.create({
-    trigger: "#show-central-bank-balance",
-    start: 'top center-=100px',
-    onEnter: () => {
-      gsap.set("#central-bank-balance", {
-        display: "flex",
-        width: "0px",
-        opacity: 0,
-      });
-      gsap.to("#central-bank-balance", {
-        width: `${balanceWidth}px`,
-        opacity: 1,
-        duration: 1,
-        ease: "power2.inOut",
-      })
-    },
-  });
+  const revealBalance = (trigger: string, target: string) => {
+    ScrollTrigger.create({
+      trigger,
+      start: 'top center-=100px',
+      onEnter: () => {
+        gsap.set(target, {
+          display: "flex",
+          width: "0px",
+          opacity: 0,
+        });
+        gsap.to(target, {
+          width: `${balanceWidth}px`,
+          opacity: 1,
+          duration: 1,
+          ease: "power2.inOut",
+        });
+      },
+    });
+  };
+
+  revealBalance("#show-central-bank-balance", "#central-bank-balance");
+  revealBalance("#show-commercial-bank-balance", "#commercial-bank-balance");
+  revealBalance("#show-personal-bank-balance", "#person-balance");
 
   ScrollTrigger.create({
     trigger: "#move-central-bank-balance-away",
@@ -110,21 +152,60 @@ const initScrollytelling = () => {
 
 
       const viewportWidth = window.innerWidth;
-      const leftPosition = (-viewportWidth/2) + (balanceWidth/2) + 20;
+      const leftPosition = (viewportWidth/2) - (balanceWidth/2);
 
       gsap.set(element, {
-        position: "relative",
-        left: "0",
+        position: "absolute",
+        left: leftPosition,
       });
 
       gsap.to(element, {
-            left: leftPosition,
+            left: 20,
             ease: "power2.inOut",
             duration: 1,
           })
     },
   });
+  const transactionAmount = 100;
+
+  ScrollTrigger.create({
+    trigger: "#person-debit",
+    start: 'top center-=100px',
+    markers: true,
+    onEnter: () => {
+      personBalance.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.newDeposits, CreditTypes.none))
+    }
+  });
+
+  ScrollTrigger.create({
+    trigger: "#commercial-credit",
+    start: 'top center-=100px',
+    markers: true,
+    onEnter: () => {
+      commercialBank.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.none, CreditTypes.newDeposits))
+    }
+  });
+
+  ScrollTrigger.create({
+    trigger: "#person-credit",
+    start: 'top center-=100px',
+    markers: true,
+    onEnter: () => {
+      personBalance.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.none, CreditTypes.newLoans))
+    }
+  });
+
+  ScrollTrigger.create({
+    trigger: "#commercial-debit",
+    start: 'top center-=100px',
+    markers: true,
+    onEnter: () => {
+      commercialBank.addTransaction(Transaction.create("Hypotheek", transactionAmount, DebitTypes.newLoans, CreditTypes.none))
+    }
+  });
+
 }
+
 
 const centralBank = Balance.createFromInitialBalance(
     "Centrale Bank", {
