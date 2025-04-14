@@ -19,6 +19,35 @@ const purple = '#5e1e5e';
 const darkPurple = '#3e1e3e';
 const lightPurple = '#a91ea9';
 
+// General
+const mlAssetPossesions = '#9ec9f4';
+const mlLiabilitiesObligations = '#f1a983';
+const mlLiabilitiesEquities = '#48d359';
+
+// Central banks
+const mlAssetCentralGold = '#dae8f9';
+const mlAssetCentralForeignCurrencies = '#dae8f9';
+const mlAssetCentralBonds = '#a6c9ec';
+const mlAssetCentralLoansToBanks = '#4d93d9';
+const mlLiabilitiesCentralDigitalPublicMoney = '#fbe2d5';
+const mlLiabilitiesCentralPhysicalPublicMoneyInCirculation = '#fbe2d5';
+const mlLiabilitiesCentralCapital = '#48d359';
+
+// Coorporate banks
+const mlAssetCorporateDigitalPublicMoney = '#dae8f9';
+const mlAssetCorporatePhysicalPublicMoney = '#dae8f9';
+const mlAssetCorporateBonds = '#a6c9ec';
+const mlAssetCorporateLoansToBanks = '#a6c9ec';
+const mlAssetCorporateLoansToNonBanks = '#4d93d9';
+const mlLiabilitiesCorporateInsuredPrivateMoney = '#fbe2d5';
+const mlLiabilitiesCorporateUninsuredPrivateMoney = '#fbe2d5';
+const mlLiabilitiesCorporateLoansFromBanks = '#f1a983';
+const mlLiabilitiesCorporateLongTermDepths = '#f1a983';
+const mlLiabilitiesCorporateCapital = '#48d359';
+
+
+
+
 export default {
     green,
     darkGreen,
