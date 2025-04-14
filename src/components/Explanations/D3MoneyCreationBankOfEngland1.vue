@@ -26,7 +26,7 @@
     </div>
   </div>
   <div class="sheet bg-gray-300" id="balances-sheet">
-    <h2>Laten we kijken naar de balansen</h2>
+    <h2 class="mt-6 mb-6">Laten we kijken naar de balansen</h2>
     <div class="balances">
       <div class="balance" id="central-bank-balance">
         <D3BalanceDrawer :balance="centralBank" :width="balanceWidth" :height="balanceHeight" :show-amounts="false" :max-y="200" />

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-2/3 mx-auto">
     <h2>Fractional banking of de Money multiplier myth</h2>
     <MoneyMultiplierSketch/>
   </div>

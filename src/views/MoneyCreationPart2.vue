@@ -1,5 +1,7 @@
 <template>
+  <div class="w-2/3 mx-auto">
   <MoneyCreationBankOfEnglandPart2/>
+  </div>
 </template>
 
 <script setup lang="ts">
