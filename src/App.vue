@@ -29,8 +29,4 @@ export default {
   height: 100px;
 }
 
-.sheet {
-  height: calc(100dvh - 100px);
-  @apply w-full flex flex-col items-center;
-}
 </style>
