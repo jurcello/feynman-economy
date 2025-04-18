@@ -20,7 +20,7 @@ const darkPurple = '#3e1e3e';
 const lightPurple = '#a91ea9';
 
 // General
-const mlAssetPossesions = '#9ec9f4';
+const mlAssetPossessions = '#9ec9f4';
 const mlLiabilitiesObligations = '#f1a983';
 const mlLiabilitiesEquities = '#48d359';
 
@@ -69,4 +69,24 @@ export default {
     purple,
     lightPurple,
     darkPurple,
+    mlAssetPossessions,
+    mlLiabilitiesObligations,
+    mlLiabilitiesEquities,
+    mlAssetCentralGold,
+    mlAssetCentralForeignCurrencies,
+    mlAssetCentralBonds,
+    mlAssetCentralLoansToBanks,
+    mlLiabilitiesCentralDigitalPublicMoney,
+    mlLiabilitiesCentralPhysicalPublicMoneyInCirculation,
+    mlLiabilitiesCentralCapital,
+    mlAssetCorporateDigitalPublicMoney,
+    mlAssetCorporatePhysicalPublicMoney,
+    mlAssetCorporateBonds,
+    mlAssetCorporateLoansToBanks,
+    mlAssetCorporateLoansToNonBanks,
+    mlLiabilitiesCorporateInsuredPrivateMoney,
+    mlLiabilitiesCorporateUninsuredPrivateMoney,
+    mlLiabilitiesCorporateLoansFromBanks,
+    mlLiabilitiesCorporateLongTermDepths,
+    mlLiabilitiesCorporateCapital,
 };

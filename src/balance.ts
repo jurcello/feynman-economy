@@ -11,6 +11,16 @@ enum DebitTypes {
     newDeposits = "Nieuwe Deposito's",
     newLoans = "Nieuwe Leningen",
     none = 'NoneDebit',
+    mlPossessions = 'Possessions',
+    mlCentralGold = 'Gold',
+    mlCentralForeignCurrencies = 'Central Foreign Currencies',
+    mlCentralBonds = 'Central Bonds',
+    mlCentralLoansToBanks = 'Central Loans to Banks',
+    mlCorporateDigitalPublicMoney = 'Corporate Digital Public Money',
+    mlCorporatePhysicalPublicMoney = 'Corporate Physical Public Money',
+    mlCorporateBonds = 'Corporate Bonds',
+    mlCorporateLoansToBanks = 'Corporate Loans to Banks',
+    mlCorporateLoansToNonBanks = 'Corporate Loans to Non-Banks',
 }
 
 enum CreditTypes {
@@ -25,6 +35,16 @@ enum CreditTypes {
     newLoans = "Nieuwe Leningen",
     noneMoney = 'Maakt niet uit',
     none = 'NoneCredit',
+    mlObligations = 'Obligaties',
+    mlEquities = 'Equities',
+    mlCentralDigitalPublicMoney = 'Central Digital Public Money',
+    mlCentralPhysicalPublicMoneyInCirculation = 'Central Physical Public Money In Circulation',
+    mlCentralCapital = 'Central Capital',
+    mlCorporateInsuredPrivateMoney = 'Corporate Insured Private Money',
+    mlCorporateUninsuredPrivateMoney = 'Corporate Uninsured Private Money',
+    mlCorporateLoansFromBanks = 'Corporate Loans from Banks',
+    mlCorporateLongTermDepths = 'Corporate Long-Term Depths',
+    mlCorporateCapital = 'Corporate Capital',
 }
 
 
