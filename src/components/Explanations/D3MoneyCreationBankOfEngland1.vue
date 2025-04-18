@@ -107,7 +107,7 @@
 
 <script setup lang="ts">import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import CircleArrow from "@/components/Svg/CircleArrow.vue";
-import D3BalanceDrawer from "@/components/D3BalanceDrawer.vue";
+import D3BalanceDrawer from "@/components/Balance/D3BalanceDrawer.vue";
 import {onMounted} from "vue";
 import {gsap} from "gsap";
 import {ScrollTrigger} from "@/plugins/gsap";

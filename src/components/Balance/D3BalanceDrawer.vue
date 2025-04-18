@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import {Balance} from "@/balance";
 import * as d3 from "d3";
-import {colorMappings} from "@/sketches/Animatables/BalanceDrawerExtended";
+import colorMappings from "@/balanceColorMappings";
 import {onMounted, ref, watch} from "vue";
 import Colors from "@/colors";
 

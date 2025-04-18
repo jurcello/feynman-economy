@@ -39,3 +39,5 @@ export const defaultColorMappings = {
     [CreditTypes.mlCorporateLongTermDepths]: Colors.mlLiabilitiesCorporateLongTermDepths,
     [CreditTypes.mlCorporateCapital]: Colors.mlLiabilitiesCorporateCapital,
 }
+
+export default defaultColorMappings;
