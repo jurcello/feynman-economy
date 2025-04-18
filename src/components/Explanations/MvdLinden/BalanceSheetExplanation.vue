@@ -6,13 +6,84 @@
       This explanation of the functioning of onshore (domestic) banking is based on the explanations of bankers, i.e. economists with practical banking experience (Pozsar et al. 2010, 2013; Sheard 2013; Cliffe and Brosens 2014, 2018; McMillan 2014; McLeay et al. 2014a, 2014b; Lipton 2015; King 2016; Boonstra 2018; Boonstra and van Goor 2021) and uses colorful visualizations. In a next article offshore and international banking will be explained.
     </p>
   </SheetFirst>
+  <Sheet id="balances">
+    <div class="balances">
+      <div class="balance" id="general-balance">
+        <D3BalanceDrawer :balance="generalBalance" :width="balanceWidth" :height="balanceHeight"/>
+      </div>
+      <div class="balance" id="central-bank-balance">
+      <D3BalanceDrawer :balance="centralBankBalance" :width="balanceWidth" :height="balanceHeight"/>
+      </div>
+      <div class="balance" id="corporate-bank-balance">
+      <D3BalanceDrawer :balance="corporateBankBalance" :width="balanceWidth" :height="balanceHeight"/>
+      </div>
+    </div>
+  </Sheet>
+  <ExplanationItemContainer>
+    <ScrollyText id="show-standard-balance" custom-class="">
+      <p>This is the first explanation item</p>
+    </ScrollyText>
+  </ExplanationItemContainer>
 
 </template>
 
 <script setup lang="ts">
 import SheetFirst from "@/components/Scrolly/SheetFirst.vue";
+import Sheet from "@/components/Scrolly/Sheet.vue";
+import {Balance} from "@/balance";
+import D3BalanceDrawer from "@/components/Balance/D3BalanceDrawer.vue";
+import {ScrollTrigger} from "@/plugins/gsap";
+import {gsap} from "gsap";
+import ExplanationItemContainer from "@/components/Scrolly/ExplanationItemContainer.vue";
+import ScrollyText from "@/components/Scrolly/ScrollyText.vue";
+
+const generalBalance = new Balance("Standard bank balance");
+const centralBankBalance = new Balance("Central bank balance");
+const corporateBankBalance = new Balance("Corporate bank balance");
+
+const balanceWidth = 300;
+const balanceHeight = 400;
+
+const revealBalance = (trigger: string, target: string) => {
+  ScrollTrigger.create({
+    trigger,
+    start: 'top center-=100px',
+    onEnter: () => {
+      gsap.set(target, {
+        display: "flex",
+        width: "0px",
+        opacity: 0,
+      });
+      gsap.to(target, {
+        width: `${balanceWidth}px`,
+        opacity: 1,
+        duration: 1,
+        ease: "power2.inOut",
+      });
+    },
+  });
+};
+
+
 </script>
 
 <style scoped>
+.balances {
+  @apply flex flex-row justify-around;
+}
+
+
+#general-balance {
+  display: none;
+  position: relative;
+}
+#central-bank-balance {
+  display: none;
+  position: relative;
+}
+
+#corporate-bank-balance {
+  display: none;
+}
 
 </style>
