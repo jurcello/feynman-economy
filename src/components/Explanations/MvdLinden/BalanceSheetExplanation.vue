@@ -21,7 +21,16 @@
   </Sheet>
   <ExplanationItemContainer>
     <ScrollyText id="show-standard-balance">
-      <p>This is the first explanation item</p>
+      <p>This is a standard bank balance</p>
+    </ScrollyText>
+    <ScrollyText id="add-possesion-to-general">
+      <p>Aan de linkerkant heeft een bank bezittingen</p>
+    </ScrollyText>
+    <ScrollyText id="add-obligation-to-general">
+      <p>Aan de rechterkant heb je de obligations</p>
+    </ScrollyText>
+    <ScrollyText id="add-equity-to-general">
+      <p>Maar ook eigen vermogen</p>
     </ScrollyText>
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
@@ -48,6 +57,10 @@ const corporateBankBalance = new Balance("Corporate bank balance");
 const balanceWidth = 300;
 const balanceHeight = 400;
 
+const possessionTransaction = Transaction.create("general possesion", 1000, DebitTypes.mlPossessions, CreditTypes.none);
+const obligationTransaction = Transaction.create("general obligation", 600, DebitTypes.none, CreditTypes.mlObligations);
+const equityTransaction = Transaction.create("general equity", 400, DebitTypes.none, CreditTypes.mlEquities);
+
 const revealBalance = (trigger: string, target: string) => {
   ScrollTrigger.create({
     trigger: `#${trigger}`,
@@ -66,15 +79,19 @@ const revealBalance = (trigger: string, target: string) => {
         ease: "power2.inOut",
       });
     },
+    onEnterBack: () => {
+      const targetId = `#${target}`;
+      gsap.to(targetId, {
+        width: "0px",
+        opacity: 0,
+        duration: 1,
+        ease: "power2.inOut",
+      });
+    },
   });
 };
 
-
-const possessionTransaction = Transaction.create("general possesion", 1000, DebitTypes.mlPossessions, CreditTypes.none);
-const obligationTransaction = Transaction.create("general obligation", 600, DebitTypes.none, CreditTypes.mlObligations);
-const equityTransaction = Transaction.create("general equity", 400, DebitTypes.none, CreditTypes.mlEquities);
-
-function createPinnedSheetScrollTrigger(trigger: string, endTrigger: string) {
+const createPinnedSheetScrollTrigger = (trigger: string, endTrigger: string) => {
   const triggerId = `#${trigger}`;
   const endTriggerID = `#${endTrigger}`;
   ScrollTrigger.create({
@@ -88,11 +105,28 @@ function createPinnedSheetScrollTrigger(trigger: string, endTrigger: string) {
   })
 }
 
+const createRevertableTransaction = (elementName: string, balance: Balance, transaction: Transaction) => {
+  const elementId = `#${elementName}`;
+  ScrollTrigger.create({
+    trigger: elementId,
+    start: 'top center-=100px',
+    onEnter: () => {
+      balance.addTransaction(transaction);
+    },
+    onEnterBack: () => {
+      balance.revertTransaction(transaction);
+    }
+  });
+
+};
 onMounted(() => {
   revealBalance('show-standard-balance','general-balance');
   const triggerId = 'balances';
   const endTriggerId = 'last-explanation-item';
   createPinnedSheetScrollTrigger(triggerId, endTriggerId);
+  createRevertableTransaction('add-possesion-to-general', generalBalance, possessionTransaction);
+  createRevertableTransaction('add-obligation-to-general', generalBalance, obligationTransaction);
+  createRevertableTransaction('add-equity-to-general', generalBalance, equityTransaction);
 });
 </script>
 

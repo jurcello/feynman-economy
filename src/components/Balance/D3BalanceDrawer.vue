@@ -3,11 +3,59 @@
 </template>
 
 <script setup lang="ts">
-import {Balance} from "@/balance";
+import {Balance, DebitTypes, CreditTypes} from "@/balance";
 import * as d3 from "d3";
 import colorMappings from "@/balanceColorMappings";
 import {onMounted, ref, watch} from "vue";
 import Colors from "@/colors";
+
+const defaultDebitOrder: DebitTypes[] = [
+  DebitTypes.cash,
+  DebitTypes.backAccount,
+  DebitTypes.property,
+  DebitTypes.loan,
+  DebitTypes.noneMoney,
+  DebitTypes.nonMoneyHouse,
+  DebitTypes.reserves,
+  DebitTypes.currency,
+  DebitTypes.deposits,
+  DebitTypes.newDeposits,
+  DebitTypes.newLoans,
+  DebitTypes.none,
+  DebitTypes.mlPossessions,
+  DebitTypes.mlCentralGold,
+  DebitTypes.mlCentralForeignCurrencies,
+  DebitTypes.mlCentralBonds,
+  DebitTypes.mlCentralLoansToBanks,
+  DebitTypes.mlCorporateDigitalPublicMoney,
+  DebitTypes.mlCorporatePhysicalPublicMoney,
+  DebitTypes.mlCorporateBonds,
+  DebitTypes.mlCorporateLoansToBanks,
+  DebitTypes.mlCorporateLoansToNonBanks
+];
+const defaultCreditOrder: CreditTypes[] = [
+  CreditTypes.equity,
+  CreditTypes.debt,
+  CreditTypes.creditAccount,
+  CreditTypes.savingsAccount,
+  CreditTypes.reserves,
+  CreditTypes.currency,
+  CreditTypes.deposits,
+  CreditTypes.newDeposits,
+  CreditTypes.newLoans,
+  CreditTypes.noneMoney,
+  CreditTypes.none,
+  CreditTypes.mlEquities,
+  CreditTypes.mlObligations,
+  CreditTypes.mlCentralDigitalPublicMoney,
+  CreditTypes.mlCentralPhysicalPublicMoneyInCirculation,
+  CreditTypes.mlCentralCapital,
+  CreditTypes.mlCorporateInsuredPrivateMoney,
+  CreditTypes.mlCorporateUninsuredPrivateMoney,
+  CreditTypes.mlCorporateLoansFromBanks,
+  CreditTypes.mlCorporateLongTermDepths,
+  CreditTypes.mlCorporateCapital
+];
 
 const props = withDefaults(
     defineProps<{
@@ -18,6 +66,8 @@ const props = withDefaults(
       showAmounts?: boolean,
       debitDescription?: string | null,
       creditDescription?: string | null,
+      debitOrder?: DebitTypes[] | null,
+      creditOrder?: string[] | null,
     }>(), {
       showAmounts: true,
     });
@@ -51,7 +101,7 @@ const createBalanceText = (description: string, amount: number) => {
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
 }, string>[]) {
-
+  
   svg.selectAll(`.${balanceType}`)
       .data(stackedData)
       .join(
@@ -151,6 +201,9 @@ watch(() => props.creditDescription, (newValue, oldValue) => {
 });
 
 onMounted(() => {
+  const debitOrder = props.debitOrder ?? defaultDebitOrder;
+  const creditOrder = props.creditOrder ?? defaultCreditOrder;
+
   const svg = d3.select(chart.value)
       .append("svg")
       .attr("width", CHART_WIDTH)
@@ -180,13 +233,17 @@ onMounted(() => {
       }
     ]
 
+    const sortedDebitKeys = Object.keys(props.balance.debit);
+    sortedDebitKeys.sort((a, b) => debitOrder.indexOf(a as DebitTypes) - debitOrder.indexOf(b as DebitTypes))
     const stackedDebit = d3
         .stack()
-        .keys(Object.keys(props.balance.debit))([props.balance.debit]);
+        .keys(sortedDebitKeys)([props.balance.debit]);
 
+    const sortedCreditKeys = Object.keys(props.balance.credit);
+    sortedCreditKeys.sort((a, b) => creditOrder.indexOf(a as CreditTypes) - creditOrder.indexOf(b as CreditTypes))
     const stackedCredit = d3
         .stack()
-        .keys(Object.keys(props.balance.credit))([props.balance.credit]);
+        .keys(sortedCreditKeys)([props.balance.credit]);
 
 
     const currentDomainY = y.domain()[1];
