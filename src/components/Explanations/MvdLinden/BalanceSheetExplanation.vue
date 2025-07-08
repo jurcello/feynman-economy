@@ -12,10 +12,10 @@
         <D3BalanceDrawer :balance="generalBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
       </div>
       <div class="balance" id="central-bank-balance">
-      <D3BalanceDrawer :balance="centralBankBalance" :width="balanceWidth" :height="balanceHeight"/>
+        <D3BalanceDrawer :balance="centralBankBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
       </div>
       <div class="balance" id="corporate-bank-balance">
-      <D3BalanceDrawer :balance="corporateBankBalance" :width="balanceWidth" :height="balanceHeight"/>
+        <D3BalanceDrawer :balance="corporateBankBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
       </div>
     </div>
   </Sheet>
@@ -35,6 +35,22 @@
     <ScrollyText id="move-default-to-left">
       <p>Now lets move the balance to the right for reference.</p>
     </ScrollyText>
+    <ScrollyText id="show-central-bank-balance">
+      <p>This is the central bank balance sheet</p>
+      <p>A simplified (standard) corporate bank balance sheet consists of seven components.</p>
+    </ScrollyText>
+    <ScrollyText id="add-gold-to-central">
+      <p>The central bank owns gold as part of its assets</p>
+    </ScrollyText>
+    <ScrollyText id="add-foreign-currencies-to-central">
+      <p>Foreign currencies are also part of central bank assets</p>
+    </ScrollyText>
+    <ScrollyText id="add-bonds-to-central">
+      <p>The central bank holds government bonds</p>
+    </ScrollyText>
+    <ScrollyText id="add-loans-to-central">
+      <p>And provides loans to banks</p>
+    </ScrollyText>
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
     </ScrollyText>
@@ -48,11 +64,10 @@ import Sheet from "@/components/Scrolly/Sheet.vue";
 import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import D3BalanceDrawer from "@/components/Balance/D3BalanceDrawer.vue";
 import {ScrollTrigger} from "@/plugins/gsap";
-import {gsap} from "gsap";
 import ExplanationItemContainer from "@/components/Scrolly/ExplanationItemContainer.vue";
 import ScrollyText from "@/components/Scrolly/ScrollyText.vue";
 import {onMounted} from "vue";
-import {createMoveToLeftTrigger} from "@/utils/scrollyUtils";
+import {createMoveToLeftTrigger, createPinnedSheetScrollTrigger, revealBalance} from "@/utils/scrollyUtils";
 
 const generalBalance = new Balance("Standard bank balance");
 const centralBankBalance = new Balance("Central bank balance");
@@ -61,53 +76,17 @@ const corporateBankBalance = new Balance("Corporate bank balance");
 const balanceWidth = 300;
 const balanceHeight = 400;
 
+// Default bank balance transactions
 const possessionTransaction = Transaction.create("general possesion", 1000, DebitTypes.mlPossessions, CreditTypes.none);
 const obligationTransaction = Transaction.create("general obligation", 600, DebitTypes.none, CreditTypes.mlObligations);
 const equityTransaction = Transaction.create("general equity", 400, DebitTypes.none, CreditTypes.mlEquities);
 
-const revealBalance = (trigger: string, target: string) => {
-  ScrollTrigger.create({
-    trigger: `#${trigger}`,
-    start: 'top center-=100px',
-    onEnter: () => {
-      const targetId = `#${target}`;
-      gsap.set(targetId, {
-        display: "flex",
-        width: "0px",
-        opacity: 0,
-      });
-      gsap.to(targetId, {
-        width: `${balanceWidth}px`,
-        opacity: 1,
-        duration: 1,
-        ease: "power2.inOut",
-      });
-    },
-    onEnterBack: () => {
-      const targetId = `#${target}`;
-      gsap.to(targetId, {
-        width: "0px",
-        opacity: 0,
-        duration: 1,
-        ease: "power2.inOut",
-      });
-    },
-  });
-};
+// Central bank balance transactions
+const goldTransaction = Transaction.create("gold", 150, DebitTypes.mlCentralGold, CreditTypes.none);
+const foreignCurrenciesTransaction = Transaction.create("foreign currencies", 150, DebitTypes.mlCentralForeignCurrencies, CreditTypes.none);
+const bondsTransaction = Transaction.create("bonds", 300, DebitTypes.mlCentralBonds, CreditTypes.none);
+const loansTransaction = Transaction.create("loans to banks", 300, DebitTypes.mlCentralLoansToBanks, CreditTypes.none);
 
-const createPinnedSheetScrollTrigger = (trigger: string, endTrigger: string) => {
-  const triggerId = `#${trigger}`;
-  const endTriggerID = `#${endTrigger}`;
-  ScrollTrigger.create({
-    trigger: triggerId,
-    endTrigger: endTriggerID,
-    start: 'top-=100px top',
-    end: 'top top',
-    pin: true,
-    pinSpacing: false,
-    markers: true,
-  })
-}
 
 const createRevertableTransaction = (elementName: string, balance: Balance, transaction: Transaction) => {
   const elementId = `#${elementName}`;
@@ -124,7 +103,7 @@ const createRevertableTransaction = (elementName: string, balance: Balance, tran
 
 };
 onMounted(() => {
-  revealBalance('show-standard-balance','general-balance');
+  revealBalance('show-standard-balance','general-balance', balanceWidth);
   const triggerId = 'balances';
   const endTriggerId = 'last-explanation-item';
   createPinnedSheetScrollTrigger(triggerId, endTriggerId);
@@ -132,6 +111,12 @@ onMounted(() => {
   createRevertableTransaction('add-obligation-to-general', generalBalance, obligationTransaction);
   createRevertableTransaction('add-equity-to-general', generalBalance, equityTransaction);
   createMoveToLeftTrigger('move-default-to-left', 'general-balance', balanceWidth);
+
+  revealBalance('show-central-bank-balance','central-bank-balance', balanceWidth);
+  createRevertableTransaction('add-gold-to-central', centralBankBalance, goldTransaction);
+  createRevertableTransaction('add-foreign-currencies-to-central', centralBankBalance, foreignCurrenciesTransaction);
+  createRevertableTransaction('add-bonds-to-central', centralBankBalance, bondsTransaction);
+  createRevertableTransaction('add-loans-to-central', centralBankBalance, loansTransaction);
 });
 </script>
 

@@ -45,8 +45,8 @@ const defaultCreditOrder: CreditTypes[] = [
   CreditTypes.newLoans,
   CreditTypes.noneMoney,
   CreditTypes.none,
-  CreditTypes.mlEquities,
   CreditTypes.mlObligations,
+  CreditTypes.mlEquities,
   CreditTypes.mlCentralDigitalPublicMoney,
   CreditTypes.mlCentralPhysicalPublicMoneyInCirculation,
   CreditTypes.mlCentralCapital,
@@ -234,13 +234,13 @@ onMounted(() => {
     ]
 
     const sortedDebitKeys = Object.keys(props.balance.debit);
-    sortedDebitKeys.sort((a, b) => debitOrder.indexOf(a as DebitTypes) - debitOrder.indexOf(b as DebitTypes))
+    sortedDebitKeys.sort((a, b) => debitOrder.indexOf(b as DebitTypes) - debitOrder.indexOf(a as DebitTypes))
     const stackedDebit = d3
         .stack()
         .keys(sortedDebitKeys)([props.balance.debit]);
 
     const sortedCreditKeys = Object.keys(props.balance.credit);
-    sortedCreditKeys.sort((a, b) => creditOrder.indexOf(a as CreditTypes) - creditOrder.indexOf(b as CreditTypes))
+    sortedCreditKeys.sort((a, b) => creditOrder.indexOf(b as CreditTypes) - creditOrder.indexOf(a as CreditTypes))
     const stackedCredit = d3
         .stack()
         .keys(sortedCreditKeys)([props.balance.credit]);
