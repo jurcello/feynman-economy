@@ -7,7 +7,8 @@ import {Balance, DebitTypes, CreditTypes} from "@/balance";
 import * as d3 from "d3";
 import colorMappings from "@/balanceColorMappings";
 import {onMounted, ref, watch} from "vue";
-import Colors from "@/colors";
+import {getTextColorWCAG} from "@/utils/color";
+import {translateCreditType, translateDebitType} from "@/utils/balanceTypeTranslations";
 
 const defaultDebitOrder: DebitTypes[] = [
   DebitTypes.cash,
@@ -101,6 +102,8 @@ const createBalanceText = (description: string, amount: number) => {
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
 }, string>[]) {
+
+  const t = balanceType === 'debit' ? translateDebitType : translateCreditType;
   
   svg.selectAll(`.${balanceType}`)
       .data(stackedData)
@@ -157,11 +160,11 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               .text((d: any) => {
                 const height = y(d[0][0]) - y(d[0][1]);
 
-                return height > 25? createBalanceText(d.key, d[0].data[d.key]) : "";
+                return height > 25? createBalanceText(t(d.key), d[0].data[d.key]) : "";
               })
               .attr("text-anchor", "middle")
               .attr("alignment-baseline", "hanging")
-              .attr("fill", (d: any) => color(d.key) == Colors.white ? "black" : "white")
+              .attr("fill", (d: any) => getTextColorWCAG(color(d.key) as string))
               .attr("font-size", "12px")
               .attr("opacity", "0")
               .call(enter => enter.transition()
@@ -172,7 +175,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               ),
           update => update.text((d: any) => {
                   const height = y(d[0][0]) - y(d[0][1]);
-                  return height > 25 ? createBalanceText(d.key, d[0].data[d.key]) : "";
+                  return height > 25 ? createBalanceText(t(d.key), d[0].data[d.key]) : "";
                 })
               .call(update => update.transition()
                   .duration(750)

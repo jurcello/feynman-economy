@@ -9,13 +9,31 @@
   <Sheet id="balances">
     <div class="balances">
       <div class="balance" id="general-balance">
-        <D3BalanceDrawer :balance="generalBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
+        <D3BalanceDrawer
+            :balance="generalBalance"
+            :width="balanceWidth"
+            :height="balanceHeight"
+            :max-y="1000"
+            :show-amounts="false"
+        />
       </div>
       <div class="balance" id="central-bank-balance">
-        <D3BalanceDrawer :balance="centralBankBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
+        <D3BalanceDrawer
+            :balance="centralBankBalance"
+            :width="balanceWidth"
+            :height="balanceHeight"
+            :max-y="1000"
+            :show-amounts="false"
+        />
       </div>
       <div class="balance" id="corporate-bank-balance">
-        <D3BalanceDrawer :balance="corporateBankBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
+        <D3BalanceDrawer
+            :balance="corporateBankBalance"
+            :width="balanceWidth"
+            :height="balanceHeight"
+            :max-y="1000"
+            :show-amounts="false"
+        />
       </div>
     </div>
   </Sheet>
