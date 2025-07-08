@@ -236,17 +236,48 @@ onMounted(() => {
       }
     ]
 
-    const sortedDebitKeys = Object.keys(props.balance.debit);
-    sortedDebitKeys.sort((a, b) => debitOrder.indexOf(b as DebitTypes) - debitOrder.indexOf(a as DebitTypes))
+    const debitKeys = Object.keys(props.balance.debit);
     const stackedDebit = d3
         .stack()
-        .keys(sortedDebitKeys)([props.balance.debit]);
+        .keys(debitKeys)
+        .order((series) => {
+          const seriesIndices = series.map((_, i) => i);
+          const sorted = seriesIndices.sort((a, b) => {
+            const keyA = series[a].key;
+            const keyB = series[b].key;
+            const indexA = debitOrder.indexOf(keyA as DebitTypes);
+            const indexB = debitOrder.indexOf(keyB as DebitTypes);
 
-    const sortedCreditKeys = Object.keys(props.balance.credit);
-    sortedCreditKeys.sort((a, b) => creditOrder.indexOf(b as CreditTypes) - creditOrder.indexOf(a as CreditTypes))
+            // If not found in order array, put at end
+            const orderA = indexA === -1 ? Infinity : indexA;
+            const orderB = indexB === -1 ? Infinity : indexB;
+
+            return orderA - orderB;
+          });
+          return sorted.reverse();
+        })([props.balance.debit]);
+
+    const creditKeys = Object.keys(props.balance.credit);
     const stackedCredit = d3
         .stack()
-        .keys(sortedCreditKeys)([props.balance.credit]);
+        .keys(creditKeys)
+        .order((series) => {
+          const seriesIndices = series.map((_, i) => i);
+          const sorted = seriesIndices.sort((a, b) => {
+            const keyA = series[a].key;
+            const keyB = series[b].key;
+            const indexA = creditOrder.indexOf(keyA as CreditTypes);
+            const indexB = creditOrder.indexOf(keyB as CreditTypes);
+
+            // If not found in order array, put at end
+            const orderA = indexA === -1 ? Infinity : indexA;
+            const orderB = indexB === -1 ? Infinity : indexB;
+
+            return orderA - orderB;
+          });
+          return sorted.reverse();
+        })
+        ([props.balance.credit]);
 
 
     const currentDomainY = y.domain()[1];
