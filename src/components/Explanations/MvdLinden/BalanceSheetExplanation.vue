@@ -9,7 +9,7 @@
   <Sheet id="balances">
     <div class="balances">
       <div class="balance" id="general-balance">
-        <D3BalanceDrawer :balance="generalBalance" :width="balanceWidth" :height="balanceHeight"/>
+        <D3BalanceDrawer :balance="generalBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="false"/>
       </div>
       <div class="balance" id="central-bank-balance">
       <D3BalanceDrawer :balance="centralBankBalance" :width="balanceWidth" :height="balanceHeight"/>
@@ -24,13 +24,16 @@
       <p>This is a standard bank balance</p>
     </ScrollyText>
     <ScrollyText id="add-possesion-to-general">
-      <p>Aan de linkerkant heeft een bank bezittingen</p>
+      <p>It consists of three parts: first of all the anything the firm owns on the left (Possessions).</p>
     </ScrollyText>
     <ScrollyText id="add-obligation-to-general">
-      <p>Aan de rechterkant heb je de obligations</p>
+      <p>Then on the right, the liabilities: everything a firm owes (obligations)</p>
     </ScrollyText>
     <ScrollyText id="add-equity-to-general">
-      <p>Maar ook eigen vermogen</p>
+      <p>Also on the right, the equity: net assets belonging to the owners (value of the assets minus value of liabilities)</p>
+    </ScrollyText>
+    <ScrollyText id="move-default-to-left">
+      <p>Now lets move the balance to the right for reference.</p>
     </ScrollyText>
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
@@ -49,6 +52,7 @@ import {gsap} from "gsap";
 import ExplanationItemContainer from "@/components/Scrolly/ExplanationItemContainer.vue";
 import ScrollyText from "@/components/Scrolly/ScrollyText.vue";
 import {onMounted} from "vue";
+import {createMoveToLeftTrigger} from "@/utils/scrollyUtils";
 
 const generalBalance = new Balance("Standard bank balance");
 const centralBankBalance = new Balance("Central bank balance");
@@ -127,6 +131,7 @@ onMounted(() => {
   createRevertableTransaction('add-possesion-to-general', generalBalance, possessionTransaction);
   createRevertableTransaction('add-obligation-to-general', generalBalance, obligationTransaction);
   createRevertableTransaction('add-equity-to-general', generalBalance, equityTransaction);
+  createMoveToLeftTrigger('move-default-to-left', 'general-balance', balanceWidth);
 });
 </script>
 
