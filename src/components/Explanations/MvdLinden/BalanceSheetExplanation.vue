@@ -102,8 +102,8 @@ const equityTransaction = Transaction.create("general equity", 400, DebitTypes.n
 // Central bank balance transactions
 const goldTransaction = Transaction.create("gold", 150, DebitTypes.mlCentralGold, CreditTypes.none);
 const foreignCurrenciesTransaction = Transaction.create("foreign currencies", 150, DebitTypes.mlCentralForeignCurrencies, CreditTypes.none);
-const bondsTransaction = Transaction.create("bonds", 300, DebitTypes.mlCentralBonds, CreditTypes.none);
-const loansTransaction = Transaction.create("loans to banks", 300, DebitTypes.mlCentralLoansToBanks, CreditTypes.none);
+const bondsTransaction = Transaction.create("bonds", 350, DebitTypes.mlCentralBonds, CreditTypes.none);
+const loansTransaction = Transaction.create("loans to banks", 350, DebitTypes.mlCentralLoansToBanks, CreditTypes.none);
 
 
 const createRevertableTransaction = (elementName: string, balance: Balance, transaction: Transaction) => {

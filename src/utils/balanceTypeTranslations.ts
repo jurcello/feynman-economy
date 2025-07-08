@@ -14,7 +14,6 @@ function translateCreditType(creditType: string) {
 }
 
 function translateDebitType(balanceType: string) {
-    console.log("translateDebitType", balanceType, debitDict);
     if (balanceType in debitDict) {
         return debitDict[balanceType];
     }
