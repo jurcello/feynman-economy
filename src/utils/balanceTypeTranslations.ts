@@ -1,6 +1,14 @@
 import {CreditTypes, DebitTypes} from "@/balance";
 
-const creditDict = {
+const creditDict:{[key: string]: string} = {
+    [CreditTypes.mlCentralDigitalPublicMoney]: "Digital Public Money",
+    [CreditTypes.mlCentralPhysicalPublicMoneyInCirculation]: "Physical Public Money in Circulation",
+    [CreditTypes.mlCentralCapital]: "Capital",
+    [CreditTypes.mlCorporateInsuredPrivateMoney]: "Insured Private Money",
+    [CreditTypes.mlCorporateUninsuredPrivateMoney]: "Uninsured Private Money",
+    [CreditTypes.mlCorporateLoansFromBanks]: "Loans from Banks",
+    [CreditTypes.mlCorporateLongTermDepths]: "Long Term Depths",
+    [CreditTypes.mlCorporateCapital]: "Capital",
 }
 
 const debitDict: {[key: string]: string} = {
@@ -10,6 +18,9 @@ const debitDict: {[key: string]: string} = {
 }
 
 function translateCreditType(creditType: string) {
+    if (creditType in creditDict) {
+        return creditDict[creditType];
+    }
     return creditType;
 }
 

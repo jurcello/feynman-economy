@@ -69,6 +69,15 @@
     <ScrollyText id="add-loans-to-central">
       <p>And provides loans to banks</p>
     </ScrollyText>
+    <ScrollyText id="add-digital-money-to-central">
+      <p>Digital public money represents electronic currency in circulation</p>
+    </ScrollyText>
+    <ScrollyText id="add-physical-money-to-central">
+      <p>Physical public money represents banknotes and coins in circulation</p>
+    </ScrollyText>
+    <ScrollyText id="add-capital-to-central">
+      <p>The central bank's own capital forms its equity</p>
+    </ScrollyText>
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
     </ScrollyText>
@@ -105,6 +114,9 @@ const foreignCurrenciesTransaction = Transaction.create("foreign currencies", 15
 const bondsTransaction = Transaction.create("bonds", 350, DebitTypes.mlCentralBonds, CreditTypes.none);
 const loansTransaction = Transaction.create("loans to banks", 350, DebitTypes.mlCentralLoansToBanks, CreditTypes.none);
 
+const digitalPublicMoneyTransaction = Transaction.create("digital public money", 550, DebitTypes.none, CreditTypes.mlCentralDigitalPublicMoney);
+const physicalPublicMoneyTransaction = Transaction.create("physical public money", 300, DebitTypes.none, CreditTypes.mlCentralPhysicalPublicMoneyInCirculation);
+const capitalTransaction = Transaction.create("central capital", 150, DebitTypes.none, CreditTypes.mlCentralCapital);
 
 const createRevertableTransaction = (elementName: string, balance: Balance, transaction: Transaction) => {
   const elementId = `#${elementName}`;
@@ -135,6 +147,11 @@ onMounted(() => {
   createRevertableTransaction('add-foreign-currencies-to-central', centralBankBalance, foreignCurrenciesTransaction);
   createRevertableTransaction('add-bonds-to-central', centralBankBalance, bondsTransaction);
   createRevertableTransaction('add-loans-to-central', centralBankBalance, loansTransaction);
+  createRevertableTransaction('add-digital-money-to-central', centralBankBalance, digitalPublicMoneyTransaction);
+  createRevertableTransaction('add-physical-money-to-central', centralBankBalance, physicalPublicMoneyTransaction);
+  createRevertableTransaction('add-capital-to-central', centralBankBalance, capitalTransaction);
+
+
 });
 </script>
 
