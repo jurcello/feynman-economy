@@ -276,8 +276,7 @@ onMounted(() => {
             return orderA - orderB;
           });
           return sorted.reverse();
-        })
-        ([props.balance.credit]);
+        })([props.balance.credit]);
 
 
     const currentDomainY = y.domain()[1];

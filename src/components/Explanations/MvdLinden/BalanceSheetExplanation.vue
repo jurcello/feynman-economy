@@ -95,6 +95,7 @@ import ExplanationItemContainer from "@/components/Scrolly/ExplanationItemContai
 import ScrollyText from "@/components/Scrolly/ScrollyText.vue";
 import {onMounted} from "vue";
 import {createMoveToLeftTrigger, createPinnedSheetScrollTrigger, revealBalance} from "@/utils/scrollyUtils";
+import {createRevertableTransaction} from "@/utils/balanceUtils";
 
 const generalBalance = new Balance("Standard bank balance");
 const centralBankBalance = new Balance("Central bank balance");
@@ -118,20 +119,6 @@ const digitalPublicMoneyTransaction = Transaction.create("digital public money",
 const physicalPublicMoneyTransaction = Transaction.create("physical public money", 300, DebitTypes.none, CreditTypes.mlCentralPhysicalPublicMoneyInCirculation);
 const capitalTransaction = Transaction.create("central capital", 150, DebitTypes.none, CreditTypes.mlCentralCapital);
 
-const createRevertableTransaction = (elementName: string, balance: Balance, transaction: Transaction) => {
-  const elementId = `#${elementName}`;
-  ScrollTrigger.create({
-    trigger: elementId,
-    start: 'top center-=100px',
-    onEnter: () => {
-      balance.addTransaction(transaction);
-    },
-    onEnterBack: () => {
-      balance.revertTransaction(transaction);
-    }
-  });
-
-};
 onMounted(() => {
   revealBalance('show-standard-balance','general-balance', balanceWidth);
   const triggerId = 'balances';
