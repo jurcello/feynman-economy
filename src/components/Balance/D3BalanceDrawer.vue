@@ -120,6 +120,11 @@ const createBalanceText = (description: string, amount: number, maxWidth: number
 };
 
 
+function shouldDrawText(height: number, numTextLine: number) {
+  const minHeight = 25 + (numTextLine - 1) * 0.2;
+  return height > minHeight;
+}
+
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
   [p: string]: number
 }, string>[]) {
@@ -192,7 +197,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
             textGroup.each(function(d: any) {
                   const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
                   const height = y(d[0][0]) - y(d[0][1]);
-                  if (height > 25 * textLines.length) {
+                  if (shouldDrawText(height, textLines.length)) {
 
                     const textElement = d3.select(this);
                     textElement.attr("y", (d: any) => calculateTextYPosition(d));
@@ -215,7 +220,7 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
           update => update.each(function(d: any) {
             const height = y(d[0][0]) - y(d[0][1]);
             const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
-            if (height > 25 * textLines.length) {
+            if (shouldDrawText(height, textLines.length)) {
               const textElement = d3.select(this);
               textElement.selectAll("tspan").remove();
 

@@ -15,6 +15,11 @@ const debitDict: {[key: string]: string} = {
     [DebitTypes.mlCentralForeignCurrencies]: "Foreign Currencies",
     [DebitTypes.mlCentralBonds]: "Bonds",
     [DebitTypes.mlCentralLoansToBanks]: "Loans to Banks",
+    [DebitTypes.mlCorporateDigitalPublicMoney]: "Digital Public Money",
+    [DebitTypes.mlCorporatePhysicalPublicMoney]: "Physical Public Money",
+    [DebitTypes.mlCorporateBonds]: "Bonds",
+    [DebitTypes.mlCorporateLoansToBanks]: "Loans to Banks",
+    [DebitTypes.mlCorporateLoansToNonBanks]: "Loans to Non-Banks",
 }
 
 function translateCreditType(creditType: string) {

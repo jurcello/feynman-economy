@@ -156,16 +156,16 @@ const physicalPublicMoneyTransaction = Transaction.create("physical public money
 const capitalTransaction = Transaction.create("central capital", 150, DebitTypes.none, CreditTypes.mlCentralCapital);
 
 // Corporate bank balance transactions
-const corporateDigitalMoneyTransaction = Transaction.create("corporate digital money", 200, DebitTypes.mlCorporateDigitalPublicMoney, CreditTypes.none);
-const corporatePhysicalMoneyTransaction = Transaction.create("corporate physical money", 100, DebitTypes.mlCorporatePhysicalPublicMoney, CreditTypes.none);
-const corporateBondsTransaction = Transaction.create("corporate bonds", 300, DebitTypes.mlCorporateBonds, CreditTypes.none);
-const corporateLoansToBanksTransaction = Transaction.create("corporate loans to banks", 200, DebitTypes.mlCorporateLoansToBanks, CreditTypes.none);
-const corporateLoansToNonBanksTransaction = Transaction.create("corporate loans to non-banks", 400, DebitTypes.mlCorporateLoansToNonBanks, CreditTypes.none);
+const corporateDigitalMoneyTransaction = Transaction.create("corporate digital money", 150, DebitTypes.mlCorporateDigitalPublicMoney, CreditTypes.none);
+const corporatePhysicalMoneyTransaction = Transaction.create("corporate physical money", 200, DebitTypes.mlCorporatePhysicalPublicMoney, CreditTypes.none);
+const corporateBondsTransaction = Transaction.create("corporate bonds", 150, DebitTypes.mlCorporateBonds, CreditTypes.none);
+const corporateLoansToBanksTransaction = Transaction.create("corporate loans to banks", 150, DebitTypes.mlCorporateLoansToBanks, CreditTypes.none);
+const corporateLoansToNonBanksTransaction = Transaction.create("corporate loans to non-banks", 350, DebitTypes.mlCorporateLoansToNonBanks, CreditTypes.none);
 
-const corporateInsuredMoneyTransaction = Transaction.create("corporate insured money", 400, DebitTypes.none, CreditTypes.mlCorporateInsuredPrivateMoney);
-const corporateUninsuredMoneyTransaction = Transaction.create("corporate uninsured money", 300, DebitTypes.none, CreditTypes.mlCorporateUninsuredPrivateMoney);
-const corporateLoansFromBanksTransaction = Transaction.create("corporate loans from banks", 200, DebitTypes.none, CreditTypes.mlCorporateLoansFromBanks);
-const corporateLongTermDepthsTransaction = Transaction.create("corporate long term depths", 200, DebitTypes.none, CreditTypes.mlCorporateLongTermDepths);
+const corporateInsuredMoneyTransaction = Transaction.create("corporate insured money", 450, DebitTypes.none, CreditTypes.mlCorporateInsuredPrivateMoney);
+const corporateUninsuredMoneyTransaction = Transaction.create("corporate uninsured money", 250, DebitTypes.none, CreditTypes.mlCorporateUninsuredPrivateMoney);
+const corporateLoansFromBanksTransaction = Transaction.create("corporate loans from banks", 100, DebitTypes.none, CreditTypes.mlCorporateLoansFromBanks);
+const corporateLongTermDepthsTransaction = Transaction.create("corporate long term depths", 100, DebitTypes.none, CreditTypes.mlCorporateLongTermDepths);
 const corporateCapitalTransaction = Transaction.create("corporate capital", 100, DebitTypes.none, CreditTypes.mlCorporateCapital);
 
 onMounted(() => {
