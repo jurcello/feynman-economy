@@ -81,7 +81,39 @@
     <ScrollyText id="move-central-bank-to-right">
       <p>Now lets move the balance of the central bank to the right for reference.</p>
     </ScrollyText>
-
+    <ScrollyText id="show-corporate-bank-balance">
+      <p>This is the corporate bank balance sheet</p>
+    </ScrollyText>
+    <ScrollyText id="add-digital-public-money-to-corporate">
+      <p>Corporate banks hold digital public money from the central bank</p>
+    </ScrollyText>
+    <ScrollyText id="add-physical-public-money-to-corporate">
+      <p>They also hold physical public money (cash)</p>
+    </ScrollyText>
+    <ScrollyText id="add-bonds-to-corporate">
+      <p>Corporate banks invest in bonds</p>
+    </ScrollyText>
+    <ScrollyText id="add-loans-to-banks-to-corporate">
+      <p>They provide loans to other banks</p>
+    </ScrollyText>
+    <ScrollyText id="add-loans-to-non-banks-to-corporate">
+      <p>And provide loans to non-bank entities</p>
+    </ScrollyText>
+    <ScrollyText id="add-insured-private-money-to-corporate">
+      <p>They have insured private money as liability</p>
+    </ScrollyText>
+    <ScrollyText id="add-uninsured-private-money-to-corporate">
+      <p>And uninsured private money</p>
+    </ScrollyText>
+    <ScrollyText id="add-loans-from-banks-to-corporate">
+      <p>They receive loans from other banks</p>
+    </ScrollyText>
+    <ScrollyText id="add-long-term-depths-to-corporate">
+      <p>Have long-term debt obligations</p>
+    </ScrollyText>
+    <ScrollyText id="add-capital-to-corporate">
+      <p>And maintain their own capital</p>
+    </ScrollyText>
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
     </ScrollyText>
@@ -123,6 +155,19 @@ const digitalPublicMoneyTransaction = Transaction.create("digital public money",
 const physicalPublicMoneyTransaction = Transaction.create("physical public money", 300, DebitTypes.none, CreditTypes.mlCentralPhysicalPublicMoneyInCirculation);
 const capitalTransaction = Transaction.create("central capital", 150, DebitTypes.none, CreditTypes.mlCentralCapital);
 
+// Corporate bank balance transactions
+const corporateDigitalMoneyTransaction = Transaction.create("corporate digital money", 200, DebitTypes.mlCorporateDigitalPublicMoney, CreditTypes.none);
+const corporatePhysicalMoneyTransaction = Transaction.create("corporate physical money", 100, DebitTypes.mlCorporatePhysicalPublicMoney, CreditTypes.none);
+const corporateBondsTransaction = Transaction.create("corporate bonds", 300, DebitTypes.mlCorporateBonds, CreditTypes.none);
+const corporateLoansToBanksTransaction = Transaction.create("corporate loans to banks", 200, DebitTypes.mlCorporateLoansToBanks, CreditTypes.none);
+const corporateLoansToNonBanksTransaction = Transaction.create("corporate loans to non-banks", 400, DebitTypes.mlCorporateLoansToNonBanks, CreditTypes.none);
+
+const corporateInsuredMoneyTransaction = Transaction.create("corporate insured money", 400, DebitTypes.none, CreditTypes.mlCorporateInsuredPrivateMoney);
+const corporateUninsuredMoneyTransaction = Transaction.create("corporate uninsured money", 300, DebitTypes.none, CreditTypes.mlCorporateUninsuredPrivateMoney);
+const corporateLoansFromBanksTransaction = Transaction.create("corporate loans from banks", 200, DebitTypes.none, CreditTypes.mlCorporateLoansFromBanks);
+const corporateLongTermDepthsTransaction = Transaction.create("corporate long term depths", 200, DebitTypes.none, CreditTypes.mlCorporateLongTermDepths);
+const corporateCapitalTransaction = Transaction.create("corporate capital", 100, DebitTypes.none, CreditTypes.mlCorporateCapital);
+
 onMounted(() => {
   revealBalance('show-standard-balance','general-balance', balanceWidth);
   const triggerId = 'balances';
@@ -144,6 +189,17 @@ onMounted(() => {
 
   createMoveToSideTrigger('move-central-bank-to-right', 'central-bank-balance', balanceWidth, 'right');
 
+  revealBalance('show-corporate-bank-balance', 'corporate-bank-balance', balanceWidth);
+  createRevertableTransaction('add-digital-public-money-to-corporate', corporateBankBalance, corporateDigitalMoneyTransaction);
+  createRevertableTransaction('add-physical-public-money-to-corporate', corporateBankBalance, corporatePhysicalMoneyTransaction);
+  createRevertableTransaction('add-bonds-to-corporate', corporateBankBalance, corporateBondsTransaction);
+  createRevertableTransaction('add-loans-to-banks-to-corporate', corporateBankBalance, corporateLoansToBanksTransaction);
+  createRevertableTransaction('add-loans-to-non-banks-to-corporate', corporateBankBalance, corporateLoansToNonBanksTransaction);
+  createRevertableTransaction('add-insured-private-money-to-corporate', corporateBankBalance, corporateInsuredMoneyTransaction);
+  createRevertableTransaction('add-uninsured-private-money-to-corporate', corporateBankBalance, corporateUninsuredMoneyTransaction);
+  createRevertableTransaction('add-loans-from-banks-to-corporate', corporateBankBalance, corporateLoansFromBanksTransaction);
+  createRevertableTransaction('add-long-term-depths-to-corporate', corporateBankBalance, corporateLongTermDepthsTransaction);
+  createRevertableTransaction('add-capital-to-corporate', corporateBankBalance, corporateCapitalTransaction);
 });
 </script>
 
