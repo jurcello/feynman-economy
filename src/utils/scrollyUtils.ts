@@ -33,6 +33,8 @@ function createMoveToSideTrigger(trigger: string, target: string, elementWidth: 
         }
     });
 }
+
+
 const revealBalance = (trigger: string, target: string, balanceWidth: number) => {
     ScrollTrigger.create({
         trigger: `#${trigger}`,
@@ -73,10 +75,32 @@ const createPinnedSheetScrollTrigger = (trigger: string, endTrigger: string) => 
         end: 'top top',
         pin: true,
         pinSpacing: false,
-        markers: true,
     })
 }
 
+const createDisappearTrigger = (trigger: string, target: string, elementWidth: number) => {
+    ScrollTrigger.create({
+        trigger: `#${trigger}`,
+        start: 'top center-=100px',
+        onEnter: () => {
+            const element = document.querySelector(`#${target}`);
+            gsap.to(element, {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                ease: "power2.inOut",
+            });
+        },
+        onEnterBack: () => {
+            const element = document.querySelector(`#${target}`);
+            gsap.to(element, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power2.inOut",
+            });
+        }
+    });
+}
 
-
-export {createMoveToSideTrigger, revealBalance, createPinnedSheetScrollTrigger}
+export {createMoveToSideTrigger, revealBalance, createPinnedSheetScrollTrigger, createDisappearTrigger}

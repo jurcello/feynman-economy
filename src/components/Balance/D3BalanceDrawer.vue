@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import {Balance, DebitTypes, CreditTypes} from "@/balance";
+import {Balance, CreditTypes, DebitTypes} from "@/balance";
 import * as d3 from "d3";
 import colorMappings from "@/balanceColorMappings";
 import {onMounted, ref, watch} from "vue";
@@ -32,7 +32,9 @@ const defaultDebitOrder: DebitTypes[] = [
   DebitTypes.mlCorporatePhysicalPublicMoney,
   DebitTypes.mlCorporateBonds,
   DebitTypes.mlCorporateLoansToBanks,
-  DebitTypes.mlCorporateLoansToNonBanks
+  DebitTypes.mlCorporateLoansToNonBanks,
+  DebitTypes.mlShadowInsuredPrivedMoney,
+  DebitTypes.mlShadowBondsOrSecurizedLoans,
 ];
 const defaultCreditOrder: CreditTypes[] = [
   CreditTypes.equity,

@@ -19,6 +19,8 @@ export const defaultColorMappings = {
     [DebitTypes.mlCorporateBonds]: Colors.mlAssetCorporateBonds,
     [DebitTypes.mlCorporateLoansToBanks]: Colors.mlAssetCorporateLoansToBanks,
     [DebitTypes.mlCorporateLoansToNonBanks]: Colors.mlAssetCorporateLoansToNonBanks,
+    [DebitTypes.mlShadowInsuredPrivedMoney]: Colors.mlShadowInsuredPrivedMoney,
+    [DebitTypes.mlShadowBondsOrSecurizedLoans]: Colors.mlShadowBondsOrSecurizedLoans,
     [CreditTypes.equity]: Colors.blue,
     [CreditTypes.debt]: Colors.red,
     [CreditTypes.creditAccount]: Colors.darkGreen,

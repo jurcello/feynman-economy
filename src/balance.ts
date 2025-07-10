@@ -21,6 +21,8 @@ enum DebitTypes {
     mlCorporateBonds = 'Corporate Bonds',
     mlCorporateLoansToBanks = 'Corporate Loans to Banks',
     mlCorporateLoansToNonBanks = 'Corporate Loans to Non-Banks',
+    mlShadowInsuredPrivedMoney = 'Shadow Insured Prived Money',
+    mlShadowBondsOrSecurizedLoans = 'Shadow Bonds and/ or securitized loans',
 }
 
 enum CreditTypes {

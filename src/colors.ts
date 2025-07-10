@@ -45,6 +45,10 @@ const mlLiabilitiesCorporateLoansFromBanks = '#f1a983';
 const mlLiabilitiesCorporateLongTermDepths = '#f1a983';
 const mlLiabilitiesCorporateCapital = '#48d359';
 
+// Shadow banks
+const mlShadowInsuredPrivedMoney = '#dae8f9';
+const mlShadowBondsOrSecurizedLoans = '#4d93d9';
+
 
 
 
@@ -89,4 +93,6 @@ export default {
     mlLiabilitiesCorporateLoansFromBanks,
     mlLiabilitiesCorporateLongTermDepths,
     mlLiabilitiesCorporateCapital,
+    mlShadowInsuredPrivedMoney,
+    mlShadowBondsOrSecurizedLoans,
 };

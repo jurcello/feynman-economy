@@ -15,6 +15,8 @@
             :height="balanceHeight"
             :max-y="1000"
             :show-amounts="false"
+            debit-description="Assets"
+            credit-description="Liabilities"
         />
       </div>
       <div class="balance" id="central-bank-balance">
@@ -24,6 +26,8 @@
             :height="balanceHeight"
             :max-y="1000"
             :show-amounts="false"
+            debit-description="Assets"
+            credit-description="Liabilities"
         />
       </div>
       <div class="balance" id="corporate-bank-balance">
@@ -33,6 +37,19 @@
             :height="balanceHeight"
             :max-y="1000"
             :show-amounts="false"
+            debit-description="Assets"
+            credit-description="Liabilities"
+        />
+      </div>
+      <div class="balance" id="shadow-bank-balance">
+        <D3BalanceDrawer
+            :balance="shadowBankBalance"
+            :width="balanceWidth"
+            :height="balanceHeight"
+            :max-y="1000"
+            :show-amounts="false"
+            debit-description="Assets"
+            credit-description="Liabilities"
         />
       </div>
     </div>
@@ -117,9 +134,26 @@
     <ScrollyText id="corporate-bank-explanation">
       The balance shows that commercial banks possess digital public money at the central bank and physical public money in its vaults and ATMs—together referred to as liquidity reserve—and bonds and loans. Banks are liable for private money and loans from other banks and debts. The business model of banks is largely based on the difference between the interest on loans and deposits—the interest spread.
     </ScrollyText>
-    <ScrollyText id="last-explanation-item">
-      <p>This is the last explanation item</p>
+    <ScrollyText id="move-corporate-bank-to-right">
+      <p>Now lets move the balance of the corporate bank to the right for reference.</p>
+      <p>We are going to have a look at the last balance: the shadow bank balance.</p>
     </ScrollyText>
+    <ScrollyText id="add-shadow-insured-money">
+      <p>Shadow banks hold insured private money</p>
+    </ScrollyText>
+    <ScrollyText id="add-shadow-bonds">
+      <p>They hold bonds or securitized loans</p>
+    </ScrollyText>
+    <ScrollyText id="add-shadow-capital">
+      <p>They maintain their own capital</p>
+    </ScrollyText>
+    <ScrollyText id="add-shadow-uninsured-money">
+      <p>And have uninsured private money</p>
+    </ScrollyText>
+    <ScrollyText id="last-explanation-item">
+      <p>I hope you understand balances better now</p>
+    </ScrollyText>
+
   </ExplanationItemContainer>
 
 </template>
@@ -129,16 +163,21 @@ import SheetFirst from "@/components/Scrolly/SheetFirst.vue";
 import Sheet from "@/components/Scrolly/Sheet.vue";
 import {Balance, CreditTypes, DebitTypes, Transaction} from "@/balance";
 import D3BalanceDrawer from "@/components/Balance/D3BalanceDrawer.vue";
-import {ScrollTrigger} from "@/plugins/gsap";
 import ExplanationItemContainer from "@/components/Scrolly/ExplanationItemContainer.vue";
 import ScrollyText from "@/components/Scrolly/ScrollyText.vue";
 import {onMounted} from "vue";
-import {createMoveToSideTrigger, createPinnedSheetScrollTrigger, revealBalance} from "@/utils/scrollyUtils";
+import {
+  createDisappearTrigger,
+  createMoveToSideTrigger,
+  createPinnedSheetScrollTrigger,
+  revealBalance
+} from "@/utils/scrollyUtils";
 import {createRevertableTransaction} from "@/utils/balanceUtils";
 
 const generalBalance = new Balance("Standard bank balance");
 const centralBankBalance = new Balance("Central bank balance");
 const corporateBankBalance = new Balance("Corporate bank balance");
+const shadowBankBalance = new Balance("Shadow bank balance");
 
 const balanceWidth = 300;
 const balanceHeight = 400;
@@ -170,6 +209,13 @@ const corporateUninsuredMoneyTransaction = Transaction.create("corporate uninsur
 const corporateLoansFromBanksTransaction = Transaction.create("corporate loans from banks", 100, DebitTypes.none, CreditTypes.mlCorporateLoansFromBanks);
 const corporateLongTermDepthsTransaction = Transaction.create("corporate long term depths", 100, DebitTypes.none, CreditTypes.mlCorporateLongTermDepths);
 const corporateCapitalTransaction = Transaction.create("corporate capital", 100, DebitTypes.none, CreditTypes.mlCorporateCapital);
+
+// Shadow bank transactions
+const shadowInsuredMoneyTransaction = Transaction.create("shadow insured money", 300, DebitTypes.mlShadowInsuredPrivedMoney, CreditTypes.none);
+const shadowBondsTransaction = Transaction.create("shadow bonds", 700, DebitTypes.mlShadowBondsOrSecurizedLoans, CreditTypes.none);
+const shadowCapitalTransaction = Transaction.create("shadow capital", 150, DebitTypes.none, CreditTypes.mlCorporateCapital);
+const shadowUninsuredMoneyTransaction = Transaction.create("shadow uninsured money", 850, DebitTypes.none, CreditTypes.mlCorporateUninsuredPrivateMoney);
+
 
 onMounted(() => {
   revealBalance('show-standard-balance','general-balance', balanceWidth);
@@ -203,6 +249,15 @@ onMounted(() => {
   createRevertableTransaction('add-loans-from-banks-to-corporate', corporateBankBalance, corporateLoansFromBanksTransaction);
   createRevertableTransaction('add-long-term-depths-to-corporate', corporateBankBalance, corporateLongTermDepthsTransaction);
   createRevertableTransaction('add-capital-to-corporate', corporateBankBalance, corporateCapitalTransaction);
+
+  createMoveToSideTrigger('move-corporate-bank-to-right', 'corporate-bank-balance', balanceWidth, 'right');
+  createDisappearTrigger('move-corporate-bank-to-right', 'central-bank-balance', balanceWidth);
+  revealBalance('move-corporate-bank-to-right', 'shadow-bank-balance', balanceWidth);
+
+  createRevertableTransaction('add-shadow-insured-money', shadowBankBalance, shadowInsuredMoneyTransaction);
+  createRevertableTransaction('add-shadow-bonds', shadowBankBalance, shadowBondsTransaction);
+  createRevertableTransaction('add-shadow-capital', shadowBankBalance, shadowCapitalTransaction);
+  createRevertableTransaction('add-shadow-uninsured-money', shadowBankBalance, shadowUninsuredMoneyTransaction);
 });
 </script>
 
@@ -226,6 +281,12 @@ onMounted(() => {
 
 #corporate-bank-balance {
   display: none;
+  position: relative;
+}
+
+#shadow-bank-balance {
+  display: none;
+  position: relative;
 }
 
 </style>

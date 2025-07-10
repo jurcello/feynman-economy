@@ -39,7 +39,6 @@ onMounted(() => {
       start: 'top-=40 top',
       end: 'bottom top',
       pin: true,
-      markers: true,
     }
   });
   gsap.to('#first-transaction', {
