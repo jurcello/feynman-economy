@@ -169,6 +169,10 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
                   .remove()
               )
       )
+  const calculateTextYPosition = (d: any) => {
+    const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
+    return y(d[0][0]) - (10 + (textLines.length - 1) * 15)
+  }
 
   svg.selectAll(`.${balanceType}-label`)
       .data(stackedData)
@@ -179,25 +183,24 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
                 .append("text")
                 .attr("class", `${balanceType}-label`)
                 .attr("x", xPosition)
-                .attr("y", (d: any) => y(d[0][0]) - 10)
                 .attr("text-anchor", "middle")
                 .attr("alignment-baseline", "hanging")
                 .attr("fill", (d: any) => getTextColorWCAG(color(d.key) as string))
                 .attr("font-size", "12px")
                 .attr("opacity", "0");
 
-            textGroup.each(function(data: any) {
-                  const textLines = createBalanceText(t(data.key), data[0].data[data.key], x.bandwidth() - 10);
-                  const height = y(data[0][0]) - y(data[0][1]);
+            textGroup.each(function(d: any) {
+                  const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
+                  const height = y(d[0][0]) - y(d[0][1]);
                   if (height > 25 * textLines.length) {
 
                     const textElement = d3.select(this);
-                    textElement.attr("y", (d: any) => y(d[0][0]) - 10 * textLines.length);
+                    textElement.attr("y", (d: any) => calculateTextYPosition(d));
 
                     textLines.forEach((line, i) => {
                       textElement.append("tspan")
                           .attr("x", x(balanceType) as number + x.bandwidth() / 2)
-                          .attr("dy", i === 0 ? 0 : "1.2em") // Line spacing
+                          .attr("dy", i === 0 ? 0 : "1.3em") // Line spacing
                           .text(line);
                     });
                   }
@@ -219,16 +222,13 @@ function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement
               textLines.forEach((line, i) => {
                 textElement.append("tspan")
                     .attr("x", x(balanceType) as number + x.bandwidth() / 2)
-                    .attr("dy", i === 0 ? 0 : "1.2em") // Line spacing
+                    .attr("dy", i === 0 ? 0 : "1.3em") // Line spacing
                     .text(line);
               });
             }
           }).call(update => update.transition()
                   .duration(750)
-                  .attr("y", (d: any) => {
-                    const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
-                    return (y(d[0][0]) - 10 * textLines.length)
-                  })
+                  .attr("y", (d: any) => calculateTextYPosition(d))
                   .attr("opacity", (d: any) => {
                     const height = y(d[0][0]) - y(d[0][1]);
                     return height > 25 ? 1 : 0;
