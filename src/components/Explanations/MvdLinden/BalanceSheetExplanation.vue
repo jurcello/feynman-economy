@@ -82,37 +82,40 @@
       <p>Now lets move the balance of the central bank to the right for reference.</p>
     </ScrollyText>
     <ScrollyText id="show-corporate-bank-balance">
-      <p>This is the corporate bank balance sheet</p>
+      <p>A simplified (standard) corporate bank balance sheet consists of ten items:</p>
     </ScrollyText>
     <ScrollyText id="add-digital-public-money-to-corporate">
-      <p>Corporate banks hold digital public money from the central bank</p>
+      <p>Corporate banks hold digital public money (central bank reserves)</p>
     </ScrollyText>
     <ScrollyText id="add-physical-public-money-to-corporate">
-      <p>They also hold physical public money (cash)</p>
+      <p>They also hold physical public money (bank notes)</p>
     </ScrollyText>
     <ScrollyText id="add-bonds-to-corporate">
-      <p>Corporate banks invest in bonds</p>
+      <p>They hold bonds (especially government bonds)</p>
     </ScrollyText>
     <ScrollyText id="add-loans-to-banks-to-corporate">
-      <p>They provide loans to other banks</p>
+      <p>They provide loans to other banks (interbank loans)</p>
     </ScrollyText>
     <ScrollyText id="add-loans-to-non-banks-to-corporate">
-      <p>And provide loans to non-bank entities</p>
+      <p>And provide loans to non-bank</p>
     </ScrollyText>
     <ScrollyText id="add-insured-private-money-to-corporate">
-      <p>They have insured private money as liability</p>
+      <p>They have insured private money (bank deposits under deposit insurance scheme)</p>
     </ScrollyText>
     <ScrollyText id="add-uninsured-private-money-to-corporate">
-      <p>And uninsured private money</p>
+      <p>And uninsured private money (bank deposits not under deposit insurance scheme)</p>
     </ScrollyText>
     <ScrollyText id="add-loans-from-banks-to-corporate">
-      <p>They receive loans from other banks</p>
+      <p>They have loans from banks (corporate banks and central bank)</p>
     </ScrollyText>
     <ScrollyText id="add-long-term-depths-to-corporate">
-      <p>Have long-term debt obligations</p>
+      <p>Have long-term debt obligations (bonds, time deposits)</p>
     </ScrollyText>
     <ScrollyText id="add-capital-to-corporate">
       <p>And maintain their own capital</p>
+    </ScrollyText>
+    <ScrollyText id="corporate-bank-explanation">
+      The balance shows that commercial banks possess digital public money at the central bank and physical public money in its vaults and ATMs—together referred to as liquidity reserve—and bonds and loans. Banks are liable for private money and loans from other banks and debts. The business model of banks is largely based on the difference between the interest on loans and deposits—the interest spread.
     </ScrollyText>
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
@@ -208,6 +211,9 @@ onMounted(() => {
   @apply flex flex-row justify-around;
 }
 
+.scrolly-text-item {
+  @apply w-1/2;
+}
 
 #general-balance {
   display: none;
