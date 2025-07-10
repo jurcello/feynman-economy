@@ -51,11 +51,11 @@
       <p>Also on the right, the equity: net assets belonging to the owners (value of the assets minus value of liabilities)</p>
     </ScrollyText>
     <ScrollyText id="move-default-to-left">
-      <p>Now lets move the balance to the right for reference.</p>
+      <p>Now lets move the balance to the left for reference.</p>
     </ScrollyText>
     <ScrollyText id="show-central-bank-balance">
       <p>This is the central bank balance sheet</p>
-      <p>A simplified (standard) corporate bank balance sheet consists of seven components.</p>
+      <p>A simplified (standard) central bank balance sheet consists of seven components.</p>
     </ScrollyText>
     <ScrollyText id="add-gold-to-central">
       <p>The central bank owns gold as part of its assets</p>
@@ -78,6 +78,10 @@
     <ScrollyText id="add-capital-to-central">
       <p>The central bank's own capital forms its equity</p>
     </ScrollyText>
+    <ScrollyText id="move-central-bank-to-right">
+      <p>Now lets move the balance of the central bank to the right for reference.</p>
+    </ScrollyText>
+
     <ScrollyText id="last-explanation-item">
       <p>This is the last explanation item</p>
     </ScrollyText>
@@ -94,7 +98,7 @@ import {ScrollTrigger} from "@/plugins/gsap";
 import ExplanationItemContainer from "@/components/Scrolly/ExplanationItemContainer.vue";
 import ScrollyText from "@/components/Scrolly/ScrollyText.vue";
 import {onMounted} from "vue";
-import {createMoveToLeftTrigger, createPinnedSheetScrollTrigger, revealBalance} from "@/utils/scrollyUtils";
+import {createMoveToSideTrigger, createPinnedSheetScrollTrigger, revealBalance} from "@/utils/scrollyUtils";
 import {createRevertableTransaction} from "@/utils/balanceUtils";
 
 const generalBalance = new Balance("Standard bank balance");
@@ -127,7 +131,7 @@ onMounted(() => {
   createRevertableTransaction('add-possesion-to-general', generalBalance, possessionTransaction);
   createRevertableTransaction('add-obligation-to-general', generalBalance, obligationTransaction);
   createRevertableTransaction('add-equity-to-general', generalBalance, equityTransaction);
-  createMoveToLeftTrigger('move-default-to-left', 'general-balance', balanceWidth);
+  createMoveToSideTrigger('move-default-to-left', 'general-balance', balanceWidth);
 
   revealBalance('show-central-bank-balance','central-bank-balance', balanceWidth);
   createRevertableTransaction('add-gold-to-central', centralBankBalance, goldTransaction);
@@ -138,6 +142,7 @@ onMounted(() => {
   createRevertableTransaction('add-physical-money-to-central', centralBankBalance, physicalPublicMoneyTransaction);
   createRevertableTransaction('add-capital-to-central', centralBankBalance, capitalTransaction);
 
+  createMoveToSideTrigger('move-central-bank-to-right', 'central-bank-balance', balanceWidth, 'right');
 
 });
 </script>

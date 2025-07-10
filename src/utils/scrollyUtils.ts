@@ -1,7 +1,7 @@
 import {ScrollTrigger} from "@/plugins/gsap";
 import {gsap} from "gsap";
 
-function createMoveToLeftTrigger(trigger: string, target: string, elementWidth: number) {
+function createMoveToSideTrigger(trigger: string, target: string, elementWidth: number, side: "left" | "right" = "left") {
     const element = document.querySelector(`#${target}`);
     const viewportWidth = window.innerWidth;
     const leftPosition = (viewportWidth/2) - (elementWidth/2);
@@ -12,11 +12,11 @@ function createMoveToLeftTrigger(trigger: string, target: string, elementWidth: 
         onEnter: () => {
             gsap.set(element, {
                 position: "absolute",
-                left: leftPosition,
+                [side]: leftPosition,
             });
 
             gsap.to(element, {
-                left: 20,
+                [side]: 20,
                 ease: "power2.inOut",
                 duration: 1,
             })
@@ -24,7 +24,7 @@ function createMoveToLeftTrigger(trigger: string, target: string, elementWidth: 
         onEnterBack: () => {
             const element = document.querySelector(`#${target}`);
             gsap.to(element, {
-                left: leftPosition,
+                [side]: leftPosition,
             }).then(() => {
                 gsap.set(element, {
                     position: "static",
@@ -79,4 +79,4 @@ const createPinnedSheetScrollTrigger = (trigger: string, endTrigger: string) => 
 
 
 
-export {createMoveToLeftTrigger, revealBalance, createPinnedSheetScrollTrigger}
+export {createMoveToSideTrigger, revealBalance, createPinnedSheetScrollTrigger}
