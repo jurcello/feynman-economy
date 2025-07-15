@@ -1,19 +1,20 @@
 import {describe, expect, it} from "vitest";
 
-class MoneyDestination {
-    public config: MoneyDestinationConfig;
+interface Position {
+    x: number;
+    y: number;
+}
 
-    constructor(
-        public name: string,
-        public amount: number
-    ) {
-        this.config = new MoneyDestinationConfig({
-            blockSize: 10,
-            blocksPerRow: 10,
-            blockGutter: 2,
-        });
+class MoneyBlock {
+    public currentPosition: Position;
+    public targetPosition: Position;
+
+    constructor(params: { currentPosition: Position; targetPosition: Position }) {
+        this.currentPosition = params.currentPosition;
+        this.targetPosition = params.targetPosition;
     }
 }
+
 
 class MoneyDestinationConfig {
     public blockSize: number;
@@ -26,6 +27,44 @@ class MoneyDestinationConfig {
         this.blockGutter = param.blockGutter;
     }
 
+}
+
+class MoneyDestination {
+    public config: MoneyDestinationConfig;
+    public blocks: MoneyBlock[];
+
+    constructor(
+        public name: string,
+        public amount: number,
+        config?: MoneyDestinationConfig
+    ) {
+        this.config = config || new MoneyDestinationConfig({
+            blockSize: 10,
+            blocksPerRow: 10,
+            blockGutter: 2,
+        });
+        this.blocks = this.createBlocks();
+    }
+
+    private createBlocks(): MoneyBlock[] {
+        const blocks: MoneyBlock[] = [];
+
+        for (let i = 0; i < this.amount; i++) {
+            const row = Math.floor(i / this.config.blocksPerRow);
+            const col = i % this.config.blocksPerRow;
+
+            const x = col * (this.config.blockSize + this.config.blockGutter);
+            const y = row === 0 ? 0 : -row * (this.config.blockSize + this.config.blockGutter);
+
+
+            blocks.push(new MoneyBlock({
+                currentPosition: { x, y },
+                targetPosition: { x: 0, y: 0 }
+            }));
+        }
+
+        return blocks;
+    }
 }
 
 describe('MoneyDestination', () => {
@@ -53,5 +92,24 @@ describe('MoneyDestination', () => {
             blockGutter: 2,
         })
         expect(moneyStash.config).toEqual(expected)
+    });
+    it('has 10 blocks created when it is initialized with an amount of 10', () => {
+        const moneyStash = new MoneyDestination('Stash', 10);
+
+        expect(moneyStash.blocks.length).toBe(10);
+    });
+
+    it('creates blocks that are instances of MoneyBlock which contains the current and new position', () => {
+        const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2});
+        const moneyStash = new MoneyDestination('Stash', 4, config)
+
+        const expectedFirstMoneyBlocks = [
+            new MoneyBlock({ currentPosition: {x: 0, y: 0}, targetPosition: {x: 0, y: 0} }),
+            new MoneyBlock({ currentPosition: {x: 12, y: 0}, targetPosition: {x: 0, y: 0} }),
+            new MoneyBlock({ currentPosition: {x: 0, y: -12}, targetPosition: {x: 0, y: 0} }),
+            new MoneyBlock({ currentPosition: {x: 12, y: -12}, targetPosition: {x: 0, y: 0} }),
+        ];
+
+        expect(moneyStash.blocks).toEqual(expectedFirstMoneyBlocks);
     });
 })
