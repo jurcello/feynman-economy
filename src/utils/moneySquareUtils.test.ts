@@ -26,7 +26,7 @@ class MoneyDestinationConfig {
         this.blockSize = param.blockSize;
         this.blocksPerRow = param.blocksPerRow;
         this.blockGutter = param.blockGutter;
-        this.position = param.position || {x: 0, y: 0};
+        this.position = param.position || { x: 0, y: 0 };
     }
 }
 
@@ -49,24 +49,45 @@ class MoneyDestination {
 
     private createBlocks(): MoneyBlock[] {
         const blocks: MoneyBlock[] = [];
-        const basePosition = this.config.position;
 
         for (let i = 0; i < this.amount; i++) {
-            const row = Math.floor(i / this.config.blocksPerRow);
-            const col = i % this.config.blocksPerRow;
-
-            const x = basePosition.x + col * (this.config.blockSize + this.config.blockGutter);
-            const y = basePosition.y + (row === 0 ? 0 : -row * (this.config.blockSize + this.config.blockGutter));
-
-            blocks.push(new MoneyBlock({
-                currentPosition: {x, y},
-                targetPosition: {x: 0, y: 0}
-            }));
+            blocks.push(this.createBlockAtIndex(i));
         }
 
         return blocks;
     }
+
+    private createBlockAtIndex(index: number): MoneyBlock {
+        const { row, col } = this.getGridPosition(index);
+        const position = this.calculatePosition(row, col);
+
+        return new MoneyBlock({
+            currentPosition: position,
+            targetPosition: { x: 0, y: 0 }
+        });
+    }
+
+    private getGridPosition(index: number): { row: number; col: number } {
+        const row = Math.floor(index / this.config.blocksPerRow);
+        const col = index % this.config.blocksPerRow;
+        return { row, col };
+    }
+
+    private calculatePosition(row: number, col: number): Position {
+        const x = this.config.position.x + col * (this.config.blockSize + this.config.blockGutter);
+        const y = this.config.position.y + (row === 0 ? 0 : -row * (this.config.blockSize + this.config.blockGutter));
+        return { x, y };
+    }
+
+    public addMoney(amount: number): void {
+        for (let i = 0; i < amount; i++) {
+            const newBlock = this.createBlockAtIndex(this.amount + i);
+            this.blocks.push(newBlock);
+        }
+        this.amount += amount;
+    }
 }
+
 
 describe('MoneyDestination', () => {
     it('can be initialized', () => {
@@ -129,4 +150,19 @@ describe('MoneyDestination', () => {
         expect(moneyStash.blocks).toEqual(expectedFirstMoneyBlocks);
     });
 
+    it('adds one block with correct position when addMoney is called', () => {
+        const position: Position = {x: 10, y: 80};
+        const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2, position});
+        const moneyStash = new MoneyDestination('Stash', 4, config);
+
+        moneyStash.addMoney(1);
+
+        const expectedNewBlock = new MoneyBlock({
+            currentPosition: {x: 10, y: 56},
+            targetPosition: {x: 0, y: 0}
+        });
+
+        expect(moneyStash.blocks.length).toBe(5);
+        expect(moneyStash.blocks[4]).toEqual(expectedNewBlock);
+    });
 })
