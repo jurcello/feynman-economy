@@ -20,13 +20,14 @@ class MoneyDestinationConfig {
     public blockSize: number;
     public blocksPerRow: number;
     public blockGutter: number;
+    public position: Position;
 
-    constructor(param: { blockSize: number; blocksPerRow: number; blockGutter: number }) {
+    constructor(param: { blockSize: number; blocksPerRow: number; blockGutter: number; position?: Position }) {
         this.blockSize = param.blockSize;
         this.blocksPerRow = param.blocksPerRow;
         this.blockGutter = param.blockGutter;
+        this.position = param.position || {x: 0, y: 0};
     }
-
 }
 
 class MoneyDestination {
@@ -48,18 +49,18 @@ class MoneyDestination {
 
     private createBlocks(): MoneyBlock[] {
         const blocks: MoneyBlock[] = [];
+        const basePosition = this.config.position;
 
         for (let i = 0; i < this.amount; i++) {
             const row = Math.floor(i / this.config.blocksPerRow);
             const col = i % this.config.blocksPerRow;
 
-            const x = col * (this.config.blockSize + this.config.blockGutter);
-            const y = row === 0 ? 0 : -row * (this.config.blockSize + this.config.blockGutter);
-
+            const x = basePosition.x + col * (this.config.blockSize + this.config.blockGutter);
+            const y = basePosition.y + (row === 0 ? 0 : -row * (this.config.blockSize + this.config.blockGutter));
 
             blocks.push(new MoneyBlock({
-                currentPosition: { x, y },
-                targetPosition: { x: 0, y: 0 }
+                currentPosition: {x, y},
+                targetPosition: {x: 0, y: 0}
             }));
         }
 
@@ -112,4 +113,20 @@ describe('MoneyDestination', () => {
 
         expect(moneyStash.blocks).toEqual(expectedFirstMoneyBlocks);
     });
+
+    it('creates blocks with correct positions when MoneyDestination has a position', () => {
+        const position: Position = {x: 10, y: 80};
+        const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2, position});
+        const moneyStash = new MoneyDestination('Stash', 4, config)
+
+        const expectedFirstMoneyBlocks = [
+            new MoneyBlock({currentPosition: {x: 10, y: 80}, targetPosition: {x: 0, y: 0}}),
+            new MoneyBlock({currentPosition: {x: 22, y: 80}, targetPosition: {x: 0, y: 0}}),
+            new MoneyBlock({currentPosition: {x: 10, y: 68}, targetPosition: {x: 0, y: 0}}),
+            new MoneyBlock({currentPosition: {x: 22, y: 68}, targetPosition: {x: 0, y: 0}}),
+        ];
+
+        expect(moneyStash.blocks).toEqual(expectedFirstMoneyBlocks);
+    });
+
 })
