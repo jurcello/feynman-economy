@@ -1,6 +1,12 @@
 <template>
   <div class="money-flow-container">
     <p class="mb-4">This component demonstrates the flow of money between three destinations.</p>
+    <button
+        @click="moveMoneyToWorkers"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+    >
+      Move Money to Workers
+    </button>
     <div ref="canvas" class="canvas"></div>
   </div>
 </template>
@@ -40,6 +46,9 @@ const destinations = [company, workers, shareholders];
 
 const canvas = ref<HTMLElement | null>(null);
 
+const moveMoneyToWorkers = () => {
+  company.moveTo(workers, 10);
+}
 
 // Initialize money destinations
 onMounted(() => {
@@ -60,9 +69,10 @@ onMounted(() => {
 
   svg.append("g")
       .selectAll("rect.money-block")
-      .data(MoneyBlock.allBlocks)
+      .data(MoneyBlock.allBlocks, d => d.id)
       .join(
           enter => {
+            console.log("entering")
             return enter
                 .append("rect")
                 .attr("class", "money-block")
@@ -78,6 +88,11 @@ onMounted(() => {
                     .duration(1000)
                     .attr("x", d => d.targetPosition.x)
                     .attr("y", d => d.targetPosition.y)
+                    .end()
+                    .then(() => {
+                      MoneyBlock.updateMovingBlocks();
+                      console.log("money moved")
+                    })
             )
           },
           exit => exit

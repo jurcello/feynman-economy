@@ -1,4 +1,4 @@
-interface Position {
+export type Position = {
     x: number;
     y: number;
 }
@@ -8,6 +8,8 @@ class MoneyBlock {
     public targetPosition: Position;
     public isMoving: boolean = false;
     public static allBlocks: MoneyBlock[] = [];
+    public id: string = `block-${Date.now()}-${Math.random()}`;
+
 
     constructor(params: { currentPosition: Position; targetPosition: Position }) {
         this.currentPosition = params.currentPosition;
@@ -135,4 +137,4 @@ class MoneyDestination {
 
 }
 
-export {Position, MoneyBlock, MoneyDestination, MoneyDestinationConfig};
+export {MoneyBlock, MoneyDestination, MoneyDestinationConfig};
