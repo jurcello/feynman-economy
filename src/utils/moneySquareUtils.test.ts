@@ -86,6 +86,34 @@ class MoneyDestination {
         }
         this.amount += amount;
     }
+
+    public addBlocks(blocks: MoneyBlock[]): void {
+        for (const block of blocks) {
+            const newIndex = this.blocks.length;
+            const { row, col } = this.getGridPosition(newIndex);
+            const newPosition = this.calculatePosition(row, col);
+
+            // Update the block's target position to its new position in this destination
+            block.targetPosition = newPosition;
+            this.blocks.push(block);
+        }
+        this.amount += blocks.length;
+    }
+
+
+    public moveTo(destination: MoneyDestination, amount: number): void {
+        if (amount > this.amount) {
+            throw new Error('Cannot move more money than available');
+        }
+
+        // Remove blocks from source (from the end)
+        const movedBlocks = this.blocks.splice(-amount, amount);
+        this.amount -= amount;
+
+        // Add the actual blocks to destination
+        destination.addBlocks(movedBlocks);
+    }
+
 }
 
 
@@ -164,5 +192,26 @@ describe('MoneyDestination', () => {
 
         expect(moneyStash.blocks.length).toBe(5);
         expect(moneyStash.blocks[4]).toEqual(expectedNewBlock);
+    });
+
+    it('can move an amount of money from one destination to another destination using the move to function', () => {
+        const source = new MoneyDestination('Source', 10);
+        const destination = new MoneyDestination('Destination', 5);
+        const amountToMove = 3;
+
+        // Test will fail as the moveTo function is not implemented yet
+        source.moveTo(destination, amountToMove);
+
+        expect({
+            sourceBlocks: source.blocks.length,
+            sourceAmount: source.amount,
+            destinationBlocks: destination.blocks.length,
+            destinationAmount: destination.amount
+        }).toEqual({
+            sourceBlocks: 7,
+            sourceAmount: 7,
+            destinationBlocks: 8,
+            destinationAmount: 8
+        });
     });
 })
