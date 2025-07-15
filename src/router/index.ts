@@ -9,6 +9,7 @@ import PriceSettingCurve from "@/views/PriceSettingCurve.vue";
 import PriceSettingCurveNew from "@/views/PriceSettingCurveNew.vue";
 import BarchartTest from "@/views/BarchartTest.vue";
 import MLBankBalance from "@/views/MLBankBalance.vue";
+import MoneyFlow from "@/views/MoneyFlow.vue";
 
 // Define routes for your app
 const routes = [
@@ -56,6 +57,11 @@ const routes = [
     path: '/ml-bank-balance',
     name: 'MLBankBalance',
     component: MLBankBalance,
+  },
+  {
+    path: '/money-flow',
+    name: 'MoneyFlow',
+    component: MoneyFlow,
   }
 ];
 

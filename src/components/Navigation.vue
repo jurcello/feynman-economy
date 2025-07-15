@@ -11,6 +11,8 @@
     <router-link to="/money-creation-part-2">Money creation part 2</router-link>
     |
     <router-link to="/ml-bank-balance">Bank balances</router-link>
+    |
+    <router-link to="/money-flow">Money Flow</router-link>
   </nav>
 </template>
 
