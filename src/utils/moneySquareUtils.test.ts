@@ -8,10 +8,20 @@ interface Position {
 class MoneyBlock {
     public currentPosition: Position;
     public targetPosition: Position;
+    public isMoving: boolean = false;
+    public static allBlocks: MoneyBlock[] = [];
 
     constructor(params: { currentPosition: Position; targetPosition: Position }) {
         this.currentPosition = params.currentPosition;
         this.targetPosition = params.targetPosition;
+        MoneyBlock.allBlocks.push(this);
+    }
+
+    public destroy(): void {
+        const index = MoneyBlock.allBlocks.indexOf(this);
+        if (index !== -1) {
+            MoneyBlock.allBlocks.splice(index, 1);
+        }
     }
 }
 
@@ -95,6 +105,7 @@ class MoneyDestination {
 
             // Update the block's target position to its new position in this destination
             block.targetPosition = newPosition;
+            block.isMoving = true;
             this.blocks.push(block);
         }
         this.amount += blocks.length;
@@ -243,4 +254,27 @@ describe('MoneyDestination', () => {
             targetPosition: {x: 100, y: 100}
         });
     });
+
+    it('keeps track of all blocks in the system through MoneyBlock.allBlocks', () => {
+        MoneyBlock.allBlocks.length = 0;
+
+        const source = new MoneyDestination('Source', 3);
+        const destination = new MoneyDestination('Destination', 2);
+
+        source.moveTo(destination, 1);
+
+        // The total number of blocks should remain the same after moving
+        expect(MoneyBlock.allBlocks.length).toBe(5);
+    });
+
+    it('sets isMoving to true when a block is moved to another destination', () => {
+        const source = new MoneyDestination('Source', 1);
+        const destination = new MoneyDestination('Destination', 0);
+
+        source.moveTo(destination, 1);
+
+        expect(destination.blocks[0].isMoving).toBe(true);
+    });
+
+
 })
