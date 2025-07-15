@@ -214,4 +214,33 @@ describe('MoneyDestination', () => {
             destinationAmount: 8
         });
     });
+
+    it('correctly updates block position when moved to another destination', () => {
+        const sourceConfig = new MoneyDestinationConfig({
+            blockSize: 10,
+            blocksPerRow: 2,
+            blockGutter: 2,
+            position: {x: 0, y: 0}
+        });
+        const destinationConfig = new MoneyDestinationConfig({
+            blockSize: 10,
+            blocksPerRow: 2,
+            blockGutter: 2,
+            position: {x: 100, y: 100}
+        });
+
+        const source = new MoneyDestination('Source', 1, sourceConfig);
+        const destination = new MoneyDestination('Destination', 0, destinationConfig);
+
+        source.moveTo(destination, 1);
+
+        const movedBlock = destination.blocks[0];
+        expect({
+            currentPosition: movedBlock.currentPosition,
+            targetPosition: movedBlock.targetPosition
+        }).toEqual({
+            currentPosition: {x: 0, y: 0},
+            targetPosition: {x: 100, y: 100}
+        });
+    });
 })
