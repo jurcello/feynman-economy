@@ -1,48 +1,93 @@
 <template>
   <div class="money-flow-container">
     <p class="mb-4">This component demonstrates the flow of money between three destinations.</p>
-    
+    <div ref="canvas" class="canvas"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { MoneyDestination, MoneyDestinationConfig, MoneyBlock } from '@/utils/moneySquareUtils';
+import * as d3 from "d3";
 
 // Create three money destinations with different configurations
-const moneyDestinations = ref<MoneyDestination[]>([]);
+const configCompany = new MoneyDestinationConfig({
+  blockSize: 10,
+  blocksPerRow: 10,
+  blockGutter: 2,
+  position: {x: 200, y: 100}
+});
+
+const configWorkers = new MoneyDestinationConfig({
+  blockSize: 10,
+  blocksPerRow: 5,
+  blockGutter: 2,
+  position: {x: 20, y: 300}
+});
+
+const configShareholders = new MoneyDestinationConfig({
+  blockSize: 10,
+  blocksPerRow: 5,
+  blockGutter: 2,
+  position: {x: 340, y: 300}
+});
+
+const company = new MoneyDestination("Company", 20, configCompany);
+const workers = new MoneyDestination("Workers", 0, configWorkers);
+const shareholders = new MoneyDestination("Shareholders", 0, configShareholders);
+
+const destinations = [company, workers, shareholders];
+
+const canvas = ref<HTMLElement | null>(null);
+
 
 // Initialize money destinations
 onMounted(() => {
-  // Create configurations for each destination with different positions
-  const config1 = new MoneyDestinationConfig({
-    blockSize: 10,
-    blocksPerRow: 5,
-    blockGutter: 2,
-    position: { x: 20, y: 180 }
-  });
-  
-  const config2 = new MoneyDestinationConfig({
-    blockSize: 10,
-    blocksPerRow: 5,
-    blockGutter: 2,
-    position: { x: 80, y: 180 }
-  });
-  
-  const config3 = new MoneyDestinationConfig({
-    blockSize: 10,
-    blocksPerRow: 5,
-    blockGutter: 2,
-    position: { x: 140, y: 180 }
-  });
-  
-  // Create money destinations with initial amounts
-  moneyDestinations.value = [
-    new MoneyDestination('Source', 20, config1),
-    new MoneyDestination('Intermediate', 10, config2),
-    new MoneyDestination('Target', 5, config3)
-  ];
-  
+
+  const svg = d3.select(canvas.value)
+      .append("svg")
+      .attr("width", 600)
+      .attr("height", 400);
+
+  svg.append("g")
+      .selectAll("text.title")
+      .data(destinations)
+      .join("text")
+      .attr("class", "title")
+      .text(d => d.name)
+      .attr("x", d => d.config.position.x)
+      .attr("y", d => d.config.position.y + 30)
+
+  svg.append("g")
+      .selectAll("rect.money-block")
+      .data(MoneyBlock.allBlocks)
+      .join(
+          enter => {
+            return enter
+                .append("rect")
+                .attr("class", "money-block")
+                .attr("fill", "red")
+                .attr("x", d => d.currentPosition.x)
+                .attr("y", d => d.currentPosition.y)
+                .attr("width", 10)
+                .attr("height", 10)
+          },
+          update => {
+            return update.call(
+                update => update.transition()
+                    .duration(1000)
+                    .attr("x", d => d.targetPosition.x)
+                    .attr("y", d => d.targetPosition.y)
+            )
+          },
+          exit => exit
+              // Animate the exit by shrinking height to 0
+              .call(exit => exit.transition()
+                  .duration(750)
+                  .attr("height", 0)
+                  .remove()
+              )
+      )
 });
 
 // Clean up animation frame on component unmount
