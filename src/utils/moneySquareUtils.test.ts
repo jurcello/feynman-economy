@@ -23,6 +23,16 @@ class MoneyBlock {
             MoneyBlock.allBlocks.splice(index, 1);
         }
     }
+
+    public static updateMovingBlocks(): void {
+        MoneyBlock.allBlocks.forEach(block => {
+            if (block.isMoving) {
+                block.currentPosition = block.targetPosition;
+                block.targetPosition = {x: 0, y: 0};
+                block.isMoving = false;
+            }
+        });
+    }
 }
 
 
@@ -274,6 +284,39 @@ describe('MoneyDestination', () => {
         source.moveTo(destination, 1);
 
         expect(destination.blocks[0].isMoving).toBe(true);
+    });
+
+    it('updates all moving blocks positions and states when updateMovingBlocks is called', () => {
+        MoneyBlock.allBlocks.length = 0;
+        const sourceConfig = new MoneyDestinationConfig({
+            blockSize: 10,
+            blocksPerRow: 2,
+            blockGutter: 2,
+            position: {x: 0, y: 0}
+        });
+        const destinationConfig = new MoneyDestinationConfig({
+            blockSize: 10,
+            blocksPerRow: 2,
+            blockGutter: 2,
+            position: {x: 100, y: 100}
+        });
+
+        const source = new MoneyDestination('Source', 1, sourceConfig);
+        const destination = new MoneyDestination('Destination', 0, destinationConfig);
+
+        source.moveTo(destination, 1);
+        MoneyBlock.updateMovingBlocks();
+
+        const movedBlock = destination.blocks[0];
+        expect({
+            currentPosition: movedBlock.currentPosition,
+            targetPosition: movedBlock.targetPosition,
+            isMoving: movedBlock.isMoving
+        }).toEqual({
+            currentPosition: {x: 100, y: 100},
+            targetPosition: {x: 0, y: 0},
+            isMoving: false
+        });
     });
 
 
