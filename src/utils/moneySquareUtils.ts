@@ -3,11 +3,14 @@ export type Position = {
     y: number;
 }
 
+export type MoneyBlockListener = (blocks: MoneyBlock[]) => void;
+
 class MoneyBlock {
     public currentPosition: Position;
     public targetPosition: Position;
     public isMoving: boolean = false;
     public static allBlocks: MoneyBlock[] = [];
+    private static listeners: MoneyBlockListener[] = [];
     public id: string = `block-${Date.now()}-${Math.random()}`;
 
 
@@ -15,6 +18,7 @@ class MoneyBlock {
         this.currentPosition = params.currentPosition;
         this.targetPosition = params.targetPosition;
         MoneyBlock.allBlocks.push(this);
+        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
     public destroy(): void {
@@ -33,6 +37,22 @@ class MoneyBlock {
             }
         });
     }
+    public static addListener(listener: MoneyBlockListener): void {
+        this.listeners.push(listener);
+        this.notifyListeners(MoneyBlock.allBlocks);
+    }
+
+    public static removeListener(listener: MoneyBlockListener): void {
+        const index = this.listeners.indexOf(listener);
+        if (index !== -1) {
+            this.listeners.splice(index, 1);
+        }
+    }
+
+    public static notifyListeners(blocks: MoneyBlock[]): void {
+        this.listeners.forEach(listener => listener(blocks));
+    }
+
 }
 
 
@@ -137,14 +157,13 @@ class MoneyDestination {
 
 }
 
-type MoneyBlockListener = (blocks: MoneyBlock[]) => void;
-
 class MoneyWorld {
     public moneyDestinations: MoneyDestination[];
     private listeners: MoneyBlockListener[] = [];
 
     constructor(moneyDestinations: MoneyDestination[]) {
         this.moneyDestinations = moneyDestinations;
+        MoneyBlock.addListener(this.notifyListeners.bind(this));
     }
 
     public addListener(listener: MoneyBlockListener): void {
@@ -164,4 +183,4 @@ class MoneyWorld {
     }
 }
 
-export {MoneyBlock, MoneyDestination, MoneyDestinationConfig, MoneyWorld, MoneyBlockListener};
+export {MoneyBlock, MoneyDestination, MoneyDestinationConfig, MoneyWorld};
