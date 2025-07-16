@@ -6,34 +6,46 @@ export type Position = {
 export type MoneyBlockListener = (blocks: MoneyBlock[]) => void;
 
 class MoneyBlock {
-    public currentPosition: Position;
-    public targetPosition: Position;
-    public isMoving: boolean = false;
+    private _currentPosition: Position;
+    private _targetPosition: Position;
+    private _isMoving: boolean = false;
     public static allBlocks: MoneyBlock[] = [];
     private static listeners: MoneyBlockListener[] = [];
     public id: string = `block-${Date.now()}-${Math.random()}`;
 
+    get currentPosition(): Position {
+        return this._currentPosition;
+    }
+
+    set currentPosition(value: Position) {
+        this._currentPosition = value;
+        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
+    }
+
+    get targetPosition(): Position {
+        return this._targetPosition;
+    }
+
+    set targetPosition(value: Position) {
+        this._targetPosition = value;
+        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
+    }
+
+    get isMoving(): boolean {
+        return this._isMoving;
+    }
+
+    set isMoving(value: boolean) {
+        this._isMoving = value;
+        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
+    }
 
     constructor(params: { currentPosition: Position; targetPosition: Position }) {
-        this.currentPosition = params.currentPosition;
-        this.targetPosition = params.targetPosition;
-
-        const proxy = new Proxy(this, {
-            set(target: MoneyBlock, property: string | symbol, value: any): boolean {
-                // Set the property
-                (target as any)[property] = value;
-
-                // Notify listeners whenever any property changes
-                MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
-
-                return true;
-            }
-        });
+        this._currentPosition = params.currentPosition;
+        this._targetPosition = params.targetPosition;
 
         MoneyBlock.allBlocks.push(this);
         MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
-
-        return proxy;
     }
 
     public destroy(): void {
@@ -52,6 +64,7 @@ class MoneyBlock {
             }
         });
     }
+
     public static addListener(listener: MoneyBlockListener): void {
         this.listeners.push(listener);
         this.notifyListeners(MoneyBlock.allBlocks);
@@ -69,7 +82,6 @@ class MoneyBlock {
     }
 
 }
-
 
 class MoneyDestinationConfig {
     public blockSize: number;
