@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { MoneyDestination, MoneyDestinationConfig, MoneyBlock } from '@/utils/moneySquareUtils';
+import {MoneyDestination, MoneyDestinationConfig, MoneyBlock, MoneyWorld} from '@/utils/moneySquareUtils';
 import * as d3 from "d3";
 
 // Create three money destinations with different configurations
@@ -43,34 +43,15 @@ const workers = new MoneyDestination("Workers", 0, configWorkers);
 const shareholders = new MoneyDestination("Shareholders", 0, configShareholders);
 
 const destinations = [company, workers, shareholders];
+const world = new MoneyWorld(destinations);
 
 const canvas = ref<HTMLElement | null>(null);
 
-const moveMoneyToWorkers = () => {
-  company.moveTo(workers, 10);
-}
+let moveMoneyToWorkers;
 
-// Initialize money destinations
-onMounted(() => {
-  const getCurrentBlocks = () => [...MoneyBlock.allBlocks];
-
-  const svg = d3.select(canvas.value)
-      .append("svg")
-      .attr("width", 600)
-      .attr("height", 400);
-
-  svg.append("g")
-      .selectAll("text.title")
-      .data(destinations)
-      .join("text")
-      .attr("class", "title")
-      .text(d => d.name)
-      .attr("x", d => d.config.position.x)
-      .attr("y", d => d.config.position.y + 30)
-
-  svg.append("g")
-      .selectAll("rect.money-block")
-      .data(getCurrentBlocks(), d => d.id)
+const redrawBlocks = (svg: d3.Selection<SVGGElement, unknown, null, undefined>) => {
+  svg.selectAll("rect.money-block")
+      .data([...MoneyBlock.allBlocks], d => d.id)
       .join(
           enter => {
             console.log("entering")
@@ -104,6 +85,31 @@ onMounted(() => {
                   .remove()
               )
       )
+}
+// Initialize money destinations
+onMounted(() => {
+  const svg = d3.select(canvas.value)
+      .append("svg")
+      .attr("width", 600)
+      .attr("height", 400);
+
+  svg.append("g")
+      .selectAll("text.title")
+      .data(destinations)
+      .join("text")
+      .attr("class", "title")
+      .text(d => d.name)
+      .attr("x", d => d.config.position.x)
+      .attr("y", d => d.config.position.y + 30)
+
+  const blocksGroup = svg.append("g");
+
+  redrawBlocks(blocksGroup)
+  moveMoneyToWorkers = () => {
+    company.moveTo(workers, 10);
+    redrawBlocks(blocksGroup);
+  }
+
 });
 
 // Clean up animation frame on component unmount
