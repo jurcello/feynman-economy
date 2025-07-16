@@ -1,5 +1,5 @@
-import {describe, expect, it} from "vitest";
-import {MoneyDestination, MoneyDestinationConfig, MoneyBlock, Position} from "@/utils/moneySquareUtils";
+import {describe, expect, it, vi} from "vitest";
+import {MoneyDestination, MoneyDestinationConfig, MoneyBlock, Position, MoneyWorld} from "@/utils/moneySquareUtils";
 
 describe('MoneyDestination', () => {
     it('can be initialized', () => {
@@ -206,6 +206,16 @@ describe('MoneyDestination', () => {
             isMoving: false
         });
     });
-
-
 })
+
+describe('The money world', () => {
+    it('tracks changes immediately when created', () => {
+        const destination = new MoneyDestination('Destination', 2);
+        const moneyWorld = new MoneyWorld([destination]);
+
+        const spy = vi.fn();
+        moneyWorld.addListener(spy);
+
+        expect(spy).toHaveBeenCalledWith(MoneyBlock.allBlocks);
+    });
+});

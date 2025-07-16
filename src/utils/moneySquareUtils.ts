@@ -137,4 +137,31 @@ class MoneyDestination {
 
 }
 
-export {MoneyBlock, MoneyDestination, MoneyDestinationConfig};
+type MoneyBlockListener = (blocks: MoneyBlock[]) => void;
+
+class MoneyWorld {
+    public moneyDestinations: MoneyDestination[];
+    private listeners: MoneyBlockListener[] = [];
+
+    constructor(moneyDestinations: MoneyDestination[]) {
+        this.moneyDestinations = moneyDestinations;
+    }
+
+    public addListener(listener: MoneyBlockListener): void {
+        this.listeners.push(listener);
+        this.notifyListeners(MoneyBlock.allBlocks);
+    }
+
+    public removeListener(listener: MoneyBlockListener): void {
+        const index = this.listeners.indexOf(listener);
+        if (index !== -1) {
+            this.listeners.splice(index, 1);
+        }
+    }
+
+    public notifyListeners(blocks: MoneyBlock[]): void {
+        this.listeners.forEach(listener => listener(blocks));
+    }
+}
+
+export {MoneyBlock, MoneyDestination, MoneyDestinationConfig, MoneyWorld, MoneyBlockListener};
