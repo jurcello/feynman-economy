@@ -52,6 +52,7 @@ const moveMoneyToWorkers = () => {
 
 // Initialize money destinations
 onMounted(() => {
+  const getCurrentBlocks = () => [...MoneyBlock.allBlocks];
 
   const svg = d3.select(canvas.value)
       .append("svg")
@@ -69,7 +70,7 @@ onMounted(() => {
 
   svg.append("g")
       .selectAll("rect.money-block")
-      .data(MoneyBlock.allBlocks, d => d.id)
+      .data(getCurrentBlocks(), d => d.id)
       .join(
           enter => {
             console.log("entering")

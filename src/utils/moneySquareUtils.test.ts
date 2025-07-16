@@ -37,14 +37,19 @@ describe('MoneyDestination', () => {
         const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2});
         const moneyStash = new MoneyDestination('Stash', 4, config)
 
-        const expectedFirstMoneyBlocks = [
-            new MoneyBlock({ currentPosition: {x: 0, y: 0}, targetPosition: {x: 0, y: 0} }),
-            new MoneyBlock({ currentPosition: {x: 12, y: 0}, targetPosition: {x: 0, y: 0} }),
-            new MoneyBlock({ currentPosition: {x: 0, y: -12}, targetPosition: {x: 0, y: 0} }),
-            new MoneyBlock({ currentPosition: {x: 12, y: -12}, targetPosition: {x: 0, y: 0} }),
+        const actualPositions = moneyStash.blocks.map(block => ({
+            currentPosition: block.currentPosition,
+            targetPosition: block.targetPosition
+        }));
+
+        const expectedPositions = [
+            {currentPosition: {x: 0, y: 0}, targetPosition: {x: 0, y: 0}},
+            {currentPosition: {x: 12, y: 0}, targetPosition: {x: 0, y: 0}},
+            {currentPosition: {x: 0, y: -12}, targetPosition: {x: 0, y: 0}},
+            {currentPosition: {x: 12, y: -12}, targetPosition: {x: 0, y: 0}}
         ];
 
-        expect(moneyStash.blocks).toEqual(expectedFirstMoneyBlocks);
+        expect(expectedPositions).toEqual(actualPositions);
     });
 
     it('creates blocks with correct positions when MoneyDestination has a position', () => {
@@ -52,14 +57,19 @@ describe('MoneyDestination', () => {
         const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2, position});
         const moneyStash = new MoneyDestination('Stash', 4, config)
 
-        const expectedFirstMoneyBlocks = [
-            new MoneyBlock({currentPosition: {x: 10, y: 80}, targetPosition: {x: 0, y: 0}}),
-            new MoneyBlock({currentPosition: {x: 22, y: 80}, targetPosition: {x: 0, y: 0}}),
-            new MoneyBlock({currentPosition: {x: 10, y: 68}, targetPosition: {x: 0, y: 0}}),
-            new MoneyBlock({currentPosition: {x: 22, y: 68}, targetPosition: {x: 0, y: 0}}),
+        const actualPositions = moneyStash.blocks.map(block => ({
+            currentPosition: block.currentPosition,
+            targetPosition: block.targetPosition
+        }));
+
+        const expectedPositions = [
+            {currentPosition: {x: 10, y: 80}, targetPosition: {x: 0, y: 0}},
+            {currentPosition: {x: 22, y: 80}, targetPosition: {x: 0, y: 0}},
+            {currentPosition: {x: 10, y: 68}, targetPosition: {x: 0, y: 0}},
+            {currentPosition: {x: 22, y: 68}, targetPosition: {x: 0, y: 0}}
         ];
 
-        expect(moneyStash.blocks).toEqual(expectedFirstMoneyBlocks);
+        expect(expectedPositions).toEqual(actualPositions);
     });
 
     it('adds one block with correct position when addMoney is called', () => {
@@ -69,13 +79,17 @@ describe('MoneyDestination', () => {
 
         moneyStash.addMoney(1);
 
-        const expectedNewBlock = new MoneyBlock({
+        const expectedNewBlock = {
             currentPosition: {x: 10, y: 56},
             targetPosition: {x: 0, y: 0}
-        });
+        };
 
         expect(moneyStash.blocks.length).toBe(5);
-        expect(moneyStash.blocks[4]).toEqual(expectedNewBlock);
+        const lastBlockPositions = {
+            currentPosition: moneyStash.blocks[4].currentPosition,
+            targetPosition: moneyStash.blocks[4].targetPosition
+        };
+        expect(lastBlockPositions).toEqual(expectedNewBlock);
     });
 
     it('can move an amount of money from one destination to another destination using the move to function', () => {
@@ -148,6 +162,17 @@ describe('MoneyDestination', () => {
 
         expect(destination.blocks[0].isMoving).toBe(true);
     });
+
+    it('preserves block id when moved to another destination', () => {
+        const source = new MoneyDestination('Source', 1);
+        const destination = new MoneyDestination('Destination', 0);
+        const originalId = source.blocks[0].id;
+
+        source.moveTo(destination, 1);
+
+        expect(destination.blocks[0].id).toBe(originalId);
+    });
+
 
     it('updates all moving blocks positions and states when updateMovingBlocks is called', () => {
         MoneyBlock.allBlocks.length = 0;
