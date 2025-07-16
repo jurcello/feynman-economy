@@ -68,8 +68,9 @@ const redrawBlocks = (svg: d3.Selection<SVGGElement, unknown, null, undefined>) 
             return update.call(
                 update => update.transition()
                     .duration(1000)
-                    .attr("x", d => d.targetPosition.x)
-                    .attr("y", d => d.targetPosition.y)
+                    .delay((d, i) => i * 20)
+                    .attr("x", d => d.targetPosition.x > 0 ? d.targetPosition.x : d.currentPosition.x)
+                    .attr("y", d => d.targetPosition.y > 0 ? d.targetPosition.y : d.currentPosition.y)
                     .end()
                     .then(() => {
                       MoneyBlock.updateMovingBlocks();
