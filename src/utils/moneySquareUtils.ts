@@ -17,8 +17,23 @@ class MoneyBlock {
     constructor(params: { currentPosition: Position; targetPosition: Position }) {
         this.currentPosition = params.currentPosition;
         this.targetPosition = params.targetPosition;
+
+        const proxy = new Proxy(this, {
+            set(target: MoneyBlock, property: string | symbol, value: any): boolean {
+                // Set the property
+                (target as any)[property] = value;
+
+                // Notify listeners whenever any property changes
+                MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
+
+                return true;
+            }
+        });
+
         MoneyBlock.allBlocks.push(this);
         MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
+
+        return proxy;
     }
 
     public destroy(): void {

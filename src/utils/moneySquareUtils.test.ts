@@ -231,5 +231,18 @@ describe('The money world', () => {
         expect(spy).toHaveBeenCalledWith(MoneyBlock.allBlocks);
     });
 
+    it('calls the listener when money is moved', () => {
+        const source = new MoneyDestination('Source', 2);
+        const destination = new MoneyDestination('Destination', 0);
+        const moneyWorld = new MoneyWorld([source, destination]);
+
+        const spy = vi.fn();
+        moneyWorld.addListener(spy);
+        spy.mockClear();
+        source.moveTo(destination, 1);
+
+        expect(spy).toHaveBeenCalledWith(MoneyBlock.allBlocks);
+    })
+
 
 });
