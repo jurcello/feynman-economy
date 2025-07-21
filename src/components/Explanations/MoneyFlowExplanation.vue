@@ -117,6 +117,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.canvas {
+  border: 1px solid #ccc;
+}
 .money-flow-container {
   max-width: 800px;
   margin: 0 auto;
