@@ -2,7 +2,7 @@
   <div class="money-flow-container">
     <p class="mb-4">This component demonstrates the flow of money between three destinations.</p>
     <button
-        @click="moveMoneyToWorkers"
+        @click="executeTimeline"
         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
     >
       Move Money to Workers
@@ -15,6 +15,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import {MoneyDestination, MoneyDestinationConfig, MoneyBlock, MoneyWorld} from '@/utils/moneySquareUtils';
 import * as d3 from "d3";
+import gsap from "gsap";
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
@@ -25,16 +26,16 @@ const configCompany = new MoneyDestinationConfig({
 });
 
 const configWorkers = new MoneyDestinationConfig({
-  blockSize: 10,
-  blocksPerRow: 5,
+  blockSize: 4,
+  blocksPerRow: 10,
   blockGutter: 2,
   position: {x: 20, y: 300}
 });
 
 const configShareholders = new MoneyDestinationConfig({
-  blockSize: 10,
-  blocksPerRow: 5,
-  blockGutter: 2,
+  blockSize: 4,
+  blocksPerRow: 10,
+  blockGutter: 1,
   position: {x: 340, y: 300}
 });
 
@@ -52,6 +53,25 @@ let redrawBlocks: () => void;
 const moveMoneyToWorkers = () => {
   company.moveTo(workers, 10);
   redrawBlocks();
+}
+
+const executeTimeline = () => {
+  const tl = gsap.timeline();
+  tl.add(() => {
+    console.log("moving money to workers");
+    company.moveTo(workers, 10);
+    redrawBlocks();
+  }, 2)
+  tl.add(() => {
+    console.log("moving money to shareholders");
+    company.moveTo(shareholders, 10);
+    redrawBlocks();
+  },'<5')
+  tl.play();
+}
+
+const reset = () => {
+
 }
 
 // Initialize money destinations
