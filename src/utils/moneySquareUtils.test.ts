@@ -131,7 +131,7 @@ describe('MoneyDestination', () => {
             position: {x: 0, y: 0}
         });
         const destinationConfig = new MoneyDestinationConfig({
-            blockSize: 10,
+            blockSize: 15,
             blocksPerRow: 2,
             blockGutter: 2,
             position: {x: 100, y: 100}
@@ -145,10 +145,12 @@ describe('MoneyDestination', () => {
         const movedBlock = destination.blocks[0];
         expect({
             currentPosition: movedBlock.currentPosition,
-            targetPosition: movedBlock.targetPosition
+            targetPosition: movedBlock.targetPosition,
+            blockSize: movedBlock.blockSize,
         }).toEqual({
             currentPosition: {x: 0, y: 0},
-            targetPosition: {x: 100, y: 100}
+            targetPosition: {x: 100, y: 100},
+            blockSize: 15,
         });
     });
 

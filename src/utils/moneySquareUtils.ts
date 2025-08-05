@@ -174,6 +174,7 @@ class MoneyDestination {
 
             // Update the block's target position to its new position in this destination
             block.targetPosition = newPosition;
+            block.blockSize = this.config.blockSize;
             block.isMoving = true;
             this.blocks.push(block);
         }

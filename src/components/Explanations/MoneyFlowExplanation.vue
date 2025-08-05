@@ -18,9 +18,9 @@ import * as d3 from "d3";
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
-  blockSize: 6,
+  blockSize: 4,
   blocksPerRow: 10,
-  blockGutter: 3,
+  blockGutter: 1,
   position: {x: 200, y: 100}
 });
 
@@ -58,8 +58,8 @@ const moveMoneyToWorkers = () => {
 onMounted(() => {
   const svg = d3.select(canvas.value)
       .append("svg")
-      .attr("width", 600)
-      .attr("height", 400);
+      .attr("width", 800)
+      .attr("height", 800);
 
   svg.append("g")
       .selectAll("text.title")
@@ -84,8 +84,8 @@ onMounted(() => {
                   .attr("fill", "red")
                   .attr("x", d => d.currentPosition.x)
                   .attr("y", d => d.currentPosition.y)
-                  .attr("width", 10)
-                  .attr("height", 10)
+                  .attr("width", d => d.blockSize)
+                  .attr("height", d => d.blockSize)
             },
             update => {
               return update.call(
@@ -94,6 +94,8 @@ onMounted(() => {
                       .delay((_, i) => i * 20)
                       .attr("x", d => d.targetPosition.x > 0 ? d.targetPosition.x : d.currentPosition.x)
                       .attr("y", d => d.targetPosition.y > 0 ? d.targetPosition.y : d.currentPosition.y)
+                      .attr("width", d => d.blockSize)
+                      .attr("height", d => d.blockSize)
                       .end()
                       .then(() => {
                         MoneyBlock.updateMovingBlocks();
