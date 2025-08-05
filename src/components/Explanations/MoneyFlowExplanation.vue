@@ -18,9 +18,9 @@ import * as d3 from "d3";
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
-  blockSize: 10,
+  blockSize: 6,
   blocksPerRow: 10,
-  blockGutter: 2,
+  blockGutter: 3,
   position: {x: 200, y: 100}
 });
 

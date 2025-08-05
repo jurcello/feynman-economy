@@ -52,6 +52,16 @@ describe('MoneyDestination', () => {
         expect(expectedPositions).toEqual(actualPositions);
     });
 
+    it('creates blocks with blockSize matching the config', () => {
+        const config = new MoneyDestinationConfig({blockSize: 15, blocksPerRow: 2, blockGutter: 2});
+        const moneyStash = new MoneyDestination('Stash', 4, config);
+
+        const actual = moneyStash.blocks.map(block => block.blockSize);
+        const expected = Array(4).fill(15);
+        expect(actual).toEqual(expected);
+    });
+
+
     it('creates blocks with correct positions when MoneyDestination has a position', () => {
         const position: Position = {x: 10, y: 80};
         const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2, position});
@@ -172,6 +182,7 @@ describe('MoneyDestination', () => {
 
         expect(destination.blocks[0].id).toBe(originalId);
     });
+
 
 
     it('updates all moving blocks positions and states when updateMovingBlocks is called', () => {

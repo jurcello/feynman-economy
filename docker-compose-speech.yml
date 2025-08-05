@@ -1,0 +1,46 @@
+services:
+  speaches:
+    container_name: speaches
+    image: ghcr.io/speaches-ai/speaches:latest-cpu
+    ports:
+    - 8000:8000
+    volumes:
+    - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
+    environment:
+    # Whisper model configuration
+    - WHISPER_MODEL=base  # or small, base, large-v2, large-v3
+    - WHISPER_COMPUTE_TYPE=float32  # or float16, float32 for better quality
+    - WHISPER_DEVICE=cpu  # or cuda if you have GPU
+
+    # TTS model configuration
+    - TTS_MODEL=kokoro-v0_19  # Default TTS model
+    - TTS_DEVICE=cpu
+
+    # Model download settings
+    - HF_HUB_CACHE=/home/ubuntu/.cache/huggingface/hub
+    - TRANSFORMERS_CACHE=/home/ubuntu/.cache/huggingface/transformers
+
+    develop:
+      watch:
+      - action: rebuild
+        path: ./uv.lock
+      - action: sync+restart
+        path: ./src
+        target: /home/ubuntu/speaches/src
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  hf-hub-cache:

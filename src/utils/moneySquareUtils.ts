@@ -12,6 +12,16 @@ class MoneyBlock {
     public static allBlocks: MoneyBlock[] = [];
     private static listeners: MoneyBlockListener[] = [];
     public id: string = `block-${Date.now()}-${Math.random()}`;
+    private _blockSize: number = 10;
+
+    get blockSize(): number {
+        return this._blockSize;
+    }
+
+    set blockSize(value: number) {
+        this._blockSize = value;
+        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
+    }
 
     get currentPosition(): Position {
         return this._currentPosition;
@@ -40,9 +50,10 @@ class MoneyBlock {
         MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
-    constructor(params: { currentPosition: Position; targetPosition: Position }) {
+    constructor(params: { currentPosition: Position; targetPosition: Position; blockSize?: number }) {
         this._currentPosition = params.currentPosition;
         this._targetPosition = params.targetPosition;
+        this._blockSize = params.blockSize || 10;
 
         MoneyBlock.allBlocks.push(this);
         MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
@@ -130,6 +141,7 @@ class MoneyDestination {
 
         return new MoneyBlock({
             currentPosition: position,
+            blockSize: this.config.blockSize,
             targetPosition: { x: 0, y: 0 }
         });
     }
