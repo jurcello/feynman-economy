@@ -195,6 +195,14 @@ class MoneyDestination {
         destination.addBlocks(movedBlocks);
     }
 
+    destroyAllBlocks() {
+        for (let i = this.blocks.length - 1; i >= 0; i--) {
+            const block = this.blocks[i];
+            this.blocks.splice(i, 1);
+            this.amount--;
+            block.destroy();
+        }
+    }
 }
 
 class MoneyWorld {

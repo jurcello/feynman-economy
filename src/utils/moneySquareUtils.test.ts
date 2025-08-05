@@ -219,6 +219,16 @@ describe('MoneyDestination', () => {
             isMoving: false
         });
     });
+
+    it('destroys all blocks in a destination when destroyAllBlocks is called', () => {
+        const destination = new MoneyDestination('Destination', 5);
+
+        destination.destroyAllBlocks();
+        const expected = {blocks: 0, amount: 0};
+        const actual = {blocks: destination.blocks.length, amount: destination.amount};
+        expect(actual).toEqual(expected);
+    });
+
 })
 
 describe('The money world', () => {
