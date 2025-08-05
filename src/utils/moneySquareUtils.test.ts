@@ -229,6 +229,15 @@ describe('MoneyDestination', () => {
         expect(actual).toEqual(expected);
     });
 
+    it('destroys blocks in a destination when destroyBlocks is called', () => {
+        const destination = new MoneyDestination('Destination', 5);
+
+        destination.destroyBlocks(4);
+        const expected = {blocks: 1, amount: 1};
+        const actual = {blocks: destination.blocks.length, amount: destination.amount};
+        expect(actual).toEqual(expected);
+    });
+
 })
 
 describe('The money world', () => {
