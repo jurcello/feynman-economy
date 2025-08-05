@@ -61,12 +61,16 @@ const executeTimeline = () => {
     console.log("moving money to workers");
     company.moveTo(workers, 10);
     redrawBlocks();
-  }, 2)
+  }, 0)
   tl.add(() => {
     console.log("moving money to shareholders");
     company.moveTo(shareholders, 10);
     redrawBlocks();
-  },'<5')
+  },'<1')
+  tl.add(() => {
+    workers.destroyBlocks(4);
+    redrawBlocks();
+  }, '<1');
   tl.play();
 }
 
@@ -106,6 +110,8 @@ onMounted(() => {
                   .attr("y", d => d.currentPosition.y)
                   .attr("width", d => d.blockSize)
                   .attr("height", d => d.blockSize)
+                  .attr("opacity", 1)
+
             },
             update => {
               return update.call(
@@ -127,7 +133,9 @@ onMounted(() => {
                 // Animate the exit by shrinking height to 0
                 .call(exit => exit.transition()
                     .duration(750)
-                    .attr("height", 0)
+                    .attr("opacity", 0)
+                    .attr("x", d => d.targetPosition.x - 40)
+                    .attr("y", d => d.targetPosition.y + 80)
                     .remove()
                 )
         )
