@@ -13,15 +13,15 @@
     >
       Reset
     </button>
-    <div ref="canvas" class="canvas"></div>
+    <MoneyFlowCanvas ref="flowCanvas" :destinations="destinations" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import {MoneyDestination, MoneyDestinationConfig, MoneyBlock, MoneyWorld} from '@/utils/moneySquareUtils';
-import * as d3 from "d3";
+import { ref } from 'vue';
+import {MoneyDestination, MoneyDestinationConfig, MoneyWorld} from '@/utils/moneySquareUtils';
 import gsap from "gsap";
+import MoneyFlowCanvas from './MoneyFlowCanvas.vue';
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
@@ -77,10 +77,11 @@ const costs = new MoneyDestination("Costs", 0, configCosts);
 const destinations = [company, workers, shareholders, profit, economy, costs];
 const world = new MoneyWorld(destinations);
 
-const canvas = ref<HTMLElement | null>(null);
+const flowCanvas = ref<any>(null);
 
-
-let redrawBlocks: () => void;
+let redrawBlocks: () => void = () => {
+  flowCanvas.value?.redraw?.();
+};
 const moveMoneyToWorkers = () => {
   company.moveTo(workers, 10);
   redrawBlocks();
@@ -135,82 +136,6 @@ const reset = () => {
   redrawBlocks();
 }
 
-// Initialize money destinations
-onMounted(() => {
-  const svg = d3.select(canvas.value)
-      .append("svg")
-      .attr("width", 800)
-      .attr("height", 800);
-
-  // Mouse position display element
-  const mousePosText = svg.append("text")
-      .attr("class", "mouse-position")
-      .attr("x", 10)
-      .attr("y", 20)
-      .attr("fill", "#333")
-      .text("x: -, y: -");
-
-  // Update text with mouse coordinates relative to the SVG
-  svg.on("mousemove", (event) => {
-    const [x, y] = d3.pointer(event);
-    mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
-  });
-
-  svg.append("g")
-      .selectAll("text.title")
-      .data(destinations)
-      .join("text")
-      .attr("class", "title")
-      .text(d => d.name)
-      .attr("x", d => d.config.position.x)
-      .attr("y", d => d.config.position.y + 30)
-
-  const blocksGroup = svg.append("g");
-
-  redrawBlocks = () => {
-    svg.selectAll("rect.money-block")
-        .data([...MoneyBlock.allBlocks], d => d.id)
-        .join(
-            enter => {
-              console.log("entering")
-              return enter
-                  .append("rect")
-                  .attr("class", "money-block")
-                  .attr("fill", "red")
-                  .attr("x", d => d.position.x)
-                  .attr("y", d => d.position.y)
-                  .attr("width", d => d.blockSize)
-                  .attr("height", d => d.blockSize)
-                  .attr("opacity", 0)
-                  .call(enter =>
-                      enter.transition()
-                          .duration(1000)
-                          .attr("opacity", 1)
-                  )
-            },
-            update => {
-              return update.call(
-                  update => update.transition()
-                      .duration(1000)
-                      .attr("x", d => d.position.x)
-                      .attr("y", d => d.position.y)
-                      .attr("width", d => d.blockSize)
-                      .attr("height", d => d.blockSize)
-              )
-            },
-            exit => exit
-                // Animate the exit by shrinking height to 0
-                .call(exit => exit.transition()
-                    .duration(750)
-                    .attr("opacity", 0)
-                    .attr("x", d => d.position.x - 40)
-                    .attr("y", d => d.position.y + 80)
-                    .remove()
-                )
-        )
-  }
-  redrawBlocks()
-});
 
 // Clean up animation frame on component unmount
 </script>
