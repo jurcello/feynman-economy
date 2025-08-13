@@ -5,7 +5,13 @@
         @click="executeTimeline"
         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
     >
-      Move Money to Workers
+      Start sequence
+    </button>
+    <button
+        @click="reset"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+    >
+      Reset
     </button>
     <div ref="canvas" class="canvas"></div>
   </div>
@@ -20,7 +26,7 @@ import gsap from "gsap";
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
   blockSize: 4,
-  blocksPerRow: 10,
+  blocksPerRow: 30,
   blockGutter: 1,
   position: {x: 200, y: 100}
 });
@@ -39,11 +45,27 @@ const configShareholders = new MoneyDestinationConfig({
   position: {x: 340, y: 300}
 });
 
-const company = new MoneyDestination("Company", 20, configCompany);
+const configProfit = new MoneyDestinationConfig({
+  blockSize: 4,
+  blocksPerRow: 15,
+  blockGutter: 1,
+  position: {x: 500, y: 100}
+});
+
+const configEconomy = new MoneyDestinationConfig({
+  blockSize: 4,
+  blocksPerRow: 15,
+  blockGutter: 1,
+  position: {x: 500, y: 300}
+});
+
+const company = new MoneyDestination("Company", 0, configCompany);
 const workers = new MoneyDestination("Workers", 0, configWorkers);
 const shareholders = new MoneyDestination("Shareholders", 0, configShareholders);
 
-const destinations = [company, workers, shareholders];
+const profit = new MoneyDestination("Profit", 0, configProfit);
+const economy = new MoneyDestination("Economy", 0, configEconomy);
+const destinations = [company, workers, shareholders, profit, economy];
 const world = new MoneyWorld(destinations);
 
 const canvas = ref<HTMLElement | null>(null);
@@ -58,10 +80,15 @@ const moveMoneyToWorkers = () => {
 const executeTimeline = () => {
   const tl = gsap.timeline();
   tl.add(() => {
+    console.log("Add money to company");
+    company.addMoney(200);
+    redrawBlocks();
+  }, 0)
+  tl.add(() => {
     console.log("moving money to workers");
     company.moveTo(workers, 10);
     redrawBlocks();
-  }, 0)
+  }, '<1')
   tl.add(() => {
     console.log("moving money to shareholders");
     company.moveTo(shareholders, 10);
@@ -75,7 +102,10 @@ const executeTimeline = () => {
 }
 
 const reset = () => {
-
+  company.destroyAllBlocks();
+  workers.destroyAllBlocks();
+  shareholders.destroyAllBlocks();
+  redrawBlocks();
 }
 
 // Initialize money destinations
@@ -110,14 +140,17 @@ onMounted(() => {
                   .attr("y", d => d.position.y)
                   .attr("width", d => d.blockSize)
                   .attr("height", d => d.blockSize)
-                  .attr("opacity", 1)
-
+                  .attr("opacity", 0)
+                  .call(enter =>
+                      enter.transition()
+                          .duration(1000)
+                          .attr("opacity", 1)
+                  )
             },
             update => {
               return update.call(
                   update => update.transition()
                       .duration(1000)
-                      .delay((_, i) => i * 20)
                       .attr("x", d => d.position.x)
                       .attr("y", d => d.position.y)
                       .attr("width", d => d.blockSize)
