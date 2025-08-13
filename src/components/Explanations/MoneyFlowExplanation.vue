@@ -54,7 +54,7 @@ const configProfit = new MoneyDestinationConfig({
 
 const configEconomy = new MoneyDestinationConfig({
   blockSize: 4,
-  blocksPerRow: 15,
+  blocksPerRow: 45,
   blockGutter: 1,
   position: {x: 80, y: 400}
 });
@@ -89,34 +89,42 @@ const moveMoneyToWorkers = () => {
 const executeTimeline = () => {
   reset();
   const tl = gsap.timeline();
+  const repeats = 100;
   tl.add(() => {
-    company.addMoney(30);
+    economy.addMoney(300);
     redrawBlocks();
-  })
-  tl.add(() => {
-    company.moveTo(workers, 15);
-    redrawBlocks();
-  }, '<1')
-  tl.add(() => {
-    company.moveTo(costs, 10);
-    redrawBlocks();
-  }, '<0')
-  tl.add(() => {
-    company.moveTo(profit, 5);
-    redrawBlocks();
-  },'<0')
-  tl.add(() => {
-    workers.moveTo(economy, 15);
-    redrawBlocks();
-  }, '<1');
-  tl.add(() => {
-    costs.moveTo(economy, 10);
-    redrawBlocks();
-  }, '<1');
-  tl.add(() => {
-    profit.moveTo(shareholders, 4);
-    redrawBlocks();
-  }, '<1');
+  },  0)
+
+  for (let i = 0; i < repeats; i++) {
+    tl.add(() => {
+      economy.moveTo(company,30);
+      redrawBlocks();
+    },  '<1')
+    tl.add(() => {
+      company.moveTo(workers, 15);
+      redrawBlocks();
+    }, '<1')
+    tl.add(() => {
+      company.moveTo(costs, 10);
+      redrawBlocks();
+    }, '<0')
+    tl.add(() => {
+      company.moveTo(profit, 5);
+      redrawBlocks();
+    },'<0')
+    tl.add(() => {
+      workers.moveTo(economy, 15);
+      redrawBlocks();
+    }, '<1');
+    tl.add(() => {
+      costs.moveTo(economy, 10);
+      redrawBlocks();
+    }, '<1');
+    tl.add(() => {
+      profit.moveTo(shareholders, 4);
+      redrawBlocks();
+    }, '<1');
+  }
   tl.play();
 }
 
