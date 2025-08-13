@@ -20,7 +20,6 @@ class MoneyBlock {
 
     set blockSize(value: number) {
         this._blockSize = value;
-        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
     get currentPosition(): Position {
@@ -29,7 +28,6 @@ class MoneyBlock {
 
     set currentPosition(value: Position) {
         this._currentPosition = value;
-        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
     get targetPosition(): Position {
@@ -38,7 +36,6 @@ class MoneyBlock {
 
     set targetPosition(value: Position) {
         this._targetPosition = value;
-        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
     get isMoving(): boolean {
@@ -47,7 +44,6 @@ class MoneyBlock {
 
     set isMoving(value: boolean) {
         this._isMoving = value;
-        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
     constructor(params: { currentPosition: Position; targetPosition: Position; blockSize?: number }) {
@@ -56,7 +52,6 @@ class MoneyBlock {
         this._blockSize = params.blockSize || 10;
 
         MoneyBlock.allBlocks.push(this);
-        MoneyBlock.notifyListeners(MoneyBlock.allBlocks);
     }
 
     public destroy(): void {
@@ -75,23 +70,6 @@ class MoneyBlock {
             }
         });
     }
-
-    public static addListener(listener: MoneyBlockListener): void {
-        this.listeners.push(listener);
-        this.notifyListeners(MoneyBlock.allBlocks);
-    }
-
-    public static removeListener(listener: MoneyBlockListener): void {
-        const index = this.listeners.indexOf(listener);
-        if (index !== -1) {
-            this.listeners.splice(index, 1);
-        }
-    }
-
-    public static notifyListeners(blocks: MoneyBlock[]): void {
-        this.listeners.forEach(listener => listener(blocks));
-    }
-
 }
 
 class MoneyDestinationConfig {
@@ -216,7 +194,6 @@ class MoneyWorld {
 
     constructor(moneyDestinations: MoneyDestination[]) {
         this.moneyDestinations = moneyDestinations;
-        MoneyBlock.addListener(this.notifyListeners.bind(this));
     }
 
     public addListener(listener: MoneyBlockListener): void {
