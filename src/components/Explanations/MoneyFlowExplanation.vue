@@ -115,6 +115,20 @@ onMounted(() => {
       .attr("width", 800)
       .attr("height", 800);
 
+  // Mouse position display element
+  const mousePosText = svg.append("text")
+      .attr("class", "mouse-position")
+      .attr("x", 10)
+      .attr("y", 20)
+      .attr("fill", "#333")
+      .text("x: -, y: -");
+
+  // Update text with mouse coordinates relative to the SVG
+  svg.on("mousemove", (event) => {
+    const [x, y] = d3.pointer(event);
+    mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
+  });
+
   svg.append("g")
       .selectAll("text.title")
       .data(destinations)
