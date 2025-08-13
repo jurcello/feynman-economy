@@ -28,44 +28,53 @@ const configCompany = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 30,
   blockGutter: 1,
-  position: {x: 200, y: 100}
+  position: {x: 308, y: 100}
 });
 
 const configWorkers = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 10,
   blockGutter: 2,
-  position: {x: 20, y: 300}
+  position: {x: 80, y: 250}
 });
 
 const configShareholders = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 10,
   blockGutter: 1,
-  position: {x: 340, y: 300}
+  position: {x: 600, y: 400}
 });
 
 const configProfit = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 15,
   blockGutter: 1,
-  position: {x: 500, y: 100}
+  position: {x: 600, y: 250}
 });
 
 const configEconomy = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 15,
   blockGutter: 1,
-  position: {x: 500, y: 300}
+  position: {x: 80, y: 400}
 });
+
+const configCosts = new MoneyDestinationConfig({
+  blockSize: 4,
+  blocksPerRow: 15,
+  blockGutter: 1,
+  position: {x: 308, y: 250}
+});
+
 
 const company = new MoneyDestination("Company", 0, configCompany);
 const workers = new MoneyDestination("Workers", 0, configWorkers);
 const shareholders = new MoneyDestination("Shareholders", 0, configShareholders);
-
 const profit = new MoneyDestination("Profit", 0, configProfit);
 const economy = new MoneyDestination("Economy", 0, configEconomy);
-const destinations = [company, workers, shareholders, profit, economy];
+const costs = new MoneyDestination("Costs", 0, configCosts);
+
+const destinations = [company, workers, shareholders, profit, economy, costs];
 const world = new MoneyWorld(destinations);
 
 const canvas = ref<HTMLElement | null>(null);
@@ -105,6 +114,7 @@ const reset = () => {
   company.destroyAllBlocks();
   workers.destroyAllBlocks();
   shareholders.destroyAllBlocks();
+  costs.destroyAllBlocks();
   redrawBlocks();
 }
 
