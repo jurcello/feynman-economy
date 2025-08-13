@@ -1,6 +1,6 @@
 <template>
   <div class="money-flow-container">
-    <p class="mb-4">This component demonstrates the flow of money between three destinations.</p>
+    <p class="mb-4">This component demonstrates the flow of money between destinations.</p>
     <button
         @click="executeTimeline"
         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
@@ -71,7 +71,7 @@ const company = new MoneyDestination("Company", 0, configCompany);
 const workers = new MoneyDestination("Workers", 0, configWorkers);
 const shareholders = new MoneyDestination("Shareholders", 0, configShareholders);
 const profit = new MoneyDestination("Profit", 0, configProfit);
-const economy = new MoneyDestination("Economy", 0, configEconomy);
+const economy = new MoneyDestination("Real economy", 0, configEconomy);
 const costs = new MoneyDestination("Costs", 0, configCosts);
 
 const destinations = [company, workers, shareholders, profit, economy, costs];
@@ -87,34 +87,43 @@ const moveMoneyToWorkers = () => {
 }
 
 const executeTimeline = () => {
+  reset();
   const tl = gsap.timeline();
   tl.add(() => {
-    console.log("Add money to company");
-    company.addMoney(200);
+    company.addMoney(30);
     redrawBlocks();
-  }, 0)
+  })
   tl.add(() => {
-    console.log("moving money to workers");
-    company.moveTo(workers, 10);
+    company.moveTo(workers, 15);
     redrawBlocks();
   }, '<1')
   tl.add(() => {
-    console.log("moving money to shareholders");
-    company.moveTo(shareholders, 10);
+    company.moveTo(costs, 10);
     redrawBlocks();
-  },'<1')
+  }, '<0')
   tl.add(() => {
-    workers.destroyBlocks(4);
+    company.moveTo(profit, 5);
+    redrawBlocks();
+  },'<0')
+  tl.add(() => {
+    workers.moveTo(economy, 15);
+    redrawBlocks();
+  }, '<1');
+  tl.add(() => {
+    costs.moveTo(economy, 10);
+    redrawBlocks();
+  }, '<1');
+  tl.add(() => {
+    profit.moveTo(shareholders, 4);
     redrawBlocks();
   }, '<1');
   tl.play();
 }
 
 const reset = () => {
-  company.destroyAllBlocks();
-  workers.destroyAllBlocks();
-  shareholders.destroyAllBlocks();
-  costs.destroyAllBlocks();
+  for (const destination of destinations) {
+    destination.destroyAllBlocks();
+  }
   redrawBlocks();
 }
 
