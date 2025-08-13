@@ -6,11 +6,8 @@ export type Position = {
 export type MoneyBlockListener = (blocks: MoneyBlock[]) => void;
 
 class MoneyBlock {
-    private _currentPosition: Position;
-    private _targetPosition: Position;
-    private _isMoving: boolean = false;
+    private _position: Position;
     public static allBlocks: MoneyBlock[] = [];
-    private static listeners: MoneyBlockListener[] = [];
     public id: string = `block-${Date.now()}-${Math.random()}`;
     private _blockSize: number = 10;
 
@@ -22,33 +19,16 @@ class MoneyBlock {
         this._blockSize = value;
     }
 
-    get currentPosition(): Position {
-        return this._currentPosition;
+    get position(): Position {
+        return this._position;
     }
 
-    set currentPosition(value: Position) {
-        this._currentPosition = value;
+    set position(value: Position) {
+        this._position = value;
     }
 
-    get targetPosition(): Position {
-        return this._targetPosition;
-    }
-
-    set targetPosition(value: Position) {
-        this._targetPosition = value;
-    }
-
-    get isMoving(): boolean {
-        return this._isMoving;
-    }
-
-    set isMoving(value: boolean) {
-        this._isMoving = value;
-    }
-
-    constructor(params: { currentPosition: Position; targetPosition: Position; blockSize?: number }) {
-        this._currentPosition = params.currentPosition;
-        this._targetPosition = params.targetPosition;
+    constructor(params: { position: Position; blockSize?: number }) {
+        this._position = params.position;
         this._blockSize = params.blockSize || 10;
 
         MoneyBlock.allBlocks.push(this);
@@ -61,15 +41,6 @@ class MoneyBlock {
         }
     }
 
-    public static updateMovingBlocks(): void {
-        MoneyBlock.allBlocks.forEach(block => {
-            if (block.isMoving) {
-                block.currentPosition = block.targetPosition;
-                block.targetPosition = {x: 0, y: 0};
-                block.isMoving = false;
-            }
-        });
-    }
 }
 
 class MoneyDestinationConfig {
@@ -118,9 +89,8 @@ class MoneyDestination {
         const position = this.calculatePosition(row, col);
 
         return new MoneyBlock({
-            currentPosition: position,
+            position,
             blockSize: this.config.blockSize,
-            targetPosition: { x: 0, y: 0 }
         });
     }
 
@@ -150,10 +120,9 @@ class MoneyDestination {
             const { row, col } = this.getGridPosition(newIndex);
             const newPosition = this.calculatePosition(row, col);
 
-            // Update the block's target position to its new position in this destination
-            block.targetPosition = newPosition;
+            // Update the block's position to its new position in this destination
+            block.position = newPosition;
             block.blockSize = this.config.blockSize;
-            block.isMoving = true;
             this.blocks.push(block);
         }
         this.amount += blocks.length;
@@ -194,22 +163,6 @@ class MoneyWorld {
 
     constructor(moneyDestinations: MoneyDestination[]) {
         this.moneyDestinations = moneyDestinations;
-    }
-
-    public addListener(listener: MoneyBlockListener): void {
-        this.listeners.push(listener);
-        this.notifyListeners(MoneyBlock.allBlocks);
-    }
-
-    public removeListener(listener: MoneyBlockListener): void {
-        const index = this.listeners.indexOf(listener);
-        if (index !== -1) {
-            this.listeners.splice(index, 1);
-        }
-    }
-
-    public notifyListeners(blocks: MoneyBlock[]): void {
-        this.listeners.forEach(listener => listener(blocks));
     }
 }
 
