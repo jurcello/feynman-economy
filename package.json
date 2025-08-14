@@ -6,9 +6,11 @@
   "author": "Jur de Vries <info@jurdevries.nl>",
   "license": "MIT",
   "dependencies": {
+    "@types/howler": "^2.2.12",
     "@vitejs/plugin-vue": "^6.0.0",
     "d3": "^7.9.0",
     "gsap": "^3.12.5",
+    "howler": "^2.2.4",
     "katex": "^0.16.21",
     "p5": "^1.11.2",
     "vite": "^7.0.4",

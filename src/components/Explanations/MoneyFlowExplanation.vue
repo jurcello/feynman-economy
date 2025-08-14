@@ -22,6 +22,9 @@ import { ref } from 'vue';
 import {MoneyDestination, MoneyDestinationConfig, MoneyWorld} from '@/utils/moneySquareUtils';
 import gsap from "gsap";
 import MoneyFlowCanvas from './MoneyFlowCanvas.vue';
+import { Howl } from "howler";
+import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow.mp3'
+import whooshSound from '@/assets/sounds/Woosh.mp3'
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
@@ -76,6 +79,14 @@ const costs = new MoneyDestination("Costs", 0, configCosts);
 
 const destinations = [company, workers, shareholders, profit, economy, costs];
 const world = new MoneyWorld(destinations);
+const lookAtTheMoneyFlow = new Howl({
+  src: [lookAtTheMoneyFlowSound]
+})
+const whoosh = new Howl({
+  src: [whooshSound],
+  volume: 1,
+});
+const tl = gsap.timeline();
 
 const flowCanvas = ref<any>(null);
 
@@ -87,23 +98,30 @@ const moveMoneyToWorkers = () => {
   redrawBlocks();
 }
 
+const redrawWithSound = () => {
+  redrawBlocks();
+  whoosh.play();
+}
 const executeTimeline = () => {
   reset();
-  const tl = gsap.timeline();
   const repeats = 100;
   tl.add(() => {
     economy.addMoney(300);
     redrawBlocks();
   },  0)
+  tl.add(() => {
+    lookAtTheMoneyFlow.play();
+  })
+  tl.add(() => {}, lookAtTheMoneyFlow.duration())
 
   for (let i = 0; i < repeats; i++) {
     tl.add(() => {
       economy.moveTo(company,30);
-      redrawBlocks();
+      redrawWithSound();
     },  '<1')
     tl.add(() => {
       company.moveTo(workers, 15);
-      redrawBlocks();
+      redrawWithSound();
     }, '<1')
     tl.add(() => {
       company.moveTo(costs, 10);
@@ -115,15 +133,15 @@ const executeTimeline = () => {
     },'<0')
     tl.add(() => {
       workers.moveTo(economy, 15);
-      redrawBlocks();
+      redrawWithSound();
     }, '<1');
     tl.add(() => {
       costs.moveTo(economy, 10);
-      redrawBlocks();
+      redrawWithSound();
     }, '<1');
     tl.add(() => {
       profit.moveTo(shareholders, 4);
-      redrawBlocks();
+      redrawWithSound();
     }, '<1');
   }
   tl.play();
@@ -134,6 +152,7 @@ const reset = () => {
     destination.destroyAllBlocks();
   }
   redrawBlocks();
+  tl.clear();
 }
 
 

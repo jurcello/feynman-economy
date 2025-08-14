@@ -39,14 +39,16 @@ const redraw = () => {
               .attr('opacity', 1)
           ),
       update =>
-        update.call(update =>
-          update
-            .transition()
-            .duration(1000)
-            .attr('x', (d: any) => d.position.x)
-            .attr('y', (d: any) => d.position.y)
-            .attr('width', (d: any) => d.blockSize)
-            .attr('height', (d: any) => d.blockSize)
+        update.call(update => {
+              console.log('playing whoosh');
+              return update
+                  .transition()
+                  .duration(1000)
+                  .attr('x', (d: any) => d.position.x)
+                  .attr('y', (d: any) => d.position.y)
+                  .attr('width', (d: any) => d.blockSize)
+                  .attr('height', (d: any) => d.blockSize)
+            }
         ),
       exit =>
         exit.call(exit =>
