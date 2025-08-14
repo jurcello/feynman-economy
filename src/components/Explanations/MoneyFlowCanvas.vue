@@ -12,6 +12,7 @@ const props = defineProps<{
   destinations: MoneyDestination[];
   duration?: number;
   showMousePosition?: boolean;
+  backgroundImageUrl?: string;
 }>();
 
 const duration = computed(() => props.duration ?? 1000);
@@ -20,6 +21,28 @@ const showMousePosition = computed(() => props.showMousePosition ?? false);
 const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
 let mouseMoveCleanup: (() => void) | null = null;
+
+const updateBackgroundImage = () => {
+  if (!svg) return;
+  const imgSel = svg.select<SVGImageElement>('image.background');
+  const hasUrl = !!props.backgroundImageUrl;
+  if (hasUrl) {
+    const img = imgSel.empty()
+      ? svg.append('image').attr('class', 'background')
+      : imgSel;
+    img
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 800)
+      .attr('height', 800)
+      .attr('preserveAspectRatio', 'xMidYMid slice')
+      .attr('href', props.backgroundImageUrl as string);
+    // Ensure the background is behind other elements
+    (img as any).lower?.();
+  } else if (!imgSel.empty()) {
+    imgSel.remove();
+  }
+};
 
 const redraw = () => {
   if (!svg) return;
@@ -74,6 +97,9 @@ onMounted(() => {
     .append('svg')
     .attr('width', 800)
     .attr('height', 800);
+
+  // background image (if provided)
+  updateBackgroundImage();
 
   if (showMousePosition.value) {
     const mousePosText = svg
@@ -140,6 +166,7 @@ watch(
       );
   }
 );
+
 
 // Expose a redraw method so parent can trigger it after moving money
 defineExpose({ redraw });

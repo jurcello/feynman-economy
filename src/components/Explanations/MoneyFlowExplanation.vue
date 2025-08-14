@@ -13,7 +13,13 @@
     >
       Reset
     </button>
-    <MoneyFlowCanvas ref="flowCanvas" :destinations="destinations" :duration="animationDuration" :show-mouse-position="true"/>
+    <MoneyFlowCanvas
+        ref="flowCanvas"
+        :destinations="destinations"
+        :duration="animationDuration"
+        :show-mouse-position="true"
+        :background-image-url="background"
+    />
   </div>
 </template>
 
@@ -25,7 +31,7 @@ import MoneyFlowCanvas from './MoneyFlowCanvas.vue';
 import { Howl } from "howler";
 import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow.mp3'
 import whooshSound from '@/assets/sounds/Woosh.mp3'
-import * as querystring from "node:querystring";
+import background from '@/assets/images/MoneyExplanation/the-sea-4.jpg'
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
