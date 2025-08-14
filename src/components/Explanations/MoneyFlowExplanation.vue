@@ -49,6 +49,7 @@ const configCompany = new MoneyDestinationConfig({
   blockGutter: 1,
   position: {x: 308, y: 190},
   imageUrl: companyImage,
+  showName: false,
   scale: 0.7
 });
 
@@ -58,6 +59,7 @@ const configWorkers = new MoneyDestinationConfig({
   blockGutter: 2,
   position: {x: 30, y: 150},
   scale: 0.6,
+  showName: false,
   imageUrl: workersImage,
 });
 
@@ -67,6 +69,7 @@ const configShareholders = new MoneyDestinationConfig({
   blockGutter: 1,
   position: {x: 600, y: 389},
   imageUrl: shareholdersImage,
+  showName: false,
   scale: 0.7,
 });
 
@@ -76,6 +79,7 @@ const configProfit = new MoneyDestinationConfig({
   blockGutter: 1,
   position: {x: 368, y: 296},
   imageUrl: profitImage,
+  showName: false,
   scale: 0.5,
 });
 
@@ -85,6 +89,7 @@ const configEconomy = new MoneyDestinationConfig({
   blockGutter: 1,
   position: {x: 252, y: 508},
   imageUrl: realEconomyImage,
+  showName: false,
   scale: 0.7
 });
 
@@ -94,6 +99,7 @@ const configCosts = new MoneyDestinationConfig({
   blockGutter: 1,
   position: {x: 208, y: 300},
   imageUrl: costsImage,
+  showName: false,
   scale: 0.6,
 });
 

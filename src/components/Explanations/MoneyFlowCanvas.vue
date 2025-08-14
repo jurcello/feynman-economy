@@ -66,7 +66,6 @@ const renderDestinations = () => {
   // Merge
   const groupsAll = groupsEnter.merge(groups as any);
 
-  // For each destination group, render image > title > nothing
   groupsAll.each(function(d: any) {
     const g = d3.select(this);
     // Clear previous content
@@ -79,6 +78,23 @@ const renderDestinations = () => {
     const imageUrl: string | undefined = d.config?.imageUrl;
     const scale: number = Number(d.config?.scale ?? 1);
 
+    // Compute underline width from blocksPerRow and gutter
+    const blockSize = Number(d.config?.blockSize ?? 10);
+    const blocksPerRow = Math.max(1, Number(d.config?.blocksPerRow ?? 10));
+    const blockGutter = Number(d.config?.blockGutter ?? 2);
+    const underlineWidth = blocksPerRow * blockSize + (blocksPerRow - 1) * blockGutter;
+    const lineY = y + 10; // draw a bit below the baseline
+
+    // Draw the underline first so subsequent elements appear above if overlapping
+    g.append('line')
+      .attr('class', 'destination-underline')
+      .attr('x1', x)
+      .attr('y1', lineY)
+      .attr('x2', x + underlineWidth)
+      .attr('y2', lineY)
+      .attr('stroke', '#333333')
+      .attr('stroke-width', 2);
+
     if (imageUrl) {
       // create image element first
       const imageSel = g.append('image')
@@ -87,7 +103,6 @@ const renderDestinations = () => {
         .attr('preserveAspectRatio', 'xMidYMid meet');
 
       // once we know natural size, set width/height and position so that image draws upward from the position
-      const lineY = y + 10;
       getImgSize(imageUrl).then(({ w, h }) => {
         const drawW = w * scale;
         const drawH = h * scale;
@@ -96,41 +111,23 @@ const renderDestinations = () => {
           .attr('height', drawH)
           .attr('x', x)
           .attr('y', y - drawH);
-        // underline 2px below the image
-        g.append('line')
-          .attr('class', 'destination-underline')
-          .attr('x1', x)
-          .attr('y1', lineY)
-          .attr('x2', x + drawW)
-          .attr('y2', lineY)
-          .attr('stroke', '#333333')
-          .attr('stroke-width', 2);
       }).catch(() => {
         // fallback: use blockSize-derived square
-        const fallback = Math.max(20, (d.config?.blockSize ?? 10) * 3) * scale;
+        const fallback = Math.max(20, blockSize * 3) * scale;
         imageSel
           .attr('width', fallback)
           .attr('height', fallback)
           .attr('x', x)
           .attr('y', y - fallback);
-        // underline 2px below the fallback square
-        g.append('line')
-          .attr('class', 'destination-underline')
-          .attr('x1', x)
-          .attr('y1', lineY)
-          .attr('x2', x + fallback)
-          .attr('y2', lineY)
-          .attr('stroke', '#333333')
-          .attr('stroke-width', 2);
       });
-    } else if (showName) {
+    }
+
+    if (showName) {
       g.append('text')
         .attr('class', 'title')
         .text(name)
         .attr('x', x)
         .attr('y', y + 30);
-    } else {
-      // Show nothing
     }
   });
 };
