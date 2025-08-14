@@ -3,14 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import type { MoneyDestination } from '@/utils/moneySquareUtils';
 import { MoneyBlock } from '@/utils/moneySquareUtils';
 import * as d3 from 'd3';
 
 const props = defineProps<{
   destinations: MoneyDestination[];
+  duration?: number;
 }>();
+
+const duration = computed(() => props.duration ?? 1000);
 
 const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
@@ -35,15 +38,15 @@ const redraw = () => {
           .call(enter =>
             enter
               .transition()
-              .duration(1000)
-              .attr('opacity', 1)
+                .duration(duration.value)
+                .attr('opacity', 1)
           ),
       update =>
         update.call(update => {
               console.log('playing whoosh');
               return update
                   .transition()
-                  .duration(1000)
+                  .duration(duration.value)
                   .attr('x', (d: any) => d.position.x)
                   .attr('y', (d: any) => d.position.y)
                   .attr('width', (d: any) => d.blockSize)
@@ -54,8 +57,8 @@ const redraw = () => {
         exit.call(exit =>
           exit
             .transition()
-            .duration(750)
-            .attr('opacity', 0)
+              .duration(duration.value)
+              .attr('opacity', 0)
             .attr('x', (d: any) => d.position.x - 40)
             .attr('y', (d: any) => d.position.y + 80)
             .remove()

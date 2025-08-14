@@ -13,7 +13,7 @@
     >
       Reset
     </button>
-    <MoneyFlowCanvas ref="flowCanvas" :destinations="destinations" />
+    <MoneyFlowCanvas ref="flowCanvas" :destinations="destinations" :duration="animationDuration"/>
   </div>
 </template>
 
@@ -25,6 +25,7 @@ import MoneyFlowCanvas from './MoneyFlowCanvas.vue';
 import { Howl } from "howler";
 import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow.mp3'
 import whooshSound from '@/assets/sounds/Woosh.mp3'
+import * as querystring from "node:querystring";
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
@@ -93,14 +94,14 @@ const flowCanvas = ref<any>(null);
 let redrawBlocks: () => void = () => {
   flowCanvas.value?.redraw?.();
 };
-const moveMoneyToWorkers = () => {
-  company.moveTo(workers, 10);
-  redrawBlocks();
-}
+
+const animationDuration = ref<number>(1000);
 
 const redrawWithSound = () => {
   redrawBlocks();
-  whoosh.play();
+  if (animationDuration.value >= whoosh.duration() * 1000) {
+    whoosh.play();
+  }
 }
 const executeTimeline = () => {
   reset();
@@ -114,15 +115,39 @@ const executeTimeline = () => {
   })
   tl.add(() => {}, lookAtTheMoneyFlow.duration())
 
+  let duration = animationDuration.value;
+  let oldDuration = duration;
+
   for (let i = 0; i < repeats; i++) {
+    const previousPosition = `<${duration / 1000}`;
+    if (i === 1) {
+      duration = 600;
+    }
+    if (i === 2) {
+      duration = 400;
+    }
+    if (i === 3) {
+      duration = 200;
+    }
+    if (i === 4) {
+      duration = 75;
+    }
+    const position = `<${duration / 1000}`;
+    const currentDuration = duration;
+    tl.add(() =>{
+      if (oldDuration !== currentDuration) {
+        animationDuration.value = currentDuration;
+        oldDuration = currentDuration;
+      }
+    }, '<0.1');
     tl.add(() => {
       economy.moveTo(company,30);
       redrawWithSound();
-    },  '<1')
+    }, previousPosition)
     tl.add(() => {
       company.moveTo(workers, 15);
       redrawWithSound();
-    }, '<1')
+    }, position)
     tl.add(() => {
       company.moveTo(costs, 10);
       redrawBlocks();
@@ -134,15 +159,15 @@ const executeTimeline = () => {
     tl.add(() => {
       workers.moveTo(economy, 15);
       redrawWithSound();
-    }, '<1');
+    }, position);
     tl.add(() => {
       costs.moveTo(economy, 10);
       redrawWithSound();
-    }, '<1');
+    }, position);
     tl.add(() => {
       profit.moveTo(shareholders, 4);
       redrawWithSound();
-    }, '<1');
+    }, position);
   }
   tl.play();
 }
@@ -151,6 +176,7 @@ const reset = () => {
   for (const destination of destinations) {
     destination.destroyAllBlocks();
   }
+  animationDuration.value = 1000;
   redrawBlocks();
   tl.clear();
 }
