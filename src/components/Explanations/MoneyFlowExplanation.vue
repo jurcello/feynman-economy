@@ -13,7 +13,7 @@
     >
       Reset
     </button>
-    <MoneyFlowCanvas ref="flowCanvas" :destinations="destinations" :duration="animationDuration"/>
+    <MoneyFlowCanvas ref="flowCanvas" :destinations="destinations" :duration="animationDuration" :show-mouse-position="true"/>
   </div>
 </template>
 

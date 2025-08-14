@@ -11,9 +11,11 @@ import * as d3 from 'd3';
 const props = defineProps<{
   destinations: MoneyDestination[];
   duration?: number;
+  showMousePosition?: boolean;
 }>();
 
 const duration = computed(() => props.duration ?? 1000);
+const showMousePosition = computed(() => props.showMousePosition ?? false);
 
 const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
@@ -73,20 +75,22 @@ onMounted(() => {
     .attr('width', 800)
     .attr('height', 800);
 
-  const mousePosText = svg
-    .append('text')
-    .attr('class', 'mouse-position')
-    .attr('x', 10)
-    .attr('y', 20)
-    .attr('fill', '#333')
-    .text('x: -, y: -');
+  if (showMousePosition.value) {
+    const mousePosText = svg
+        .append('text')
+        .attr('class', 'mouse-position')
+        .attr('x', 10)
+        .attr('y', 20)
+        .attr('fill', '#333333')
+        .text('x: -, y: -');
 
-  const mousemove = (event: any) => {
-    const [x, y] = d3.pointer(event);
-    mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
-  };
-  svg.on('mousemove', mousemove);
-  mouseMoveCleanup = () => svg?.on('mousemove', null);
+    const mousemove = (event: any) => {
+      const [x, y] = d3.pointer(event);
+      mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
+    };
+    svg.on('mousemove', mousemove);
+    mouseMoveCleanup = () => svg?.on('mousemove', null);
+  }
 
   // titles for destinations
   svg
