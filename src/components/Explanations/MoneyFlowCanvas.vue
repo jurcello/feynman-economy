@@ -10,6 +10,8 @@ import * as d3 from 'd3';
 
 const props = defineProps<{
   destinations: MoneyDestination[];
+  width: number;
+  height: number;
   duration?: number;
   showMousePosition?: boolean;
   backgroundImageUrl?: string;
@@ -33,8 +35,8 @@ const updateBackgroundImage = () => {
     img
       .attr('x', 0)
       .attr('y', 0)
-      .attr('width', 800)
-      .attr('height', 800)
+      .attr('width', props.width)
+      .attr('height', props.height)
       .attr('preserveAspectRatio', 'xMidYMid slice')
       .attr('href', props.backgroundImageUrl as string);
     // Ensure the background is behind other elements
@@ -95,8 +97,8 @@ onMounted(() => {
   svg = d3
     .select(canvas.value)
     .append('svg')
-    .attr('width', 800)
-    .attr('height', 800);
+    .attr('width', props.width)
+    .attr('height', props.height);
 
   // background image (if provided)
   updateBackgroundImage();

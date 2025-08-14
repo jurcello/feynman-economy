@@ -16,6 +16,8 @@
     <MoneyFlowCanvas
         ref="flowCanvas"
         :destinations="destinations"
+        :width="731"
+        :height="527"
         :duration="animationDuration"
         :show-mouse-position="true"
         :background-image-url="background"
@@ -31,7 +33,7 @@ import MoneyFlowCanvas from './MoneyFlowCanvas.vue';
 import { Howl } from "howler";
 import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow.mp3'
 import whooshSound from '@/assets/sounds/Woosh.mp3'
-import background from '@/assets/images/MoneyExplanation/the-sea-4.jpg'
+import background from '@/assets/images/MoneyExplanation/MoneyFlowExplanationBG.png'
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
