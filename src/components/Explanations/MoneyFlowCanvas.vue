@@ -87,6 +87,7 @@ const renderDestinations = () => {
         .attr('preserveAspectRatio', 'xMidYMid meet');
 
       // once we know natural size, set width/height and position so that image draws upward from the position
+      const lineY = y + 10;
       getImgSize(imageUrl).then(({ w, h }) => {
         const drawW = w * scale;
         const drawH = h * scale;
@@ -95,6 +96,15 @@ const renderDestinations = () => {
           .attr('height', drawH)
           .attr('x', x)
           .attr('y', y - drawH);
+        // underline 2px below the image
+        g.append('line')
+          .attr('class', 'destination-underline')
+          .attr('x1', x)
+          .attr('y1', lineY)
+          .attr('x2', x + drawW)
+          .attr('y2', lineY)
+          .attr('stroke', '#333333')
+          .attr('stroke-width', 2);
       }).catch(() => {
         // fallback: use blockSize-derived square
         const fallback = Math.max(20, (d.config?.blockSize ?? 10) * 3) * scale;
@@ -103,6 +113,15 @@ const renderDestinations = () => {
           .attr('height', fallback)
           .attr('x', x)
           .attr('y', y - fallback);
+        // underline 2px below the fallback square
+        g.append('line')
+          .attr('class', 'destination-underline')
+          .attr('x1', x)
+          .attr('y1', lineY)
+          .attr('x2', x + fallback)
+          .attr('y2', lineY)
+          .attr('stroke', '#333333')
+          .attr('stroke-width', 2);
       });
     } else if (showName) {
       g.append('text')
