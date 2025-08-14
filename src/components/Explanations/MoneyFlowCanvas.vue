@@ -24,6 +24,61 @@ const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
 let mouseMoveCleanup: (() => void) | null = null;
 
+const renderDestinations = () => {
+  if (!svg) return;
+  // Ensure a container group for destinations exists
+  const container = svg.select<SVGGElement>('g.destinations').empty()
+    ? svg.append('g').attr('class', 'destinations')
+    : svg.select<SVGGElement>('g.destinations');
+
+  // Bind data to destination groups
+  const groups = container
+    .selectAll<SVGGElement, any>('g.destination')
+    .data(props.destinations);
+
+  // Exit
+  groups.exit().remove();
+
+  // Enter
+  const groupsEnter = groups.enter()
+    .append('g')
+    .attr('class', 'destination');
+
+  // Merge
+  const groupsAll = groupsEnter.merge(groups as any);
+
+  // For each destination group, render image > title > nothing
+  groupsAll.each(function(d: any) {
+    const g = d3.select(this);
+    // Clear previous content
+    g.selectAll('*').remove();
+
+    const x = d.config?.position?.x ?? 0;
+    const y = d.config?.position?.y ?? 0;
+    const name: string = (d.name ?? '').toString();
+    const showName: boolean = !!(d.config?.showName ?? true);
+    const imageUrl: string | undefined = d.config?.imageUrl;
+
+    if (imageUrl) {
+      const size = Math.max(20, (d.config?.blockSize ?? 10) * 3);
+      g.append('image')
+        .attr('class', 'destination-image')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('href', imageUrl)
+        .attr('preserveAspectRatio', 'xMidYMid meet');
+    } else if (showName) {
+      g.append('text')
+        .attr('class', 'title')
+        .text(name)
+        .attr('x', x)
+        .attr('y', y + 30);
+    } else {
+      // Show nothing
+    }
+  });
+};
+
 const updateBackgroundImage = () => {
   if (!svg) return;
   const imgSel = svg.select<SVGImageElement>('image.background');
@@ -120,16 +175,8 @@ onMounted(() => {
     mouseMoveCleanup = () => svg?.on('mousemove', null);
   }
 
-  // titles for destinations
-  svg
-    .append('g')
-    .selectAll('text.title')
-    .data(props.destinations)
-    .join('text')
-    .attr('class', 'title')
-    .text((d: any) => d.name)
-    .attr('x', (d: any) => d.config.position.x)
-    .attr('y', (d: any) => d.config.position.y + 30);
+  // render destinations (image > title > nothing)
+  renderDestinations();
 
   redraw();
 });
@@ -143,29 +190,12 @@ onUnmounted(() => {
   }
 });
 
-// If the destinations array identity changes (unlikely in this scenario), redraw titles
+// If the destinations array identity changes, re-render their visuals (image/title)
 watch(
   () => props.destinations,
-  (newVal, oldVal) => {
+  () => {
     if (!svg) return;
-    svg
-      .selectAll('g .title')
-      .data(newVal)
-      .join(
-        enter =>
-          enter
-            .append('text')
-            .attr('class', 'title')
-            .text((d: any) => d.name)
-            .attr('x', (d: any) => d.config.position.x)
-            .attr('y', (d: any) => d.config.position.y + 30),
-        update =>
-          update
-            .text((d: any) => d.name)
-            .attr('x', (d: any) => d.config.position.x)
-            .attr('y', (d: any) => d.config.position.y + 30),
-        exit => exit.remove()
-      );
+    renderDestinations();
   }
 );
 

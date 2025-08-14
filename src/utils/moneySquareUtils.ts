@@ -48,12 +48,16 @@ class MoneyDestinationConfig {
     public blocksPerRow: number;
     public blockGutter: number;
     public position: Position;
+    public imageUrl?: string;
+    public showName: boolean;
 
-    constructor(param: { blockSize: number; blocksPerRow: number; blockGutter: number; position?: Position }) {
+    constructor(param: { blockSize: number; blocksPerRow: number; blockGutter: number; position?: Position; imageUrl?: string; showName?: boolean }) {
         this.blockSize = param.blockSize;
         this.blocksPerRow = param.blocksPerRow;
         this.blockGutter = param.blockGutter;
         this.position = param.position || { x: 0, y: 0 };
+        this.imageUrl = param.imageUrl;
+        this.showName = param.showName ?? true;
     }
 }
 

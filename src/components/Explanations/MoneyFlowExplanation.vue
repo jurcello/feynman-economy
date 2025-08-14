@@ -34,13 +34,15 @@ import { Howl } from "howler";
 import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow.mp3'
 import whooshSound from '@/assets/sounds/Woosh.mp3'
 import background from '@/assets/images/MoneyExplanation/MoneyFlowExplanationBG.png'
+import companyImage from '@/assets/images/MoneyExplanation/Company.png'
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 30,
   blockGutter: 1,
-  position: {x: 308, y: 100}
+  position: {x: 308, y: 100},
+  imageUrl: companyImage
 });
 
 const configWorkers = new MoneyDestinationConfig({
