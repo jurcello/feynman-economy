@@ -99,7 +99,7 @@ const animationDuration = ref<number>(1000);
 
 const redrawWithSound = () => {
   redrawBlocks();
-  if (animationDuration.value >= whoosh.duration() * 1000) {
+  if (animationDuration.value >= 500) {
     whoosh.play();
   }
 }
@@ -130,7 +130,7 @@ const executeTimeline = () => {
       duration = 200;
     }
     if (i === 4) {
-      duration = 75;
+      duration = 100;
     }
     const position = `<${duration / 1000}`;
     const currentDuration = duration;
