@@ -243,6 +243,6 @@ defineExpose({ redraw });
 
 <style scoped>
 .canvas {
-  border: 1px solid #ccc;
+  border: 0;
 }
 </style>

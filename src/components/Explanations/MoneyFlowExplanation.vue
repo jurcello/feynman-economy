@@ -35,50 +35,65 @@ import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow
 import whooshSound from '@/assets/sounds/Woosh.mp3'
 import background from '@/assets/images/MoneyExplanation/MoneyFlowExplanationBG.png'
 import companyImage from '@/assets/images/MoneyExplanation/Company.png'
+import workersImage from '@/assets/images/MoneyExplanation/Workers.png'
+import shareholdersImage from '@/assets/images/MoneyExplanation/Shareholders.png'
+import profitImage from '@/assets/images/MoneyExplanation/Profit.png'
+import costsImage from '@/assets/images/MoneyExplanation/Costs.png'
+import realEconomyImage from '@/assets/images/MoneyExplanation/RealEconomy.png'
 
 // Create three money destinations with different configurations
 const configCompany = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 30,
   blockGutter: 1,
-  position: {x: 308, y: 100},
+  position: {x: 308, y: 190},
   imageUrl: companyImage,
-  scale: 0.5
+  scale: 0.7
 });
 
 const configWorkers = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 10,
   blockGutter: 2,
-  position: {x: 80, y: 250}
+  position: {x: 30, y: 150},
+  scale: 0.6,
+  imageUrl: workersImage,
 });
 
 const configShareholders = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 10,
   blockGutter: 1,
-  position: {x: 600, y: 400}
+  position: {x: 600, y: 389},
+  imageUrl: shareholdersImage,
+  scale: 0.7,
 });
 
 const configProfit = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 15,
   blockGutter: 1,
-  position: {x: 600, y: 250}
+  position: {x: 368, y: 296},
+  imageUrl: profitImage,
+  scale: 0.5,
 });
 
 const configEconomy = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 45,
   blockGutter: 1,
-  position: {x: 80, y: 400}
+  position: {x: 252, y: 508},
+  imageUrl: realEconomyImage,
+  scale: 0.7
 });
 
 const configCosts = new MoneyDestinationConfig({
   blockSize: 4,
   blocksPerRow: 15,
   blockGutter: 1,
-  position: {x: 308, y: 250}
+  position: {x: 208, y: 300},
+  imageUrl: costsImage,
+  scale: 0.6,
 });
 
 
