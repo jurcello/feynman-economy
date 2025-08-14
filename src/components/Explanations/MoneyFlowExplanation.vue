@@ -45,7 +45,7 @@ import realEconomyImage from '@/assets/images/MoneyExplanation/RealEconomy.png'
 const blockSize = 6;
 const configCompany = new MoneyDestinationConfig({
   blockSize: blockSize,
-  blocksPerRow: 30,
+  blocksPerRow: 18,
   blockGutter: 1,
   position: {x: 308, y: 190},
   imageUrl: companyImage,
@@ -55,7 +55,7 @@ const configCompany = new MoneyDestinationConfig({
 
 const configWorkers = new MoneyDestinationConfig({
   blockSize: blockSize,
-  blocksPerRow: 10,
+  blocksPerRow: 17,
   blockGutter: 2,
   position: {x: 30, y: 150},
   scale: 0.6,
@@ -65,7 +65,7 @@ const configWorkers = new MoneyDestinationConfig({
 
 const configShareholders = new MoneyDestinationConfig({
   blockSize: blockSize,
-  blocksPerRow: 10,
+  blocksPerRow: 18,
   blockGutter: 1,
   position: {x: 600, y: 389},
   imageUrl: shareholdersImage,
