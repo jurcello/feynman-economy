@@ -42,8 +42,9 @@ import costsImage from '@/assets/images/MoneyExplanation/Costs.png'
 import realEconomyImage from '@/assets/images/MoneyExplanation/RealEconomy.png'
 
 // Create three money destinations with different configurations
+const blockSize = 6;
 const configCompany = new MoneyDestinationConfig({
-  blockSize: 4,
+  blockSize: blockSize,
   blocksPerRow: 30,
   blockGutter: 1,
   position: {x: 308, y: 190},
@@ -52,7 +53,7 @@ const configCompany = new MoneyDestinationConfig({
 });
 
 const configWorkers = new MoneyDestinationConfig({
-  blockSize: 4,
+  blockSize: blockSize,
   blocksPerRow: 10,
   blockGutter: 2,
   position: {x: 30, y: 150},
@@ -61,7 +62,7 @@ const configWorkers = new MoneyDestinationConfig({
 });
 
 const configShareholders = new MoneyDestinationConfig({
-  blockSize: 4,
+  blockSize: blockSize,
   blocksPerRow: 10,
   blockGutter: 1,
   position: {x: 600, y: 389},
@@ -70,7 +71,7 @@ const configShareholders = new MoneyDestinationConfig({
 });
 
 const configProfit = new MoneyDestinationConfig({
-  blockSize: 4,
+  blockSize: blockSize,
   blocksPerRow: 15,
   blockGutter: 1,
   position: {x: 368, y: 296},
@@ -79,7 +80,7 @@ const configProfit = new MoneyDestinationConfig({
 });
 
 const configEconomy = new MoneyDestinationConfig({
-  blockSize: 4,
+  blockSize: blockSize,
   blocksPerRow: 45,
   blockGutter: 1,
   position: {x: 252, y: 508},
@@ -88,7 +89,7 @@ const configEconomy = new MoneyDestinationConfig({
 });
 
 const configCosts = new MoneyDestinationConfig({
-  blockSize: 4,
+  blockSize: blockSize,
   blocksPerRow: 15,
   blockGutter: 1,
   position: {x: 208, y: 300},
@@ -155,7 +156,7 @@ const executeTimeline = () => {
     if (i === 3) {
       duration = 200;
     }
-    if (i === 4) {
+    if (i === blockSize) {
       duration = 100;
     }
     const position = `<${duration / 1000}`;
@@ -191,7 +192,7 @@ const executeTimeline = () => {
       redrawWithSound();
     }, position);
     tl.add(() => {
-      profit.moveTo(shareholders, 4);
+      profit.moveTo(shareholders, blockSize);
       redrawWithSound();
     }, position);
   }
