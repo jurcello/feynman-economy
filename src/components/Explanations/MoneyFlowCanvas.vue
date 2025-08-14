@@ -26,6 +26,25 @@ let mouseMoveCleanup: (() => void) | null = null;
 
 const renderDestinations = () => {
   if (!svg) return;
+
+  // simple in-memory cache of image natural sizes
+  const getImgSize = (() => {
+    const cache = (renderDestinations as any)._imgCache as Map<string, { w: number; h: number }> || new Map();
+    (renderDestinations as any)._imgCache = cache;
+    return async (url: string): Promise<{ w: number; h: number }> => {
+      const cached = cache.get(url);
+      if (cached) return cached;
+      const dims = await new Promise<{ w: number; h: number }>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve({ w: img.naturalWidth || img.width, h: img.naturalHeight || img.height });
+        img.onerror = (e) => reject(e);
+        img.src = url;
+      });
+      cache.set(url, dims);
+      return dims;
+    };
+  })();
+
   // Ensure a container group for destinations exists
   const container = svg.select<SVGGElement>('g.destinations').empty()
     ? svg.append('g').attr('class', 'destinations')
@@ -58,15 +77,33 @@ const renderDestinations = () => {
     const name: string = (d.name ?? '').toString();
     const showName: boolean = !!(d.config?.showName ?? true);
     const imageUrl: string | undefined = d.config?.imageUrl;
+    const scale: number = Number(d.config?.scale ?? 1);
 
     if (imageUrl) {
-      const size = Math.max(20, (d.config?.blockSize ?? 10) * 3);
-      g.append('image')
+      // create image element first
+      const imageSel = g.append('image')
         .attr('class', 'destination-image')
-        .attr('x', x)
-        .attr('y', y)
         .attr('href', imageUrl)
         .attr('preserveAspectRatio', 'xMidYMid meet');
+
+      // once we know natural size, set width/height and position so that image draws upward from the position
+      getImgSize(imageUrl).then(({ w, h }) => {
+        const drawW = w * scale;
+        const drawH = h * scale;
+        imageSel
+          .attr('width', drawW)
+          .attr('height', drawH)
+          .attr('x', x)
+          .attr('y', y - drawH);
+      }).catch(() => {
+        // fallback: use blockSize-derived square
+        const fallback = Math.max(20, (d.config?.blockSize ?? 10) * 3) * scale;
+        imageSel
+          .attr('width', fallback)
+          .attr('height', fallback)
+          .attr('x', x)
+          .attr('y', y - fallback);
+      });
     } else if (showName) {
       g.append('text')
         .attr('class', 'title')

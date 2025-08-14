@@ -42,7 +42,8 @@ const configCompany = new MoneyDestinationConfig({
   blocksPerRow: 30,
   blockGutter: 1,
   position: {x: 308, y: 100},
-  imageUrl: companyImage
+  imageUrl: companyImage,
+  scale: 0.5
 });
 
 const configWorkers = new MoneyDestinationConfig({
