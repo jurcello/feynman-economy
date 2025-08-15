@@ -19,7 +19,7 @@
         :width="731"
         :height="527"
         :duration="animationDuration"
-        :show-mouse-position="true"
+        :show-mouse-position="false"
         :background-image-url="background"
     />
   </div>
@@ -219,9 +219,6 @@ const reset = () => {
 </script>
 
 <style scoped>
-.canvas {
-  border: 1px solid #ccc;
-}
 .money-flow-container {
   max-width: 800px;
   margin: 0 auto;
