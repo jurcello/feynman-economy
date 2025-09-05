@@ -80,6 +80,8 @@ let redraw = () => {
                 .attr('fill', 'red');
           },
           update => update
+              .transition()
+              .duration(1000)
               .attr('x', (d: any) => d.x)
               .attr('y', (d: any) => d.y)
               .attr('width', (d: any) => d.width)
