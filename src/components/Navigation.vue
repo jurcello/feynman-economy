@@ -13,6 +13,8 @@
     <router-link to="/ml-bank-balance">Bank balances</router-link>
     |
     <router-link to="/money-flow">Money Flow</router-link>
+    |
+    <router-link to="/roc">ROC</router-link>
   </nav>
 </template>
 

@@ -10,6 +10,7 @@ import PriceSettingCurveNew from "@/views/PriceSettingCurveNew.vue";
 import BarchartTest from "@/views/BarchartTest.vue";
 import MLBankBalance from "@/views/MLBankBalance.vue";
 import MoneyFlow from "@/views/MoneyFlow.vue";
+import ROC from "@/views/ROC.vue";
 
 // Define routes for your app
 const routes = [
@@ -62,6 +63,11 @@ const routes = [
     path: '/money-flow',
     name: 'MoneyFlow',
     component: MoneyFlow,
+  },
+  {
+    path: '/roc',
+    name: 'ROC',
+    component: ROC,
   }
 ];
 
