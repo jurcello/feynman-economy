@@ -12,11 +12,12 @@
         id="roc-slider"
         type="range"
         min="0"
-        max="2"
-        step="0.1"
+        max="0.5"
+        step="0.001"
         v-model.number="gapWidth"
         class="w-full"
         aria-label="roc-slider"
+          @change="redraw"
       />
     </div>
 
@@ -35,18 +36,16 @@ const container = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
 
 // Slider-controlled numeric variable
-const gapWidth = ref<number>(2); // default highlighted blocks
+const gapWidth = ref<number>(0.1); // default highlighted blocks
 
 // constants for the grid
 const blocks = 100;
 const cols = 10;
 const rows = Math.ceil(blocks / cols);
-const blockSize = 10;
+const blockSize = 20;
 
 // Scales defined at module scope to reuse in watchers
 // Use scaleBand to compute band positions and sizes; ranges are in pixels
-const xScale = d3.scaleBand<number>().domain(d3.range(cols)).range([0, cols * (blockSize + gapWidth.value) - gapWidth.value]).paddingInner(0).paddingOuter(0);
-const yScale = d3.scaleBand<number>().domain(d3.range(rows)).range([0, rows * (blockSize + gapWidth.value) - gapWidth.value]).paddingInner(0).paddingOuter(0);
 
 // Type for a precomputed block
 type Block = { x: number; y: number; width: number; height: number };
@@ -54,6 +53,10 @@ let blocksData: Block[] = [];
 
 // Redraw function (restored): computes data and updates the SVG
 let redraw = () => {
+  console.log("redraw");
+  const xScale = d3.scaleBand<number>().domain(d3.range(cols)).range([0, cols * blockSize]).paddingInner(gapWidth.value).paddingOuter(0);
+  const yScale = d3.scaleBand<number>().domain(d3.range(rows)).range([0, rows * blockSize]).paddingInner(gapWidth.value).paddingOuter(0);
+
   if (!svg) return;
   // Precompute block objects with intrinsic x, y, width, height
   blocksData = d3.range(blocks).map((i) => {
@@ -79,12 +82,8 @@ let redraw = () => {
 onMounted(() => {
   if (!container.value) return;
 
-  // Update scales to current gapWidth before computing size
-  xScale.range([0, cols * (blockSize + gapWidth.value) - gapWidth.value]).paddingInner(0).paddingOuter(0)
-  yScale.range([0, rows * (blockSize + gapWidth.value) - gapWidth.value]).paddingInner(0).paddingOuter(0)
-
-  const svgWidth = (xScale.range()[1])
-  const svgHeight = (yScale.range()[1])
+  const svgWidth = 300;
+  const svgHeight = 400;
 
   svg = d3
     .select(container.value)
@@ -93,17 +92,6 @@ onMounted(() => {
     .attr('height', svgHeight);
 
   // Initial draw
-  redraw();
-});
-
-// Watch function (restored): react to slider changes
-watch(() => gapWidth.value, () => {
-  // Update scales based on new gapWidth to let scaleBand handle spacing
-  xScale.range([0, cols * (blockSize + gapWidth.value) - gapWidth.value]);
-  yScale.range([0, rows * (blockSize + gapWidth.value) - gapWidth.value]);
-  if (svg) {
-    svg.attr('width', xScale.range()[1]).attr('height', yScale.range()[1]);
-  }
   redraw();
 });
 
