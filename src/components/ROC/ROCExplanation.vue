@@ -6,7 +6,7 @@
     <!-- Slider controlling a numeric variable (0-100) -->
     <div class="mt-4">
       <label for="roc-slider" class="block text-sm font-medium text-gray-700 mb-1">
-        gapwidth: {{ value }}
+        gapwidth: {{ gapWidth }}
       </label>
       <input
         id="roc-slider"
@@ -14,7 +14,7 @@
         min="0"
         max="2"
         step="0.1"
-        v-model.number="value"
+        v-model.number="gapWidth"
         class="w-full"
         aria-label="roc-slider"
       />
@@ -35,7 +35,7 @@ const container = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
 
 // Slider-controlled numeric variable
-const value = ref<number>(25); // default highlighted blocks
+const gapWidth = ref<number>(2); // default highlighted blocks
 
 // constants for the grid
 const gap = 2; // gap between blocks
@@ -48,11 +48,39 @@ const blockSize = 10;
 const xScale = d3.scaleBand<number>().domain(d3.range(cols)).range([0, cols]).paddingInner(0);
 const yScale = d3.scaleBand<number>().domain(d3.range(rows)).range([0, rows]).paddingInner(0);
 
+// Type for a precomputed block
+type Block = { x: number; y: number; width: number; height: number };
+let blocksData: Block[] = [];
+
+// Redraw function (restored): computes data and updates the SVG
+let redraw = () => {
+  if (!svg) return;
+  // Precompute block objects with intrinsic x, y, width, height
+  blocksData = d3.range(blocks).map((i) => {
+    const c = i % cols;
+    const r = Math.floor(i / cols);
+    const x = (xScale(c)! * blockSize) + c * gapWidth.value;
+    const y = (yScale(r)! * blockSize) + r * gapWidth.value;
+    return { x, y, width: blockSize, height: blockSize };
+  });
+
+  (svg as any)
+    .selectAll('rect.block')
+    .data(blocksData)
+    .join('rect')
+    .attr('class', 'block')
+    .attr('x', (d: any) => d.x)
+    .attr('y', (d: any) => d.y)
+    .attr('width', (d: any) => d.width)
+    .attr('height', (d: any) => d.height)
+    .attr('fill', 'red');
+};
+
 onMounted(() => {
   if (!container.value) return;
 
-  const svgWidth = cols * blockSize + (cols - 1) * gap;
-  const svgHeight = rows * blockSize + (rows - 1) * gap;
+  const svgWidth = cols * blockSize + (cols - 1) * gapWidth.value;
+  const svgHeight = rows * blockSize + (rows - 1) * gapWidth.value;
 
   svg = d3
     .select(container.value)
@@ -60,23 +88,14 @@ onMounted(() => {
     .attr('width', svgWidth)
     .attr('height', svgHeight);
 
-  const xPos = (c: number) => (xScale(c)! * blockSize) + c * gap;
-  const yPos = (r: number) => (yScale(r)! * blockSize) + r * gap;
-
-  const data = d3.range(blocks);
-
-  (svg as any)
-    .selectAll('rect.block')
-    .data(data)
-    .join('rect')
-    .attr('class', 'block')
-    .attr('x', (d: number) => xPos(d % cols))
-    .attr('y', (d: number) => yPos(Math.floor(d / cols)))
-    .attr('width', blockSize)
-    .attr('height', blockSize)
-    .attr('fill', '#9ca3af'); // neutral gray-400
+  // Initial draw
+  redraw();
 });
 
+// Watch function (restored): react to slider changes
+watch(() => gapWidth.value, () => {
+  redraw();
+});
 
 onUnmounted(() => {
   if (svg) {
