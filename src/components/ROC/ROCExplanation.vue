@@ -67,16 +67,25 @@ let redraw = () => {
     return { x, y, width: xScale.bandwidth(), height: yScale.bandwidth() };
   });
 
-  (svg as any)
-    .selectAll('rect.block')
+  svg.selectAll('rect.block')
     .data(blocksData)
-    .join('rect')
-    .attr('class', 'block')
-    .attr('x', (d: any) => d.x)
-    .attr('y', (d: any) => d.y)
-    .attr('width', (d: any) => d.width)
-    .attr('height', (d: any) => d.height)
-    .attr('fill', 'red');
+      .join(
+          enter => {
+            return enter.append('rect')
+                .attr('class', 'block')
+                .attr('x', (d: any) => d.x)
+                .attr('y', (d: any) => d.y)
+                .attr('width', (d: any) => d.width)
+                .attr('height', (d: any) => d.height)
+                .attr('fill', 'red');
+          },
+          update => update
+              .attr('x', (d: any) => d.x)
+              .attr('y', (d: any) => d.y)
+              .attr('width', (d: any) => d.width)
+              .attr('height', (d: any) => d.height),
+          exit => exit.remove()
+      )
 };
 
 onMounted(() => {
