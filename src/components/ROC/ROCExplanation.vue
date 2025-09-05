@@ -3,22 +3,60 @@
     <h2 class="text-2xl font-semibold mb-4">ROC</h2>
     <p class="mb-2">This is the ROC explanation/visualization component.</p>
 
-    <!-- Slider controlling a numeric variable (0-100) -->
-    <div class="mt-4">
-      <label for="roc-slider" class="block text-sm font-medium text-gray-700 mb-1">
-        gapwidth: {{ gapWidth }}
-      </label>
-      <input
-        id="roc-slider"
-        type="range"
-        min="0"
-        max="0.5"
-        step="0.001"
-        v-model.number="gapWidth"
-        class="w-full"
-        aria-label="roc-slider"
+    <!-- Controls -->
+    <div class="mt-4 space-y-3">
+      <div>
+        <label for="roc-slider" class="block text-sm font-medium text-gray-700 mb-1">
+          gapwidth: {{ gapWidth }}
+        </label>
+        <input
+          id="roc-slider"
+          type="range"
+          min="0"
+          max="0.5"
+          step="0.001"
+          v-model.number="gapWidth"
+          class="w-full"
+          aria-label="roc-slider"
           @change="redraw"
-      />
+        />
+      </div>
+      <div>
+        <label for="capital-slider" class="block text-sm font-medium text-gray-700 mb-1">
+          capital amount: {{ capitalAmount }}
+        </label>
+        <input
+            id="capital-slider"
+            type="range"
+            min="0"
+            max="300"
+            step="1"
+            v-model.number="capitalAmount"
+            class="w-full"
+            aria-label="capital-slider"
+            @change="redraw"
+        />
+      </div>
+      <div>
+        <label for="profit-slider" class="block text-sm font-medium text-gray-700 mb-1">
+          profit amount: {{ profitAmount }}
+        </label>
+        <input
+            id="profit-slider"
+            type="range"
+            min="0"
+            max="300"
+            step="1"
+            v-model.number="profitAmount"
+            class="w-full"
+            aria-label="profit-slider"
+            @change="redraw"
+        />
+      </div>
+      <label class="inline-flex items-center space-x-2">
+        <input type="checkbox" v-model="showBlocks" aria-label="show-blocks" />
+        <span>Show blocks</span>
+      </label>
     </div>
 
     <div class="mt-6">
@@ -35,8 +73,10 @@ import * as d3 from 'd3';
 const container = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
 
-// Slider-controlled numeric variable
-const gapWidth = ref<number>(0.1); // default highlighted blocks
+const gapWidth = ref<number>(0);
+const showBlocks = ref<boolean>(false);
+const capitalAmount = ref<number>(200);
+const profitAmount = ref<number>(20);
 
 // constants for the grid
 const blocks = 100;
@@ -49,26 +89,56 @@ const blockSize = 20;
 
 // Type for a precomputed block
 type Block = { x: number; y: number; width: number; height: number };
-let blocksData: Block[] = [];
+let capitalBlocks: Block[] = [];
 
 // Redraw function (restored): computes data and updates the SVG
 let redraw = () => {
-  console.log("redraw");
-  const xScale = d3.scaleBand<number>().domain(d3.range(cols)).range([0, cols * blockSize]).paddingInner(gapWidth.value).paddingOuter(0);
-  const yScale = d3.scaleBand<number>().domain(d3.range(rows)).range([0, rows * blockSize]).paddingInner(gapWidth.value).paddingOuter(0);
+  let width;
+  let height;
+  let xOffset = 0;
+  const initialWidth = 100;
+  if (showBlocks.value) {
+    width = cols * blockSize;
+    height = rows * blockSize;
+    gapWidth.value = 0.15;
+    xOffset = 400;
+  }
+  else {
+    width = initialWidth;
+    height = capitalAmount.value;
+    gapWidth.value = 0;
+  }
+
+  const xScale = d3.scaleBand<number>().domain(d3.range(cols)).range([0, width]).paddingInner(gapWidth.value).paddingOuter(0);
+  const yScale = d3.scaleBand<number>().domain(d3.range(rows)).range([0, height]).paddingInner(gapWidth.value).paddingOuter(0);
 
   if (!svg) return;
   // Precompute block objects with intrinsic x, y, width, height
-  blocksData = d3.range(blocks).map((i) => {
+  capitalBlocks = d3.range(blocks).map((i) => {
     const c = i % cols;
     const r = Math.floor(i / cols);
-    const x = xScale(c)!;
-    const y = yScale(r)!;
+    const x = xScale(c)! + xOffset;
+    const y = 300 - (yScale(r)! + yScale.bandwidth());
+    if (r === 0 && c === 0) console.log(y)
     return { x, y, width: xScale.bandwidth(), height: yScale.bandwidth() };
   });
+  const capitalBG = [capitalAmount.value]
+  svg.selectAll('rect.capital-bg')
+      .data(capitalBG)
+      .join('rect')
+      .classed('capital-bg', true)
+      .attr('x', 0)
+      .attr('y', 300 - capitalAmount.value)
+      .attr('width', initialWidth)
+      .attr('height', capitalAmount.value)
+      .attr('fill', '#ffb3b3')
+  
+  const profitBG = [capitalAmount.value]
+
+
 
   svg.selectAll('rect.block')
-    .data(blocksData)
+    .data(capitalBlocks)
       .join(
           enter => {
             return enter.append('rect')
@@ -88,12 +158,15 @@ let redraw = () => {
               .attr('height', (d: any) => d.height),
           exit => exit.remove()
       )
+  // Toggle visibility based on showBlocks
+  svg.selectAll('rect.block')
+     .attr('display', showBlocks.value ? null : 'none');
 };
 
 onMounted(() => {
   if (!container.value) return;
 
-  const svgWidth = 300;
+  const svgWidth = 600;
   const svgHeight = 400;
 
   svg = d3
@@ -103,6 +176,11 @@ onMounted(() => {
     .attr('height', svgHeight);
 
   // Initial draw
+  redraw();
+});
+
+// Watch for checkbox changes to show/hide blocks
+watch(() => showBlocks.value, () => {
   redraw();
 });
 
