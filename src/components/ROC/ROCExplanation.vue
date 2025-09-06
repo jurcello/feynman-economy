@@ -123,18 +123,43 @@ let redraw = () => {
     return { x, y, width: xScale.bandwidth(), height: yScale.bandwidth() };
   });
   const capitalBG = [capitalAmount.value]
+  const transitionTime = 1000;
   svg.selectAll('rect.capital-bg')
       .data(capitalBG)
-      .join('rect')
-      .classed('capital-bg', true)
-      .attr('x', 0)
-      .attr('y', 300 - capitalAmount.value)
-      .attr('width', initialWidth)
-      .attr('height', capitalAmount.value)
-      .attr('fill', '#ffb3b3')
-  
-  const profitBG = [capitalAmount.value]
+      .join(
+          enter => enter.append('rect')
+              .classed('capital-bg', true)
+              .attr('x', 0)
+              .attr('y', 300 - capitalAmount.value)
+              .attr('width', initialWidth)
+              .attr('height', capitalAmount.value)
+              .attr('fill', '#FFB3B3'),
+          update => update
+              .transition()
+              .duration(transitionTime)
+              .attr('y', 300 - capitalAmount.value)
+              .attr('height', capitalAmount.value),
+          exit => exit.remove()
+      )
 
+  const profitBG = [profitAmount.value]
+  svg.selectAll('rect.profit-bg')
+      .data(profitBG)
+      .join(
+          enter => enter.append('rect')
+              .classed('profit-bg', true)
+              .attr('x', 200)
+              .attr('y', d => 300 - d)
+              .attr('width', initialWidth)
+              .attr('height', d => d)
+              .attr('fill', '#bce3a9'),
+          update => update
+              .transition()
+              .duration(transitionTime)
+              .attr('y', d => 300 - d)
+              .attr('height', d => d),
+          exit => exit.remove()
+      )
 
 
   svg.selectAll('rect.block')
@@ -151,7 +176,7 @@ let redraw = () => {
           },
           update => update
               .transition()
-              .duration(1000)
+              .duration(transitionTime)
               .attr('x', (d: any) => d.x)
               .attr('y', (d: any) => d.y)
               .attr('width', (d: any) => d.width)
