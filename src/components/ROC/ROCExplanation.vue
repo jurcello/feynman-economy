@@ -45,8 +45,8 @@
             id="profit-slider"
             type="range"
             min="0"
-            max="300"
-            step="1"
+            max="40"
+            step="0.1"
             v-model.number="profitAmount"
             class="w-full"
             aria-label="profit-slider"
@@ -57,7 +57,7 @@
         <input type="checkbox" v-model="showBlocks" aria-label="show-blocks" />
         <span>Show blocks</span>
       </label>
-      <div>{{ profitBlocks}}</div>
+      <div>{{ numberOfProfitBlocks }}</div>
     </div>
 
     <div class="mt-6">
@@ -78,7 +78,7 @@ const gapWidth = ref<number>(0);
 const showBlocks = ref<boolean>(false);
 const capitalAmount = ref<number>(200);
 const profitAmount = ref<number>(20);
-const profitBlocks = ref<number>(0);
+const numberOfProfitBlocks = ref<number>(0);
 
 // constants for the grid
 const blocks = 100;
@@ -90,10 +90,18 @@ const blockSize = 20;
 // Use scaleBand to compute band positions and sizes; ranges are in pixels
 
 // Type for a precomputed block
-type Block = { x: number; y: number; width: number; height: number };
+type Block = {
+  x: number;
+  y: number;
+  width: number;
+  height: number
+};
+
 let capitalBlocks: Block[] = [];
+let profitBlocks: Block[] = [];
+
 let recalculate = () => {
-  profitBlocks.value = (profitAmount.value / capitalAmount.value) * 100;
+  numberOfProfitBlocks.value = (profitAmount.value / capitalAmount.value) * 100;
 }
 
 // Redraw function (restored): computes data and updates the SVG
@@ -119,6 +127,7 @@ let redraw = () => {
   const yScale = d3.scaleBand<number>().domain(d3.range(rows)).range([0, height]).paddingInner(gapWidth.value).paddingOuter(0);
 
   if (!svg) return;
+
   // Precompute block objects with intrinsic x, y, width, height
   capitalBlocks = d3.range(blocks).map((i) => {
     const c = i % cols;
@@ -128,8 +137,37 @@ let redraw = () => {
     if (r === 0 && c === 0) console.log(y)
     return { x, y, width: xScale.bandwidth(), height: yScale.bandwidth() };
   });
+
+  const widthPerUnitForProfit = initialWidth / numberOfProfitBlocks.value;
+
+  profitBlocks = d3.range(Math.ceil(numberOfProfitBlocks.value)).map((i) => {
+    const c = i % cols;
+    const r = Math.floor(i / cols);
+    let x, y, width, height;
+
+    if (showBlocks.value) {
+      x = xScale(c)! + xOffset;
+      y = 300 - (yScale(r)! + yScale.bandwidth());
+      width = xScale.bandwidth();
+      height = yScale.bandwidth();
+      if (i === Math.ceil(numberOfProfitBlocks.value - 1)) {
+        width = xScale.bandwidth() * (numberOfProfitBlocks.value % 1);
+      }
+    } else {
+      x = 200 + i * widthPerUnitForProfit;
+      y = 300 - profitAmount.value;
+      width = widthPerUnitForProfit;
+      if (i === Math.ceil(numberOfProfitBlocks.value - 1) && (numberOfProfitBlocks.value % 1) > 0) {
+        width = widthPerUnitForProfit * (numberOfProfitBlocks.value % 1);
+      }
+      height = profitAmount.value;
+    }
+
+    return {x, y, width, height};
+  });
   const capitalBG = [capitalAmount.value]
   const transitionTime = 1000;
+
   svg.selectAll('rect.capital-bg')
       .data(capitalBG)
       .join(
@@ -149,18 +187,23 @@ let redraw = () => {
       )
 
   const profitBG = [profitAmount.value]
+  let profitBgX = 200;
+  if (showBlocks.value) {
+    profitBgX = 0;
+  }
   svg.selectAll('rect.profit-bg')
       .data(profitBG)
       .join(
           enter => enter.append('rect')
               .classed('profit-bg', true)
-              .attr('x', 200)
+              .attr('x', profitBgX)
               .attr('y', d => 300 - d)
               .attr('width', initialWidth)
               .attr('height', d => d)
               .attr('fill', '#bce3a9'),
           update => update
               .transition()
+              .attr('x', profitBgX)
               .duration(transitionTime)
               .attr('y', d => 300 - d)
               .attr('height', d => d),
@@ -168,12 +211,12 @@ let redraw = () => {
       )
 
 
-  svg.selectAll('rect.block')
+  svg.selectAll('rect.capital-block')
     .data(capitalBlocks)
       .join(
           enter => {
             return enter.append('rect')
-                .attr('class', 'block')
+                .attr('class', 'capital-block')
                 .attr('x', (d: any) => d.x)
                 .attr('y', (d: any) => d.y)
                 .attr('width', (d: any) => d.width)
@@ -189,9 +232,27 @@ let redraw = () => {
               .attr('height', (d: any) => d.height),
           exit => exit.remove()
       )
-  // Toggle visibility based on showBlocks
-  svg.selectAll('rect.block')
-     .attr('display', showBlocks.value ? null : 'none');
+  svg.selectAll('rect.profit-block')
+    .data(profitBlocks)
+      .join(
+          enter => {
+            return enter.append('rect')
+                .attr('class', 'profit-block')
+                .attr('x', (d: any) => d.x)
+                .attr('y', (d: any) => d.y)
+                .attr('width', (d: any) => d.width)
+                .attr('height', (d: any) => d.height)
+                .attr('fill', 'green');
+          },
+          update => update
+              .transition()
+              .duration(transitionTime)
+              .attr('x', (d: any) => d.x)
+              .attr('y', (d: any) => d.y)
+              .attr('width', (d: any) => d.width)
+              .attr('height', (d: any) => d.height),
+          exit => exit.remove()
+      )
 };
 
 onMounted(() => {
