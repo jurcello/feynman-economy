@@ -55,9 +55,9 @@
       </div>
       <label class="inline-flex items-center space-x-2">
         <input type="checkbox" v-model="showBlocks" aria-label="show-blocks" />
-        <span>Show blocks</span>
+        <span>Show percentage visualisation</span>
       </label>
-      <div>{{ numberOfProfitBlocks }}</div>
+      <div>Percentage: {{ percentage }} %</div>
     </div>
 
     <div class="mt-6">
@@ -78,7 +78,7 @@ const gapWidth = ref<number>(0);
 const showBlocks = ref<boolean>(false);
 const capitalAmount = ref<number>(200);
 const profitAmount = ref<number>(20);
-const numberOfProfitBlocks = ref<number>(0);
+const percentage = ref<number>(0);
 
 // constants for the grid
 const blocks = 100;
@@ -101,7 +101,7 @@ let capitalBlocks: Block[] = [];
 let profitBlocks: Block[] = [];
 
 let recalculate = () => {
-  numberOfProfitBlocks.value = (profitAmount.value / capitalAmount.value) * 100;
+  percentage.value = (profitAmount.value / capitalAmount.value) * 100;
 }
 
 // Redraw function (restored): computes data and updates the SVG
@@ -138,9 +138,9 @@ let redraw = () => {
     return { x, y, width: xScale.bandwidth(), height: yScale.bandwidth() };
   });
 
-  const widthPerUnitForProfit = initialWidth / numberOfProfitBlocks.value;
+  const widthPerUnitForProfit = initialWidth / percentage.value;
 
-  profitBlocks = d3.range(Math.ceil(numberOfProfitBlocks.value)).map((i) => {
+  profitBlocks = d3.range(Math.ceil(percentage.value)).map((i) => {
     const c = i % cols;
     const r = Math.floor(i / cols);
     let x, y, width, height;
@@ -150,15 +150,15 @@ let redraw = () => {
       y = 300 - (yScale(r)! + yScale.bandwidth());
       width = xScale.bandwidth();
       height = yScale.bandwidth();
-      if (i === Math.ceil(numberOfProfitBlocks.value - 1)) {
-        width = xScale.bandwidth() * (numberOfProfitBlocks.value % 1);
+      if (i === Math.ceil(percentage.value - 1)) {
+        width = xScale.bandwidth() * (percentage.value % 1);
       }
     } else {
       x = 200 + i * widthPerUnitForProfit;
       y = 300 - profitAmount.value;
       width = widthPerUnitForProfit;
-      if (i === Math.ceil(numberOfProfitBlocks.value - 1) && (numberOfProfitBlocks.value % 1) > 0) {
-        width = widthPerUnitForProfit * (numberOfProfitBlocks.value % 1);
+      if (i === Math.ceil(percentage.value - 1) && (percentage.value % 1) > 0) {
+        width = widthPerUnitForProfit * (percentage.value % 1);
       }
       height = profitAmount.value;
     }
