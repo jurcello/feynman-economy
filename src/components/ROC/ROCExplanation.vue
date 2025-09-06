@@ -57,6 +57,7 @@
         <input type="checkbox" v-model="showBlocks" aria-label="show-blocks" />
         <span>Show blocks</span>
       </label>
+      <div>{{ profitBlocks}}</div>
     </div>
 
     <div class="mt-6">
@@ -77,6 +78,7 @@ const gapWidth = ref<number>(0);
 const showBlocks = ref<boolean>(false);
 const capitalAmount = ref<number>(200);
 const profitAmount = ref<number>(20);
+const profitBlocks = ref<number>(0);
 
 // constants for the grid
 const blocks = 100;
@@ -90,9 +92,13 @@ const blockSize = 20;
 // Type for a precomputed block
 type Block = { x: number; y: number; width: number; height: number };
 let capitalBlocks: Block[] = [];
+let recalculate = () => {
+  profitBlocks.value = (profitAmount.value / capitalAmount.value) * 100;
+}
 
 // Redraw function (restored): computes data and updates the SVG
 let redraw = () => {
+  recalculate()
   let width;
   let height;
   let xOffset = 0;
