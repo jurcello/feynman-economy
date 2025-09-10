@@ -60,9 +60,15 @@
       <div>Percentage: {{ percentage }} %</div>
     </div>
 
-    <div class="mt-6">
-      <div ref="container" aria-label="roc-bar" role="img"></div>
-      <p class="text-xs text-gray-500 mt-2">100 blocks rendered with d3.</p>
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <div>
+        <div ref="container" aria-label="roc-bar" role="img"></div>
+        <p class="text-xs text-gray-500 mt-2">100 blocks rendered with d3.</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <canvas ref="gaugeCanvas" width="260" height="160" aria-label="percentage-gauge" role="img"></canvas>
+        <p class="text-xs text-gray-500 mt-2">Pressure gauge (canvas) animated with d3.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -72,6 +78,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue';
 import * as d3 from 'd3';
 
 const container = ref<HTMLElement | null>(null);
+const gaugeCanvas = ref<HTMLCanvasElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
 
 const gapWidth = ref<number>(0);
@@ -101,7 +108,8 @@ let capitalBlocks: Block[] = [];
 let profitBlocks: Block[] = [];
 
 let recalculate = () => {
-  percentage.value = (profitAmount.value / capitalAmount.value) * 100;
+  const cap = capitalAmount.value;
+  percentage.value = cap > 0 ? (profitAmount.value / cap) * 100 : 0;
 }
 
 // Redraw function (restored): computes data and updates the SVG
@@ -255,6 +263,128 @@ let redraw = () => {
       )
 };
 
+// ---- Pressure gauge (canvas) setup ----
+let gaugeTimer: d3.Timer | null = null;
+let lastGaugePercent = 0;
+
+const drawGauge = (pct: number) => {
+  const canvas = gaugeCanvas.value;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // HiDPI scale
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = canvas.width;
+  const cssH = canvas.height;
+  if ((canvas as any)._scaled !== dpr) {
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.floor(cssW * dpr);
+    canvas.height = Math.floor(cssH * dpr);
+    (canvas as any)._scaled = dpr;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const w = cssW;
+  const h = cssH;
+  const cx = w / 2;
+  const cy = h - 10; // bottom-ish center
+  const radius = Math.min(w, h * 2) / 2 - 12;
+
+  // Clear
+  ctx.clearRect(0, 0, w, h);
+
+  const startAngle = -Math.PI * 0.75;
+  const endAngle = Math.PI * 0.75;
+  const angleScale = d3.scaleLinear().domain([0, 100]).range([startAngle, endAngle]).clamp(true);
+
+  // Background arc
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, startAngle, endAngle, false);
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Colored arc according to percentage (green to red via yellow)
+  const grad = ctx.createLinearGradient(cx - radius, 0, cx + radius, 0);
+  grad.addColorStop(0, '#22c55e');
+  grad.addColorStop(0.5, '#eab308');
+  grad.addColorStop(1, '#ef4444');
+
+  const targetAngle = angleScale(pct);
+
+  // Foreground arc up to pct
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, startAngle, targetAngle, false);
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = grad;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Ticks (every 10%)
+  ctx.save();
+  ctx.translate(cx, cy);
+  const tickLen = 8;
+  ctx.strokeStyle = '#9ca3af';
+  for (let i = 0; i <= 10; i++) {
+    const a = angleScale(i * 10);
+    const x1 = Math.cos(a) * (radius - 2);
+    const y1 = Math.sin(a) * (radius - 2);
+    const x2 = Math.cos(a) * (radius - 2 - tickLen);
+    const y2 = Math.sin(a) * (radius - 2 - tickLen);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineWidth = i % 5 === 0 ? 2 : 1;
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Needle
+  const needleAngle = targetAngle;
+  const nx = cx + Math.cos(needleAngle) * (radius - 18);
+  const ny = cy + Math.sin(needleAngle) * (radius - 18);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(nx, ny);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#111827';
+  ctx.stroke();
+  // Needle hub
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#111827';
+  ctx.fill();
+
+  // Label
+  ctx.font = 'bold 14px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial';
+  ctx.fillStyle = '#111827';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${pct.toFixed(1)}%`, cx, Math.min(cy + 20, h - 2));
+};
+
+const animateGaugeTo = (toPct: number, duration = 800) => {
+  const from = lastGaugePercent;
+  const start = d3.now();
+  const interp = d3.interpolateNumber(from, toPct);
+  if (gaugeTimer) gaugeTimer.stop();
+  gaugeTimer = d3.timer(() => {
+    const t = Math.min(1, (d3.now() - start) / duration);
+    const eased = d3.easeCubicInOut(t);
+    const v = interp(eased);
+    drawGauge(v);
+    if (t >= 1) {
+      lastGaugePercent = toPct;
+      if (gaugeTimer) {
+        gaugeTimer.stop();
+        gaugeTimer = null;
+      }
+    }
+  });
+};
+
 onMounted(() => {
   if (!container.value) return;
 
@@ -269,6 +399,9 @@ onMounted(() => {
 
   // Initial draw
   redraw();
+  // Initialize gauge
+  lastGaugePercent = Math.max(0, Math.min(100, percentage.value || 0));
+  drawGauge(lastGaugePercent);
 });
 
 // Watch for checkbox changes to show/hide blocks
@@ -276,11 +409,21 @@ watch(() => showBlocks.value, () => {
   redraw();
 });
 
+// Animate gauge when percentage changes
+watch(() => percentage.value, (val) => {
+  const pct = Math.max(0, Math.min(100, val || 0));
+  animateGaugeTo(pct);
+});
+
 onUnmounted(() => {
   if (svg) {
     svg.selectAll('*').remove();
     svg.remove();
     svg = null;
+  }
+  if (gaugeTimer) {
+    gaugeTimer.stop();
+    gaugeTimer = null;
   }
 });
 </script>
