@@ -7,6 +7,8 @@
 
 <script setup lang="ts">
 import DemandPullInflation from '@/components/Inflation/DemandPullInflation.vue'
+// Give explicit name for clarity in Vue Devtools
+defineOptions({ name: 'DemandPullInflationView' })
 </script>
 
 <style scoped>

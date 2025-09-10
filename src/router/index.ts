@@ -12,7 +12,7 @@ import MLBankBalance from "@/views/MLBankBalance.vue";
 import MoneyFlow from "@/views/MoneyFlow.vue";
 import ROC from "@/views/ROC.vue";
 import Inflation from "@/views/Inflation.vue";
-import DemandPullInflation from "@/views/DemandPullInflation.vue";
+import DemandPullInflationView from "@/views/DemandPullInflationView.vue";
 
 // Define routes for your app
 const routes = [
@@ -79,7 +79,7 @@ const routes = [
   {
     path: '/demand-pull-inflation',
     name: 'DemandPullInflation',
-    component: DemandPullInflation
+    component: DemandPullInflationView
   }
 ];
 
