@@ -11,6 +11,8 @@ import BarchartTest from "@/views/BarchartTest.vue";
 import MLBankBalance from "@/views/MLBankBalance.vue";
 import MoneyFlow from "@/views/MoneyFlow.vue";
 import ROC from "@/views/ROC.vue";
+import Inflation from "@/views/Inflation.vue";
+import DemandPullInflation from "@/views/DemandPullInflation.vue";
 
 // Define routes for your app
 const routes = [
@@ -68,6 +70,16 @@ const routes = [
     path: '/roc',
     name: 'ROC',
     component: ROC,
+  },
+  {
+    path: '/inflation',
+    name: 'Inflation',
+    component: Inflation
+  },
+  {
+    path: '/demand-pull-inflation',
+    name: 'DemandPullInflation',
+    component: DemandPullInflation
   }
 ];
 

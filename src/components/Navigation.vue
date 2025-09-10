@@ -15,6 +15,8 @@
     <router-link to="/money-flow">Money Flow</router-link>
     |
     <router-link to="/roc">ROC</router-link>
+    |
+    <router-link to="/inflation">Inflation</router-link>
   </nav>
 </template>
 
