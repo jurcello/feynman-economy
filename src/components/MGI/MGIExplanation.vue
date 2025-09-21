@@ -7,6 +7,13 @@
       <button @click="onReset" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">Reset</button>
     </div>
 
+    <!-- Dynamic explanation area -->
+    <div class="mb-4 mx-auto w-[760px] max-w-full">
+      <div class="rounded border border-gray-300 bg-gray-50 p-3">
+        <p data-testid="mgi-explanation">{{ explanationText }}</p>
+      </div>
+    </div>
+
     <div class="mx-auto w-[760px] max-w-full">
       <MoneyFlowCanvas
         ref="flowCanvas"
@@ -91,6 +98,12 @@ const destinations: MoneyDestination[] = [
 const flowCanvas = ref<any>(null);
 const animationDuration = ref<number>(800);
 
+// Explanation text and function to update it
+const explanationText = ref<string>('Use Next to step through the sequence.');
+const explain = (text: string) => {
+  explanationText.value = text;
+};
+
 const redraw = () => flowCanvas.value?.redraw?.();
 
 const q = createFunctionQueue();
@@ -105,15 +118,33 @@ q.addResetFunction(() => {
 });
 
 q.add(() => {
+  explain('We start with the banks creating some money. This money is equal to the debt.');
   banks.addMoney(20);
   totalDebt.addMoney(20);
   redraw();
 });
 q.add(() => {
+  explain('The banks then move the money to the real economy by a deposit.');
   banks.moveTo(realEconomy,20); redraw();
 });
-q.add(() => { realEconomy.moveTo(banks, 1); redraw(); });
-q.add(() => { banks.moveTo(stalledMoney, 1); redraw(); });
+q.add(() => {
+  explain('Each year some of the debt has to be paid off to the banks.');
+  realEconomy.moveTo(banks, 1); redraw();
+});
+q.add(() => {
+  explain(' This money disappears again by defition.');
+  banks.destroyBlocks(1);
+  totalDebt.destroyBlocks(1);
+  redraw();
+});
+q.add(() => {
+  explain('Also Each year interest has to be paid off to the banks.');
+  realEconomy.moveTo(banks, 1); redraw();
+});
+q.add(() => {
+  explain('For the sake of simplicity we assume that the banks give this money to its shareholders.');
+  banks.moveTo(stalledMoney, 1); redraw();
+});
 
 const onNext = () => {
   q.next();
@@ -122,6 +153,10 @@ const onNext = () => {
 const onReset = () => {
   q.reset();
 };
+
+// Expose the explain function so parents/tests can update the text easily
+// Usage example from a parent: const r = ref(); r.value?.explain('New text');
+defineExpose({ explain });
 </script>
 
 <style scoped>
