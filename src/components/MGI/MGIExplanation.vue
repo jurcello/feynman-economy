@@ -24,8 +24,12 @@
         :show-mouse-position="true"
       />
     </div>
-    <div class="mt-4 text-center text-sm text-gray-600">
-      Money destinations: Banks, Real economy, Stalled money, Total debt, GDP
+    <!-- Simple indicators for block counts per destination -->
+    <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+      <div v-for="d in destinations" :key="d.name + '-' + uiTick" class="px-2 py-1 rounded border border-gray-300 bg-white shadow-sm">
+        <span class="font-medium">{{ d.name }}:</span>
+        <span :data-testid="`indicator-${d.name.replace(/\\s+/g, '-')}`" class="ml-1">{{ d.amount }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -104,7 +108,9 @@ const explain = (text: string) => {
   explanationText.value = text;
 };
 
-const redraw = () => flowCanvas.value?.redraw?.();
+const uiTick = ref(0);
+const bump = () => uiTick.value++;
+const redraw = () => { flowCanvas.value?.redraw?.(); bump(); };
 
 const q = createFunctionQueue();
 
