@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full mx-auto">
+  <div class="w-2/3 mx-auto">
     <h2 class="text-2xl font-semibold mb-4 text-center">Monetary Growth Imperative (MGI)</h2>
-
+    <p>The next bit assumes only banks are involved getting money out of the system</p>
     <div class="mb-4 flex justify-center gap-3">
       <button @click="onNext" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Next</button>
       <button @click="onReset" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">Reset</button>
@@ -73,11 +73,9 @@ const redraw = () => flowCanvas.value?.redraw?.();
 
 // Build a small sequence demonstrating flows
 const q = createFunctionQueue();
-q.add(() => { realEconomy.addMoney(50); redraw(); });
-q.add(() => { realEconomy.moveTo(banks, 20); redraw(); });
-q.add(() => { banks.moveTo(stalledMoney, 10); redraw(); });
-q.add(() => { stalledMoney.moveTo(realEconomy, 5); redraw(); });
-
+q.add(() => { realEconomy.addMoney(20); redraw(); });
+q.add(() => { realEconomy.moveTo(banks, 1); redraw(); });
+q.add(() => { banks.moveTo(stalledMoney, 1); redraw(); });
 q.addResetFunction(() => {
   // destroy all current blocks to reset visual state
   banks.destroyAllBlocks();
