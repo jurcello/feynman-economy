@@ -10,6 +10,7 @@ class MoneyBlock {
     public static allBlocks: MoneyBlock[] = [];
     public id: string = `block-${Date.now()}-${Math.random()}`;
     private _blockSize: number = 10;
+    private _color: string = '#000000';
 
     get blockSize(): number {
         return this._blockSize;
@@ -27,9 +28,19 @@ class MoneyBlock {
         this._position = value;
     }
 
-    constructor(params: { position: Position; blockSize?: number }) {
+    get color(): string {
+        return this._color;
+    }
+
+    set color(value: string) {
+        this._color = value;
+    }
+
+
+    constructor(params: { position: Position; blockSize?: number; color?: string }) {
         this._position = params.position;
         this._blockSize = params.blockSize || 10;
+        this._color = params.color || '#d4af37';
 
         MoneyBlock.allBlocks.push(this);
     }
@@ -51,8 +62,9 @@ class MoneyDestinationConfig {
     public imageUrl?: string;
     public showName: boolean;
     public scale: number;
+    public color?: string;
 
-    constructor(param: { blockSize: number; blocksPerRow: number; blockGutter: number; position?: Position; imageUrl?: string; showName?: boolean; scale?: number }) {
+    constructor(param: { blockSize: number; blocksPerRow: number; blockGutter: number; position?: Position; imageUrl?: string; showName?: boolean; scale?: number, color?: string }) {
         this.blockSize = param.blockSize;
         this.blocksPerRow = param.blocksPerRow;
         this.blockGutter = param.blockGutter;
@@ -60,6 +72,7 @@ class MoneyDestinationConfig {
         this.imageUrl = param.imageUrl;
         this.showName = param.showName ?? true;
         this.scale = param.scale ?? 1;
+        this.color = param.color;
     }
 }
 
@@ -97,6 +110,7 @@ class MoneyDestination {
         return new MoneyBlock({
             position,
             blockSize: this.config.blockSize,
+            color: this.config.color,
         });
     }
 
@@ -129,6 +143,9 @@ class MoneyDestination {
             // Update the block's position to its new position in this destination
             block.position = newPosition;
             block.blockSize = this.config.blockSize;
+            if (this.config.color) {
+                block.color = this.config.color
+            }
             this.blocks.push(block);
         }
         this.amount += blocks.length;

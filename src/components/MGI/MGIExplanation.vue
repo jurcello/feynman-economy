@@ -60,8 +60,9 @@ const totalDebtCfg = new MoneyDestinationConfig({
   blockSize,
   blocksPerRow: 20,
   blockGutter: 2,
-  position: { x: 540, y: 100 },
+  position: { x: 440, y: 100 },
   showName: true,
+  color: '#ea3636'
 });
 
 const gdpCfg = new MoneyDestinationConfig({
@@ -70,6 +71,7 @@ const gdpCfg = new MoneyDestinationConfig({
   blockGutter: 2,
   position: { x: 80, y: 100 },
   showName: true,
+  color: '#428c07'
 });
 
 const banks = new MoneyDestination('Banks', 0, banksCfg);
@@ -91,22 +93,27 @@ const animationDuration = ref<number>(800);
 
 const redraw = () => flowCanvas.value?.redraw?.();
 
-// Build a small sequence demonstrating flows
 const q = createFunctionQueue();
-q.add(() => { realEconomy.addMoney(20); redraw(); });
-q.add(() => { realEconomy.moveTo(banks, 1); redraw(); });
-q.add(() => { banks.moveTo(stalledMoney, 1); redraw(); });
+
 q.addResetFunction(() => {
-  // destroy all current blocks to reset visual state
   banks.destroyAllBlocks();
   realEconomy.destroyAllBlocks();
   stalledMoney.destroyAllBlocks();
   totalDebt.destroyAllBlocks();
   gdp.destroyAllBlocks();
-  // ensure amounts are zero
-  // (destroyAllBlocks already updates amounts)
   redraw();
 });
+
+q.add(() => {
+  banks.addMoney(20);
+  totalDebt.addMoney(20);
+  redraw();
+});
+q.add(() => {
+  banks.moveTo(realEconomy,20); redraw();
+});
+q.add(() => { realEconomy.moveTo(banks, 1); redraw(); });
+q.add(() => { banks.moveTo(stalledMoney, 1); redraw(); });
 
 const onNext = () => {
   q.next();

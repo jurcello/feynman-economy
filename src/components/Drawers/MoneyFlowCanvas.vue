@@ -164,7 +164,7 @@ const redraw = () => {
         enter
           .append('rect')
           .attr('class', 'money-block')
-          .attr('fill', '#d4af37')
+          .attr('fill', (d: any) => d.color)
           .attr('x', (d: any) => d.position.x)
           .attr('y', (d: any) => d.position.y)
           .attr('width', (d: any) => d.blockSize)
