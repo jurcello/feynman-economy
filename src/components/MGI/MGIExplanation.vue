@@ -1,12 +1,19 @@
 <template>
   <div class="w-full mx-auto">
     <h2 class="text-2xl font-semibold mb-4 text-center">Monetary Growth Imperative (MGI)</h2>
+
+    <div class="mb-4 flex justify-center gap-3">
+      <button @click="onNext" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Next</button>
+      <button @click="onReset" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">Reset</button>
+    </div>
+
     <div class="mx-auto w-[760px] max-w-full">
       <MoneyFlowCanvas
+        ref="flowCanvas"
         :destinations="destinations"
         :width="731"
         :height="527"
-        :duration="800"
+        :duration="animationDuration"
         :show-mouse-position="false"
       />
     </div>
@@ -17,8 +24,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import MoneyFlowCanvas from '@/components/Drawers/MoneyFlowCanvas.vue';
 import { MoneyDestination, MoneyDestinationConfig } from '@/utils/moneySquareUtils';
+import { createFunctionQueue } from '@/utils/functionQueue';
 
 // Basic layout parameters (tuned for the 731x527 canvas)
 const blockSize = 8;
@@ -56,6 +65,36 @@ const destinations: MoneyDestination[] = [
   realEconomy,
   stalledMoney,
 ];
+
+const flowCanvas = ref<any>(null);
+const animationDuration = ref<number>(800);
+
+const redraw = () => flowCanvas.value?.redraw?.();
+
+// Build a small sequence demonstrating flows
+const q = createFunctionQueue();
+q.add(() => { realEconomy.addMoney(50); redraw(); });
+q.add(() => { realEconomy.moveTo(banks, 20); redraw(); });
+q.add(() => { banks.moveTo(stalledMoney, 10); redraw(); });
+q.add(() => { stalledMoney.moveTo(realEconomy, 5); redraw(); });
+
+q.addResetFunction(() => {
+  // destroy all current blocks to reset visual state
+  banks.destroyAllBlocks();
+  realEconomy.destroyAllBlocks();
+  stalledMoney.destroyAllBlocks();
+  // ensure amounts are zero
+  // (destroyAllBlocks already updates amounts)
+  redraw();
+});
+
+const onNext = () => {
+  q.next();
+};
+
+const onReset = () => {
+  q.reset();
+};
 </script>
 
 <style scoped>
