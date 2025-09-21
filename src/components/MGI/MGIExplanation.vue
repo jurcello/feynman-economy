@@ -47,7 +47,6 @@ const stalledMoneyCfg = new MoneyDestinationConfig({
   showName: true,
 });
 
-// Create required three destinations with specified names
 const banks = new MoneyDestination('Banks', 0, banksCfg);
 const realEconomy = new MoneyDestination('Real economy', 0, realEconomyCfg);
 const stalledMoney = new MoneyDestination('Stalled money', 0, stalledMoneyCfg);
