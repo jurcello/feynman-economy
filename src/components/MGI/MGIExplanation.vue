@@ -14,11 +14,11 @@
         :width="731"
         :height="527"
         :duration="animationDuration"
-        :show-mouse-position="false"
+        :show-mouse-position="true"
       />
     </div>
     <div class="mt-4 text-center text-sm text-gray-600">
-      Money destinations: Banks, Real economy, Stalled money
+      Money destinations: Banks, Real economy, Stalled money, Total debt, GDP
     </div>
   </div>
 </template>
@@ -36,7 +36,7 @@ const banksCfg = new MoneyDestinationConfig({
   blockSize,
   blocksPerRow: 20,
   blockGutter: 2,
-  position: { x: 80, y: 180 },
+  position: { x: 80, y: 260 },
   showName: true,
 });
 
@@ -56,14 +56,34 @@ const stalledMoneyCfg = new MoneyDestinationConfig({
   showName: true,
 });
 
+const totalDebtCfg = new MoneyDestinationConfig({
+  blockSize,
+  blocksPerRow: 20,
+  blockGutter: 2,
+  position: { x: 540, y: 100 },
+  showName: true,
+});
+
+const gdpCfg = new MoneyDestinationConfig({
+  blockSize,
+  blocksPerRow: 24,
+  blockGutter: 2,
+  position: { x: 80, y: 100 },
+  showName: true,
+});
+
 const banks = new MoneyDestination('Banks', 0, banksCfg);
 const realEconomy = new MoneyDestination('Real economy', 0, realEconomyCfg);
 const stalledMoney = new MoneyDestination('Stalled money', 0, stalledMoneyCfg);
+const totalDebt = new MoneyDestination('Total debt', 0, totalDebtCfg);
+const gdp = new MoneyDestination('GDP', 0, gdpCfg);
 
 const destinations: MoneyDestination[] = [
   banks,
   realEconomy,
   stalledMoney,
+  totalDebt,
+  gdp,
 ];
 
 const flowCanvas = ref<any>(null);
@@ -81,6 +101,8 @@ q.addResetFunction(() => {
   banks.destroyAllBlocks();
   realEconomy.destroyAllBlocks();
   stalledMoney.destroyAllBlocks();
+  totalDebt.destroyAllBlocks();
+  gdp.destroyAllBlocks();
   // ensure amounts are zero
   // (destroyAllBlocks already updates amounts)
   redraw();
