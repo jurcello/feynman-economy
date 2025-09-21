@@ -114,6 +114,22 @@ const redraw = () => { flowCanvas.value?.redraw?.(); bump(); };
 
 const q = createFunctionQueue();
 
+const calculateGDP = (realEconomyAmount: number, velocityFactor: number = 2.5) => {
+  return realEconomyAmount * velocityFactor;
+};
+
+// Update GDP display whenever real economy changes
+const updateGDP = () => {
+  const gdpValue = calculateGDP(realEconomy.amount);
+  const difference = gdpValue - gdp.amount;
+  if (difference > 0) {
+    gdp.addMoney(Math.round(difference));
+  }
+  else if (difference < 0) {
+    gdp.destroyBlocks(Math.round(-difference));
+  }
+};
+
 q.addResetFunction(() => {
   banks.destroyAllBlocks();
   realEconomy.destroyAllBlocks();
@@ -127,29 +143,146 @@ q.add(() => {
   explain('We start with the banks creating some money. This money is equal to the debt.');
   banks.addMoney(20);
   totalDebt.addMoney(20);
+  updateGDP();
   redraw();
 });
+
 q.add(() => {
   explain('The banks then move the money to the real economy by a deposit.');
-  banks.moveTo(realEconomy,20); redraw();
+  banks.moveTo(realEconomy, 20);
+  redraw();
 });
+
+q.add(() => {
+  explain(`With 20 units in the real economy, GDP is ${calculateGDP(20)} (using velocity factor of 2.5).`);
+  // GDP already updated in previous step
+  redraw();
+});
+
 q.add(() => {
   explain('Each year some of the debt has to be paid off to the banks.');
-  realEconomy.moveTo(banks, 1); redraw();
+  realEconomy.moveTo(banks, 1);
+  updateGDP();
+  redraw();
 });
+
 q.add(() => {
-  explain(' This money disappears again by defition.');
+  explain('This money disappears again by definition.');
   banks.destroyBlocks(1);
   totalDebt.destroyBlocks(1);
   redraw();
 });
+
 q.add(() => {
-  explain('Also Each year interest has to be paid off to the banks.');
-  realEconomy.moveTo(banks, 1); redraw();
+  explain('Also each year interest has to be paid off to the banks.');
+  realEconomy.moveTo(banks, 1);
+  updateGDP();
+  redraw();
 });
+
 q.add(() => {
   explain('For the sake of simplicity we assume that the banks give this money to its shareholders.');
-  banks.moveTo(stalledMoney, 1); redraw();
+  banks.moveTo(stalledMoney, 1);
+  redraw();
+});
+
+q.add(() => {
+  explain(`After Year 1: Real economy has ${realEconomy.amount} units, GDP is ${calculateGDP(realEconomy.amount)}. Notice GDP dropped from 50 to ${calculateGDP(realEconomy.amount)}.`);
+  redraw();
+});
+
+// YEAR 2 - First additional cycle
+q.add(() => {
+  explain('Year 2: To maintain economic activity, banks must create new money. Let\'s add 3 new units.');
+  banks.addMoney(3);
+  totalDebt.addMoney(3);
+  redraw();
+});
+
+q.add(() => {
+  explain('New money flows to the real economy.');
+  banks.moveTo(realEconomy, 3);
+  updateGDP();
+  redraw();
+});
+
+q.add(() => {
+  explain(`Real economy now has ${realEconomy.amount} units, GDP is ${calculateGDP(realEconomy.amount)}. But debt servicing continues...`);
+  redraw();
+});
+
+q.add(() => {
+  explain('Year 2 debt repayment (now higher total debt means higher payments).');
+  realEconomy.moveTo(banks, 1);
+  updateGDP();
+  redraw();
+});
+
+q.add(() => {
+  explain('Debt money disappears.');
+  banks.destroyBlocks(1);
+  totalDebt.destroyBlocks(1);
+  redraw();
+});
+
+q.add(() => {
+  explain('Year 2 interest payment.');
+  realEconomy.moveTo(banks, 1);
+  updateGDP();
+  redraw();
+});
+
+q.add(() => {
+  explain('Interest goes to stalled money.');
+  banks.moveTo(stalledMoney, 1);
+  redraw();
+});
+
+// YEAR 3 - Second additional cycle
+q.add(() => {
+  explain('Year 3: Even more new money needed to compensate for ongoing outflows.');
+  banks.addMoney(4);
+  totalDebt.addMoney(4);
+  redraw();
+});
+
+q.add(() => {
+  explain('New money to real economy.');
+  banks.moveTo(realEconomy, 4);
+  updateGDP();
+  redraw();
+});
+
+q.add(() => {
+  explain('Year 3 debt repayment (now from even higher debt level).');
+  realEconomy.moveTo(banks, 1);
+  updateGDP();
+  redraw();
+});
+
+q.add(() => {
+  explain('Debt money disappears.');
+  banks.destroyBlocks(1);
+  totalDebt.destroyBlocks(1);
+  redraw();
+});
+
+q.add(() => {
+  explain('Year 3 interest payment.');
+  realEconomy.moveTo(banks, 1);
+  updateGDP();
+  redraw();
+});
+
+q.add(() => {
+  explain('Interest to stalled money.');
+  banks.moveTo(stalledMoney, 1);
+  redraw();
+});
+
+q.add(() => {
+  explain(`Final result: Real economy has ${realEconomy.amount} units (GDP: ${calculateGDP(realEconomy.amount)}), but total debt grew from 20 to ${totalDebt.amount}, and ${stalledMoney.amount} units are stalled. Growth imperative demonstrated!`);
+  redraw();
 });
 
 const onNext = () => {
