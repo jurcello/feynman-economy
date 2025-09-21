@@ -13,6 +13,7 @@ import MoneyFlow from "@/views/MoneyFlow.vue";
 import ROC from "@/views/ROC.vue";
 import Inflation from "@/views/Inflation.vue";
 import DemandPullInflationView from "@/views/DemandPullInflationView.vue";
+import MGI from "@/views/MGI.vue";
 
 // Define routes for your app
 const routes = [
@@ -80,6 +81,11 @@ const routes = [
     path: '/demand-pull-inflation',
     name: 'DemandPullInflation',
     component: DemandPullInflationView
+  },
+  {
+    path: '/mgi',
+    name: 'MGI',
+    component: MGI
   }
 ];
 

@@ -17,6 +17,8 @@
     <router-link to="/roc">ROC</router-link>
     |
     <router-link to="/inflation">Inflation</router-link>
+    |
+    <router-link to="/mgi">MGI</router-link>
   </nav>
 </template>
 
