@@ -29,7 +29,7 @@
 import { ref } from 'vue';
 import {MoneyDestination, MoneyDestinationConfig, MoneyWorld} from '@/utils/moneySquareUtils';
 import gsap from "gsap";
-import MoneyFlowCanvas from './MoneyFlowCanvas.vue';
+import MoneyFlowCanvas from '@/components/Drawers/MoneyFlowCanvas.vue';
 import { Howl } from "howler";
 import lookAtTheMoneyFlowSound from '@/assets/sounds/Lets-look-at-the-money-flow.mp3'
 import whooshSound from '@/assets/sounds/Woosh.mp3'
