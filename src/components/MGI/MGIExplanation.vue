@@ -51,7 +51,7 @@ const banksCfg = new MoneyDestinationConfig({
   showName: true,
 });
 
-const realEconomyCfg = new MoneyDestinationConfig({
+const circulatingCfg = new MoneyDestinationConfig({
   blockSize,
   blocksPerRow: 24,
   blockGutter: 2,
@@ -59,7 +59,7 @@ const realEconomyCfg = new MoneyDestinationConfig({
   showName: true,
 });
 
-const stalledMoneyCfg = new MoneyDestinationConfig({
+const bankProfitsCfg = new MoneyDestinationConfig({
   blockSize,
   blocksPerRow: 18,
   blockGutter: 2,
@@ -86,17 +86,15 @@ const gdpCfg = new MoneyDestinationConfig({
 });
 
 const banks = new MoneyDestination('Banks', 0, banksCfg);
-const realEconomy = new MoneyDestination('Real economy', 0, realEconomyCfg);
-const stalledMoney = new MoneyDestination('Stalled money', 0, stalledMoneyCfg);
-const totalDebt = new MoneyDestination('Total debt', 0, totalDebtCfg);
-const gdp = new MoneyDestination('GDP', 0, gdpCfg);
+const circulatingMoney = new MoneyDestination('Money in Circulation', 0, circulatingCfg);
+const bankProfits = new MoneyDestination('Bank Profits', 0, bankProfitsCfg);
+const totalDebt = new MoneyDestination('Total Debt', 0, totalDebtCfg);
 
 const destinations: MoneyDestination[] = [
   banks,
-  realEconomy,
-  stalledMoney,
+  circulatingMoney,
+  bankProfits,
   totalDebt,
-  gdp,
 ];
 
 const flowCanvas = ref<any>(null);
@@ -114,174 +112,114 @@ const redraw = () => { flowCanvas.value?.redraw?.(); bump(); };
 
 const q = createFunctionQueue();
 
-const calculateGDP = (realEconomyAmount: number, velocityFactor: number = 2.5) => {
-  return realEconomyAmount * velocityFactor;
-};
-
-// Update GDP display whenever real economy changes
-const updateGDP = () => {
-  const gdpValue = calculateGDP(realEconomy.amount);
-  const difference = gdpValue - gdp.amount;
-  if (difference > 0) {
-    gdp.addMoney(Math.round(difference));
-  }
-  else if (difference < 0) {
-    gdp.destroyBlocks(Math.round(-difference));
-  }
-};
-
 q.addResetFunction(() => {
   banks.destroyAllBlocks();
-  realEconomy.destroyAllBlocks();
-  stalledMoney.destroyAllBlocks();
+  circulatingMoney.destroyAllBlocks();
+  bankProfits.destroyAllBlocks();
   totalDebt.destroyAllBlocks();
-  gdp.destroyAllBlocks();
   redraw();
 });
 
 q.add(() => {
-  explain('We start with the banks creating some money. This money is equal to the debt.');
+  explain('Banks create 20 units of money by lending. This creates equal debt.');
   banks.addMoney(20);
   totalDebt.addMoney(20);
-  updateGDP();
   redraw();
 });
 
 q.add(() => {
-  explain('The banks then move the money to the real economy by a deposit.');
-  banks.moveTo(realEconomy, 20);
+  explain('The newly created money enters circulation in the economy.');
+  banks.moveTo(circulatingMoney, 20);
   redraw();
 });
 
 q.add(() => {
-  explain(`With 20 units in the real economy, GDP is ${calculateGDP(20)} (using velocity factor of 2.5).`);
-  // GDP already updated in previous step
+  explain('After 1 year: Interest payment of 2 units flows back to banks.');
+  circulatingMoney.moveTo(banks, 2);
   redraw();
 });
 
 q.add(() => {
-  explain('Each year some of the debt has to be paid off to the banks.');
-  realEconomy.moveTo(banks, 1);
-  updateGDP();
+  explain('Banks pay 1 unit for operating costs (wages, rent, etc.) - this returns to circulation.');
+  banks.moveTo(circulatingMoney, 1);
   redraw();
 });
 
 q.add(() => {
-  explain('This money disappears again by definition.');
-  banks.destroyBlocks(1);
-  totalDebt.destroyBlocks(1);
+  explain('The remaining 1 unit becomes bank profit and is REMOVED from circulation.');
+  banks.moveTo(bankProfits, 1);
   redraw();
 });
 
 q.add(() => {
-  explain('Also each year interest has to be paid off to the banks.');
-  realEconomy.moveTo(banks, 1);
-  updateGDP();
+  explain(`Result: Only ${circulatingMoney.amount} units remain in circulation. 1 unit permanently removed.`);
   redraw();
 });
 
 q.add(() => {
-  explain('For the sake of simplicity we assume that the banks give this money to its shareholders.');
-  banks.moveTo(stalledMoney, 1);
+  explain('Year 2: To prevent money supply from shrinking, banks must create new money.');
+  banks.addMoney(2);
+  totalDebt.addMoney(2);
   redraw();
 });
 
 q.add(() => {
-  explain(`After Year 1: Real economy has ${realEconomy.amount} units, GDP is ${calculateGDP(realEconomy.amount)}. Notice GDP dropped from 50 to ${calculateGDP(realEconomy.amount)}.`);
-  redraw();
-});
-
-// YEAR 2 - First additional cycle
-q.add(() => {
-  explain('Year 2: To maintain economic activity, banks must create new money. Let\'s add 3 new units.');
-  banks.addMoney(3);
-  totalDebt.addMoney(3);
+  explain('New money enters circulation.');
+  banks.moveTo(circulatingMoney, 2);
   redraw();
 });
 
 q.add(() => {
-  explain('New money flows to the real economy.');
-  banks.moveTo(realEconomy, 3);
-  updateGDP();
+  explain('Year 2 interest payment (now on higher debt).');
+  circulatingMoney.moveTo(banks, 2);
   redraw();
 });
 
 q.add(() => {
-  explain(`Real economy now has ${realEconomy.amount} units, GDP is ${calculateGDP(realEconomy.amount)}. But debt servicing continues...`);
+  explain('Banks return 1 unit to circulation for costs.');
+  banks.moveTo(circulatingMoney, 1);
   redraw();
 });
 
 q.add(() => {
-  explain('Year 2 debt repayment (now higher total debt means higher payments).');
-  realEconomy.moveTo(banks, 1);
-  updateGDP();
+  explain('1 unit becomes profit and leaves circulation permanently.');
+  banks.moveTo(bankProfits, 1);
   redraw();
 });
 
 q.add(() => {
-  explain('Debt money disappears.');
-  banks.destroyBlocks(1);
-  totalDebt.destroyBlocks(1);
+  explain(`Year 3: Must create even more money to maintain circulation.`);
+  banks.addMoney(2);
+  totalDebt.addMoney(2);
   redraw();
 });
 
 q.add(() => {
-  explain('Year 2 interest payment.');
-  realEconomy.moveTo(banks, 1);
-  updateGDP();
+  explain('Year 3: New money enters circulation.');
+  banks.moveTo(circulatingMoney, 2);
   redraw();
 });
 
 q.add(() => {
-  explain('Interest goes to stalled money.');
-  banks.moveTo(stalledMoney, 1);
-  redraw();
-});
-
-// YEAR 3 - Second additional cycle
-q.add(() => {
-  explain('Year 3: Even more new money needed to compensate for ongoing outflows.');
-  banks.addMoney(4);
-  totalDebt.addMoney(4);
+  explain('Year 3 interest payment (debt keeps growing).');
+  circulatingMoney.moveTo(banks, 2);
   redraw();
 });
 
 q.add(() => {
-  explain('New money to real economy.');
-  banks.moveTo(realEconomy, 4);
-  updateGDP();
+  explain('Banks return 1 unit to circulation for costs.');
+  banks.moveTo(circulatingMoney, 1);
   redraw();
 });
 
 q.add(() => {
-  explain('Year 3 debt repayment (now from even higher debt level).');
-  realEconomy.moveTo(banks, 1);
-  updateGDP();
+  explain('1 unit becomes profit and leaves circulation.');
+  banks.moveTo(bankProfits, 1);
   redraw();
 });
 
 q.add(() => {
-  explain('Debt money disappears.');
-  banks.destroyBlocks(1);
-  totalDebt.destroyBlocks(1);
-  redraw();
-});
-
-q.add(() => {
-  explain('Year 3 interest payment.');
-  realEconomy.moveTo(banks, 1);
-  updateGDP();
-  redraw();
-});
-
-q.add(() => {
-  explain('Interest to stalled money.');
-  banks.moveTo(stalledMoney, 1);
-  redraw();
-});
-
-q.add(() => {
-  explain(`Final result: Real economy has ${realEconomy.amount} units (GDP: ${calculateGDP(realEconomy.amount)}), but total debt grew from 20 to ${totalDebt.amount}, and ${stalledMoney.amount} units are stalled. Growth imperative demonstrated!`);
+  explain(`Key insight: To maintain ${circulatingMoney.amount} units in circulation, debt grew from 20 to ${totalDebt.amount} units. ${bankProfits.amount} units permanently removed. This cycle must continue indefinitely!`);
   redraw();
 });
 
