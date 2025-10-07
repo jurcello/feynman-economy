@@ -1,0 +1,144 @@
+import { reactive, type Reactive } from 'vue';
+
+/**
+ * ROC (Return on Capital/Investment) domain object
+ *
+ * Base (mutable) inputs with getters and setters:
+ *  - profit (aka NOPAT)
+ *  - equity
+ *  - debt
+ *  - costOfDebt (as decimal, e.g., 0.05 for 5%)
+ *
+ * Derived read-only properties (computed internally and exposed via getters only):
+ *  - investedCapital = equity + debt
+ *  - totalCapital (alias of investedCapital)
+ *  - interestExpense = debt * costOfDebt
+ *  - roi = profit / investedCapital (0 when investedCapital = 0)
+ *  - roe = profit / equity (0 when equity = 0)
+ *  - debtRatio = debt / investedCapital (0 when investedCapital = 0)
+ *  - equityRatio = equity / investedCapital (0 when investedCapital = 0)
+ *
+ * Changing any base property triggers a recalculation of derived values.
+ */
+export class ROC {
+  // base inputs
+  private _profit: number;
+  private _equity: number;
+  private _debt: number;
+  private _costOfDebt: number; // decimal, e.g. 0.05 = 5%
+
+  // cached derived values
+  private _investedCapital = 0;
+  private _interestExpense = 0;
+  private _roi = 0;
+  private _roe = 0;
+  private _debtRatio = 0;
+  private _equityRatio = 0;
+
+  constructor({ profit = 0, equity = 0, debt = 0, costOfDebt = 0 }: {
+    profit?: number;
+    equity?: number;
+    debt?: number;
+    costOfDebt?: number;
+  } = {}) {
+    this._profit = profit;
+    this._equity = equity;
+    this._debt = debt;
+    this._costOfDebt = costOfDebt;
+    this.recalculate();
+  }
+
+  // setters trigger recalculation
+  set profit(value: number) {
+    this._profit = value;
+    this.recalculate();
+  }
+  get profit(): number {
+    return this._profit;
+  }
+
+  set equity(value: number) {
+    this._equity = value;
+    this.recalculate();
+  }
+  get equity(): number {
+    return this._equity;
+  }
+
+  set debt(value: number) {
+    this._debt = value;
+    this.recalculate();
+  }
+  get debt(): number {
+    return this._debt;
+  }
+
+  set costOfDebt(value: number) {
+    this._costOfDebt = value;
+    this.recalculate();
+  }
+  get costOfDebt(): number {
+    return this._costOfDebt;
+  }
+
+  // derived (read-only) getters
+  get investedCapital(): number {
+    return this._investedCapital;
+  }
+  // alias for convenience
+  get totalCapital(): number {
+    return this._investedCapital;
+  }
+
+  get interestExpense(): number {
+    return this._interestExpense;
+  }
+
+  get roi(): number {
+    return this._roi;
+  }
+
+  get roe(): number {
+    return this._roe;
+  }
+
+  get debtRatio(): number {
+    return this._debtRatio;
+  }
+
+  get equityRatio(): number {
+    return this._equityRatio;
+  }
+
+  // core recompute method
+  private recalculate(): void {
+    const invested = clampNonNegative(this._equity) + clampNonNegative(this._debt);
+    this._investedCapital = invested;
+
+    this._interestExpense = clampNonNegative(this._debt) * this._costOfDebt;
+
+    this._roi = safeDivide(this._profit, invested);
+    this._roe = safeDivide(this._profit, this._equity);
+
+    this._debtRatio = safeDivide(this._debt, invested);
+    this._equityRatio = safeDivide(this._equity, invested);
+  }
+}
+
+
+function clampNonNegative(n: number): number {
+  return n < 0 ? 0 : n;
+}
+
+function safeDivide(num: number, den: number): number {
+  return den === 0 ? 0 : num / den;
+}
+
+export function createROC(initial?: {
+  profit?: number;
+  equity?: number;
+  debt?: number;
+  costOfDebt?: number;
+}): Reactive<ROC> {
+  return reactive(new ROC(initial ?? {}));
+}
