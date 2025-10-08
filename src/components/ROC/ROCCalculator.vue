@@ -99,9 +99,23 @@
 </template>
 
 <script setup lang="ts">
-import { createROC } from '@/PlainObjects/ROC/rocCalculation';
+import {CarbonCredit, createROC, ResourceCredit} from '@/PlainObjects/ROC/rocCalculation';
 
 const roc = createROC({ profit: 50, equity: 800, debt: 400, costOfDebt: 0.05 });
+const ccCredits = [
+    new CarbonCredit({
+      amount: 1,
+      unitOfMeasurement: 'ton CO2',
+      cost: 10,
+    }),
+    new CarbonCredit({
+      amount: 1,
+      unitOfMeasurement: 'ton CO2',
+      cost: 10,
+    }),
+]
+
+roc.carbonCredits = ccCredits;
 
 function formatCurrency(v: number): string {
   return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);

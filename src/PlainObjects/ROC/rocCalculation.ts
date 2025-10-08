@@ -1,5 +1,32 @@
 import { reactive, type Reactive } from 'vue';
 
+export interface ResourceCredit {
+  amount: number;
+  unitOfMeasurement: string; // e.g., 'ton CO2e', 'kg', etc.
+  cost: number; // total cost associated with the amount in base currency
+}
+
+export class CarbonCredit implements ResourceCredit {
+    constructor({
+                    amount = 0,
+                    unitOfMeasurement = 'ton CO2e',
+                    cost = 0
+                }: {
+        amount?: number;
+        unitOfMeasurement?: string;
+        cost?: number;
+    } = {}) {
+        this.amount = amount;
+        this.unitOfMeasurement = unitOfMeasurement;
+        this.cost = cost;
+    }
+
+    amount: number;
+    unitOfMeasurement: string;
+    cost: number;
+}
+
+
 /**
  * ROC (Return on Capital/Investment) domain object
  *
@@ -35,17 +62,20 @@ export class ROC {
   private _debtRatio = 0;
   private _equityRatio = 0;
   private _var95 = 0;
+  private _carbonCredits: ResourceCredit[] = [];
 
-  constructor({ profit = 0, equity = 0, debt = 0, costOfDebt = 0 }: {
+  constructor({ profit = 0, equity = 0, debt = 0, costOfDebt = 0, carbonCredits = [] }: {
     profit?: number;
     equity?: number;
     debt?: number;
     costOfDebt?: number;
+    carbonCredits?: ResourceCredit[];
   } = {}) {
     this._profit = profit;
     this._equity = equity;
     this._debt = debt;
     this._costOfDebt = costOfDebt;
+    this._carbonCredits = Array.isArray(carbonCredits) ? carbonCredits : [];
     this.recalculate();
   }
 
@@ -115,6 +145,22 @@ export class ROC {
     return this._var95;
   }
 
+  set carbonCredits(value: ResourceCredit[]) {
+    this._carbonCredits = Array.isArray(value) ? value : [];
+    this.recalculate();
+  }
+  get carbonCredits(): ResourceCredit[] {
+    return this._carbonCredits;
+  }
+
+  get carbonCreditAmount(): number {
+    return this._carbonCredits.length;
+  }
+
+  get carbonCreditCosts(): number {
+    return this._carbonCredits.reduce((sum, rc) => sum + (rc.amount ?? 0), 0);
+  }
+
   // core recompute method
   private recalculate(): void {
     const invested = clampNonNegative(this._equity) + clampNonNegative(this._debt);
@@ -149,6 +195,7 @@ export function createROC(initial?: {
   equity?: number;
   debt?: number;
   costOfDebt?: number;
+  carbonCredits?: ResourceCredit[];
 }): Reactive<ROC> {
   return reactive(new ROC(initial ?? {}));
 }
