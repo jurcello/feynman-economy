@@ -75,6 +75,18 @@
 
       <div class="bg-white/50 rounded-lg p-4 border">
         <h3 class="text-lg font-semibold mb-3">Derived metrics</h3>
+        <div class="flex items-center justify-center mb-4">
+          <PressureGauge
+            :value="roc.roc * 100"
+            :threshold="10"
+            label="ROC vs 10% threshold"
+            ok-color="#16a34a"
+            bad-color="#dc2626"
+            :size="260"
+            :stroke-width="12"
+            :format="(v:number) => v.toFixed(1) + '%'"
+          />
+        </div>
         <ul class="space-y-1">
           <li>
             <span class="font-medium">Invested Capital:</span>
@@ -108,6 +120,7 @@
 
 <script setup lang="ts">
 import {CarbonCredit, createROC, ResourceCredit} from '@/PlainObjects/ROC/rocCalculation';
+import PressureGauge from '@/components/Common/PressureGauge.vue';
 
 const roc = createROC({ profit: 50, equity: 800, debt: 400, costOfDebt: 0.05 });
 const ccCredits = [
