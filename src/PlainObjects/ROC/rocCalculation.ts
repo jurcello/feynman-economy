@@ -158,7 +158,7 @@ export class ROC {
   }
 
   get carbonCreditCosts(): number {
-    return this._carbonCredits.reduce((sum, rc) => sum + (rc.amount ?? 0), 0);
+    return this._carbonCredits.reduce((sum, rc) => sum + (rc.cost ?? 0), 0);
   }
 
   // core recompute method

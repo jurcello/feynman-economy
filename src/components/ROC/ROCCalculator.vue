@@ -92,6 +92,14 @@
             <span class="font-medium">VaR (95%):</span>
             <span>{{ formatCurrency(roc.var95) }}</span>
           </li>
+          <li>
+            <span class="font-medium">Carbon Credits Amount:</span>
+            <span>{{ roc.carbonCreditAmount }}</span>
+          </li>
+          <li>
+            <span class="font-medium">Carbon Credits Cost:</span>
+            <span>{{ formatCurrency(roc.carbonCreditCosts) }}</span>
+          </li>
         </ul>
       </div>
     </div>
