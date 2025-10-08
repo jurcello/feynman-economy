@@ -31,6 +31,7 @@ export class ROC {
   private _investedCapital = 0;
   private _interestExpense = 0;
   private _roi = 0;
+  private _roc = 0;
   private _roe = 0;
   private _debtRatio = 0;
   private _equityRatio = 0;
@@ -98,6 +99,10 @@ export class ROC {
     return this._roi;
   }
 
+  get roc(): number {
+    return this._roc;
+  }
+
   get roe(): number {
     return this._roe;
   }
@@ -118,7 +123,9 @@ export class ROC {
     this._interestExpense = clampNonNegative(this._debt) * this._costOfDebt;
 
     this._roi = safeDivide(this._profit, invested);
-    this._roe = safeDivide(this._profit, this._equity);
+    this._roc = safeDivide(this._profit, invested);
+    // ROE should reflect returns to equity holders after servicing debt
+    this._roe = safeDivide(this._profit - this._interestExpense, this._equity);
 
     this._debtRatio = safeDivide(this._debt, invested);
     this._equityRatio = safeDivide(this._equity, invested);
