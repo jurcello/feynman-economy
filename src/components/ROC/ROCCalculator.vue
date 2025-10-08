@@ -88,6 +88,10 @@
             <span class="font-medium">ROC (Return on Capital):</span>
             <span>{{ formatPercent(roc.roc) }}</span>
           </li>
+          <li>
+            <span class="font-medium">VaR (95%):</span>
+            <span>{{ formatCurrency(roc.var95) }}</span>
+          </li>
         </ul>
       </div>
     </div>

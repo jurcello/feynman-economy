@@ -30,11 +30,11 @@ export class ROC {
   // cached derived values
   private _investedCapital = 0;
   private _interestExpense = 0;
-  private _roi = 0;
   private _roc = 0;
   private _roe = 0;
   private _debtRatio = 0;
   private _equityRatio = 0;
+  private _var95 = 0;
 
   constructor({ profit = 0, equity = 0, debt = 0, costOfDebt = 0 }: {
     profit?: number;
@@ -95,10 +95,6 @@ export class ROC {
     return this._interestExpense;
   }
 
-  get roi(): number {
-    return this._roi;
-  }
-
   get roc(): number {
     return this._roc;
   }
@@ -115,6 +111,10 @@ export class ROC {
     return this._equityRatio;
   }
 
+  get var95(): number {
+    return this._var95;
+  }
+
   // core recompute method
   private recalculate(): void {
     const invested = clampNonNegative(this._equity) + clampNonNegative(this._debt);
@@ -122,13 +122,16 @@ export class ROC {
 
     this._interestExpense = clampNonNegative(this._debt) * this._costOfDebt;
 
-    this._roi = safeDivide(this._profit, invested);
     this._roc = safeDivide(this._profit, invested);
     // ROE should reflect returns to equity holders after servicing debt
     this._roe = safeDivide(this._profit - this._interestExpense, this._equity);
 
     this._debtRatio = safeDivide(this._debt, invested);
     this._equityRatio = safeDivide(this._equity, invested);
+
+    // Simple VaR (95%) proxy using interest expense as the risk driver under normal assumption (z=1.645)
+    const Z_95 = 1.645;
+    this._var95 = Z_95 * Math.abs(this._interestExpense);
   }
 }
 
