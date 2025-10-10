@@ -3,7 +3,7 @@
       :minValue="min"
       :maxValue="max"
       :value="value"
-      :width="200"
+      :fluidWidth="true"
       :ringWidth="20"
       :segments="2"
       :segmentColors="colors"
