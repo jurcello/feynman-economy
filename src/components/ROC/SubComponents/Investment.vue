@@ -8,7 +8,7 @@
             :okThreshold="3.5"
             :goodThreshold="6"
             :max="10"
-            :value="5"
+            :value="roc"
             label="ROC"
         />
       </div>
@@ -16,7 +16,7 @@
         <MoneyGauge
             :min="0"
             :max="10000"
-            :value="7000"
+            :value="varRisk"
             label="Var"
         />
       </div>
@@ -24,7 +24,7 @@
         <GradientGauge
             :min="0"
             :max="100"
-            :value="50"
+            :value="tonCO2"
             startColor="#00FF00"
             endColor="#ff0000"
             label="ton CO2"
@@ -42,8 +42,17 @@ import MoneyGauge from "@/components/Gauges/MoneyGauge.vue";
 import GradientGauge from "@/components/Gauges/GradientGauge.vue";
 import {moneyFormatter} from "@/utils/display";
 
-const amount = 20000000;
-
+const props = withDefaults(defineProps<{
+  amount: number
+  roc: number
+  varRisk: number
+  tonCO2: number
+}>(), {
+  amount: 20000000,
+  roc: 5,
+  varRisk: 7000,
+  tonCO2: 50
+})
 </script>
 
 <style scoped>
