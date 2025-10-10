@@ -1,5 +1,6 @@
 <template>
   <div class="investment-container">
+    <p class="description">{{ description }}</p>
     <p class="loan">Totale lening: {{ moneyFormatter(amount)}}</p>
     <div class="gauges-container">
       <div class="gauge">
@@ -47,11 +48,13 @@ const props = withDefaults(defineProps<{
   roc: number
   varRisk: number
   tonCO2: number
+  description: string
 }>(), {
   amount: 20000000,
   roc: 5,
   varRisk: 7000,
-  tonCO2: 50
+  tonCO2: 50,
+  description: ''
 })
 </script>
 
@@ -70,5 +73,9 @@ const props = withDefaults(defineProps<{
 
 .loan {
   @apply text-lg font-bold;
+}
+
+.description {
+  @apply text-xl font-thin;
 }
 </style>
