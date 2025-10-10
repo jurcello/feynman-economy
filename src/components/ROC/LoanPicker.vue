@@ -21,7 +21,11 @@
       </div>
       <div 
         class="investment-destination w-1/3 min-h-96 border-2 border-dashed border-gray-300 rounded-lg p-4"
-        :class="{ 'border-blue-500 bg-blue-50': isDragOver }"
+        :class="{
+        'border-blue-500 bg-blue-50': isDragOver,
+        'border-green-500 bg-green-50': isSpaceLeft && !isDragOver,
+        'border-red-500 bg-red-50': !isSpaceLeft && !isDragOver,
+      }"
         @dragover="handleDragOver"
         @dragenter="handleDragEnter"
         @dragleave="handleDragLeave"
@@ -33,7 +37,11 @@
         </div>
         <div v-else class="mt-4">
           <div v-for="(investment, index) in selectedInvestments" :key="investment.id" class="mb-4">
-            <p class="text-lg">{{ investment.description }}</p>
+            <p class="text-lg">
+              {{ investment.description }}<br/>
+              CO₂ space: {{ investment.tonCO2 }}
+
+            </p>
             <button
                 @click="removeInvestment(index)"
                 class="remove-button"
@@ -44,7 +52,16 @@
           <div class="mt-4 border-t pt-4">
             <p class="font-bold">Totals:</p>
             <p>Total Amount: {{ moneyFormatter(totalAmount) }}</p>
-            <p>Total CO2: {{ totalCO2.toFixed(1) }} tCO₂e</p>
+            <p>CO₂ space left: {{ maxAllowed - totalCO2 }} </p>
+            <div class="allowed-gauge">
+              <AllowedGauge
+                  :max="200"
+                  :maxAllowed="maxAllowed"
+                  :value="totalCO2"
+                  label="ton CO2"
+                  unit="tCO₂e"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +73,7 @@
 import Investment from "@/components/ROC/SubComponents/Investment.vue";
 import {computed, reactive, ref} from "vue";
 import {moneyFormatter} from "@/utils/display";
+import AllowedGauge from "@/components/Gauges/AllowedGauge.vue";
 
 interface LoanData {
   
@@ -114,6 +132,7 @@ const selectedInvestments = reactive<LoanData[]>([])
 const isDragOver = ref(false)
 let draggedItemIndex: number | null = null
 
+const maxAllowed = 120;
 // Drag event handlers
 const handleDragStart = (event: DragEvent, index: number) => {
   draggedItemIndex = index
@@ -187,6 +206,10 @@ const totalAmount = computed(() => {
 const totalCO2 = computed(() => {
   return selectedInvestments.reduce((sum, investment) => sum + investment.tonCO2, 0)
 })
+
+const isSpaceLeft = computed(() => {
+  return totalCO2.value <= maxAllowed
+})
 </script>
 
 <style scoped>
@@ -201,5 +224,10 @@ const totalCO2 = computed(() => {
   &.selected {
     @apply opacity-50 cursor-not-allowed;
   }
+}
+
+.allowed-gauge {
+  width: 200px;
+  height: 150px;
 }
 </style>
