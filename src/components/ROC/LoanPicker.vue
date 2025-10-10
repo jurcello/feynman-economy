@@ -12,7 +12,9 @@
             :var-risk="loan.varRisk"
             :ton-c-o2="loan.tonCO2"
             :description="loan.description"
-            :draggable="true"
+            :draggable="!isSelected(loan.id)"
+            :class="{ 'selected': isSelected(loan.id) }"
+            class="investment"
             @dragstart="handleDragStart($event, index)"
             @dragend="handleDragEnd"
         />
@@ -158,13 +160,14 @@ const handleDrop = (event: DragEvent) => {
     
     if (!isAlreadySelected) {
       selectedInvestments.push({ ...draggedItem })
-      console.log(selectedInvestments)
-      // Optionally remove from available loans
-      // loans.splice(draggedItemIndex, 1)
     }
   }
   
   draggedItemIndex = null
+}
+
+const isSelected = (id: number): boolean => {
+  return selectedInvestments.some(investment => investment.id === id)
 }
 
 const removeInvestment = (index: number) => {
@@ -175,5 +178,14 @@ const removeInvestment = (index: number) => {
 <style scoped>
 .remove-button {
   @apply mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600;
+}
+
+
+.investment {
+  @apply cursor-pointer;
+
+  &.selected {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }
 </style>
