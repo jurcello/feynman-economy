@@ -30,6 +30,15 @@
           Drag investments here
         </div>
         <div v-else class="mt-4">
+          <div v-for="(investment, index) in selectedInvestments" :key="investment.id" class="mb-4">
+            <p class="text-lg">{{ investment.description }}</p>
+            <button
+                @click="removeInvestment(index)"
+                class="remove-button"
+            >
+              Remove
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -157,7 +166,14 @@ const handleDrop = (event: DragEvent) => {
   
   draggedItemIndex = null
 }
+
+const removeInvestment = (index: number) => {
+  selectedInvestments.splice(index, 1)
+}
 </script>
 
 <style scoped>
+.remove-button {
+  @apply mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600;
+}
 </style>
