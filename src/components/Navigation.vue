@@ -14,11 +14,7 @@
     |
     <router-link to="/money-flow">Money Flow</router-link>
     |
-    <router-link to="/roc">ROC</router-link>
-    |
-    <router-link to="/inflation">Inflation</router-link>
-    |
-    <router-link to="/mgi">MGI</router-link>
+    <router-link to="/financing-within-limits">Financing within limits</router-link>
   </nav>
 </template>
 

@@ -68,8 +68,8 @@ const routes = [
     component: MoneyFlow,
   },
   {
-    path: '/roc',
-    name: 'ROC',
+    path: '/financing-within-limits',
+    name: 'FinanancingWithinLimits',
     component: ROC,
   },
   {
