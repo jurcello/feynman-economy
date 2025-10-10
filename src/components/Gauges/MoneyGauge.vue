@@ -8,7 +8,7 @@
       :segments="2"
       :segmentColors="colors"
       :custom-segment-stops="[min, value,max]"
-      :currentValueText="`${label} € ${moneyFormatter(value)}`"
+      :currentValueText="`${label}: ${moneyFormatter(value)}`"
       :segmentValueFormatter="moneyFormatter"
   />
 

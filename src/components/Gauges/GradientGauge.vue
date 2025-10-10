@@ -6,33 +6,38 @@
       :width="200"
       :height="130"
       :ringWidth="20"
-      :segments="3"
-      :segmentColors="colors"
-      :custom-segment-stops="[min, okThreshold, goodThreshold,max]"
-      :currentValueText="`${label}: ${value}%`"
+      :segments="segments"
+      :maxSegmentLabels="3"
+      :startColor="startColor"
+      :endColor="endColor"
+      :currentValueText="displayText"
       :segmentValueFormatter="segmentFormatter"
   />
 </template>
 
 <script setup lang="ts">
 import Speedometer from 'vue-speedometer'
-// Only define the attributes (props) as requested
+import { computed } from 'vue'
+
 const props = withDefaults(defineProps<{
   min: number
   max: number
-  okThreshold?: number
-  goodThreshold?: number
   value: number
   label: string
+  startColor: string
+  endColor: string
+  unit?: string
+  segments?: number
 }>(), {
-  okThreshold: 5,
-  goodThreshold: 7,
+  unit: '',
+  segments: 100,
 })
 
-const colors = ['#DC3545', '#FFC107', '#28A745']
+const segmentFormatter = (value: number) => `${value} ${props.unit}`
+const displayText = computed(() => {
 
-const segmentFormatter = (value: number) => `${value}%`
-// No additional logic or rendering at this stage
+  return `${props.label}: ${props.value}`
+})
 </script>
 
 <style scoped>

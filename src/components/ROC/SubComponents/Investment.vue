@@ -16,6 +16,15 @@
         :value="7000"
         label="Var"
       />
+    <GradientGauge
+        :min="0"
+        :max="100"
+        :value="50"
+        startColor="#00FF00"
+        endColor="#ff0000"
+        label="ton CO2"
+        unit="tCO₂e"
+      />
   </div>
 </template>
 
@@ -23,6 +32,7 @@
 
 import PercentageGauge from "@/components/Gauges/PercentageGauge.vue";
 import MoneyGauge from "@/components/Gauges/MoneyGauge.vue";
+import GradientGauge from "@/components/Gauges/GradientGauge.vue";
 import {moneyFormatter} from "@/utils/display";
 
 const amount = 20000000;
