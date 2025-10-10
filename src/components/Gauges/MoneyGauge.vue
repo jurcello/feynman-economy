@@ -8,14 +8,15 @@
       :segments="2"
       :segmentColors="colors"
       :custom-segment-stops="[min, value,max]"
-      :currentValueText="`${label} € ${value}`"
-      :segmentValueFormatter="segmentFormatter"
+      :currentValueText="`${label} € ${moneyFormatter(value)}`"
+      :segmentValueFormatter="moneyFormatter"
   />
 
 </template>
 
 <script setup lang="ts">
 import Speedometer from 'vue-speedometer'
+import {moneyFormatter} from "@/utils/display";
 // Only define the attributes (props) as requested
 const props = defineProps<{
   min: number
@@ -24,10 +25,9 @@ const props = defineProps<{
   label: string
 }>()
 
-const colors = ['#72b180', '#ffffff']
+const colors = ['#72b180', '#e1e1e1']
 
 
-const segmentFormatter = (value: number) => `€ ${value}`
 </script>
 
 <style scoped>

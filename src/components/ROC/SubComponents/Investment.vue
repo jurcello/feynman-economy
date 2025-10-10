@@ -1,7 +1,7 @@
 <template>
   <div class="investment-container">
     <h2>investment</h2>
-    <p>Totale lening: € 20.000.000,0</p>
+    <p>Totale lening: {{ moneyFormatter(amount)}}</p>
     <PercentageGauge
         :min="0"
         :okThreshold="3.5"
@@ -23,6 +23,10 @@
 
 import PercentageGauge from "@/components/Gauges/PercentageGauge.vue";
 import MoneyGauge from "@/components/Gauges/MoneyGauge.vue";
+import {moneyFormatter} from "@/utils/display";
+
+const amount = 20000000;
+
 </script>
 
 <style scoped>
