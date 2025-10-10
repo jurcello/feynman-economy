@@ -41,6 +41,11 @@
               Remove
             </button>
           </div>
+          <div class="mt-4 border-t pt-4">
+            <p class="font-bold">Totals:</p>
+            <p>Total Amount: {{ moneyFormatter(totalAmount) }}</p>
+            <p>Total CO2: {{ totalCO2.toFixed(1) }} tCO₂e</p>
+          </div>
         </div>
       </div>
     </div>
@@ -49,7 +54,8 @@
 
 <script setup lang="ts">
 import Investment from "@/components/ROC/SubComponents/Investment.vue";
-import {reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
+import {moneyFormatter} from "@/utils/display";
 
 interface LoanData {
   
@@ -173,6 +179,14 @@ const isSelected = (id: number): boolean => {
 const removeInvestment = (index: number) => {
   selectedInvestments.splice(index, 1)
 }
+
+const totalAmount = computed(() => {
+  return selectedInvestments.reduce((sum, investment) => sum + investment.amount, 0)
+})
+
+const totalCO2 = computed(() => {
+  return selectedInvestments.reduce((sum, investment) => sum + investment.tonCO2, 0)
+})
 </script>
 
 <style scoped>
