@@ -129,16 +129,63 @@ const renderDestinations = () => {
         .attr('x', x)
         .attr('y', y + 30);
     }
-    if (showMousePosition) {
-      console.log('appending circle');
-      g.append('circle')
+    if (showMousePosition.value) {
+      const circle = g.append('circle')
           .attr('class', 'mouse-handle')
-          .attr('fill', 'none')
+          .attr('fill', 'transparent')
           .attr('stroke', 'black')
           .attr('stroke-width', '2')
+          .attr('pointer-events', 'all')
           .attr('cx', x - 10)
           .attr('cy', y + 20)
           .attr('r', 5)
+          .style('cursor', 'move');
+
+      // Show position on hover
+      circle
+        .on('mouseover', function() {
+          const posX = d.config?.position?.x ?? 0;
+          const posY = d.config?.position?.y ?? 0;
+          // remove any existing label first
+          g.selectAll('text.pos-label').remove();
+          g.append('text')
+            .attr('class', 'pos-label')
+            .attr('x', posX + 12)
+            .attr('y', posY - 12)
+            .attr('fill', '#222')
+            .attr('font-size', 12)
+            .text(`x: ${Math.round(posX)}, y: ${Math.round(posY)}`);
+        })
+        .on('mouseout', function() {
+          g.selectAll('text.pos-label').remove();
+        })
+        .append('title')
+        .text(() => `Drag to move. Position: x=${Math.round(x)}, y=${Math.round(y)}`);
+
+      // Drag behavior to move entire destination by updating its config.position
+      circle.call(
+        d3.drag<SVGCircleElement, any>()
+          .on('start', (event: any) => {
+            // optional: highlight
+          })
+          .on('drag', (event: any) => {
+            if (!svg) return;
+            const [mx, my] = d3.pointer(event, svg.node() as any);
+            // Convert from circle center back to destination anchor point
+            const newX = mx + 10;
+            const newY = my - 20;
+            if (!d.config) d.config = {} as any;
+            if (!d.config.position) d.config.position = { x: 0, y: 0 } as any;
+            d.config.position.x = newX;
+            d.config.position.y = newY;
+            // Re-render destination visuals
+            renderDestinations();
+          })
+          .on('end', () => {
+            // cleanup hover label after drag end
+            g.selectAll('text.pos-label').remove();
+          })
+      );
     }
   });
 };
