@@ -55,4 +55,30 @@ describe('moneyFlowSimulation', () => {
         expect(moneyDestination.amount).toEqual(expectedStash);
         expect(moneyDestination2.amount).toEqual(expectedStash2);
     });
+
+    it('can have fractional connections', () => {
+        const moneyFlowSimulation = new MoneyFlowSimulation();
+        const input = new Input(10);
+
+        moneyFlowSimulation.addInput(input)
+
+        const moneyDestination = new MoneyDestination('Stash', 0);
+        const moneyDestination2 = new MoneyDestination('Stash2', 0);
+        const moneyDestination3 = new MoneyDestination('Stash3', 0);
+        const connection = new Connection({from: input, to: moneyDestination});
+        const connection2 = new Connection({from: moneyDestination, to: moneyDestination2, fraction:0.7});
+        const connection3 = new Connection({from: moneyDestination, to: moneyDestination3, fraction:0.3});
+        moneyFlowSimulation.addConnection(connection)
+        moneyFlowSimulation.addConnection(connection2)
+        moneyFlowSimulation.addConnection(connection3)
+
+        const generatedFunctions = moneyFlowSimulation.loop(1);
+
+        for (const func of generatedFunctions) {
+            func();
+        };
+
+        const expectedValues = {stash2: 7, stash3: 3};
+        expect({stash2: moneyDestination2.amount, stash3: moneyDestination3.amount}).toEqual(expectedValues);
+    })
 })

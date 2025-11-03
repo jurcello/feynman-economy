@@ -57,11 +57,21 @@ export class Input {
 
 export class Connection {
     private _from: Input|MoneyDestination;
+    private _fraction: number;
     private _to: MoneyDestination;
 
-    constructor(params: { from: Input|MoneyDestination; to: MoneyDestination }) {
+    constructor(params: {
+        from: Input | MoneyDestination;
+        to: MoneyDestination;
+        fraction?: number;
+    }) {
         this._from = params.from;
         this._to = params.to;
+        this._fraction = params.fraction ?? 1;
+    }
+
+    public get fraction(): number {
+        return this._fraction;
     }
 
     public get from(): Input|MoneyDestination {
@@ -75,11 +85,11 @@ export class Connection {
     public apply(): () => void {
         if (this._from instanceof Input) {
             return () => {
-                this._to.addMoney(this._from.amount);
+                this._to.addMoney(this._from.amount * this._fraction);
             }
         }
         return () => {
-            (this._from as MoneyDestination).moveTo(this._to, this._from.amount);
+            (this._from as MoneyDestination).moveTo(this._to, this._from.amount * this._fraction);
         }
     }
 }
