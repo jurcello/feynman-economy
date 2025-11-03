@@ -4,15 +4,11 @@
 }
 
 .scrolly-text-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid #C3C3C3;
-    padding: 10px;
-    margin-top: 10px;
-    margin-bottom: 60vh;
-    z-index: 3;
+    @apply bg-white/80 backdrop-blur ring-1 ring-earth-100 rounded-organic p-3 mt-2 mb-[60vh] z-30 shadow-sm animate-fade;
 }
+
 .explanation-items {
-    @apply flex flex-col items-center;
+    @apply flex flex-col items-center gap-2;
 }
 
 .sheet {

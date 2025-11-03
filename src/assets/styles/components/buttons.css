@@ -1,47 +1,47 @@
 .btn {
-    @apply bg-blue-500 text-white font-medium py-2 px-4 rounded mb-2 cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 mb-2 cursor-pointer select-none rounded-full font-medium text-white bg-trust-500 shadow-sm transition-all duration-200 ease-out;
 }
 
 .btn:hover {
-    @apply bg-blue-600;
+    @apply bg-trust-600 shadow-md -translate-y-px;
 }
 
 .btn-primary {
-    @apply bg-green-500 text-white font-bold py-2 px-4 rounded-lg;
+    @apply px-5 py-2.5 rounded-full font-semibold bg-accent-500 text-white shadow-sm;
 }
 
 .btn-primary:hover {
-    @apply bg-green-600;
+    @apply bg-accent-600 shadow-md -translate-y-px;
 }
 
 .btn-secondary {
-    @apply bg-gray-500 text-white font-medium py-2 px-4 rounded;
+    @apply bg-growth-600 text-white font-medium py-2.5 px-4 rounded-full shadow-sm;
 }
 
 .btn-secondary:hover {
-    @apply bg-gray-600;
+    @apply bg-growth-700 shadow-md -translate-y-px;
 }
 
 .btn-outline {
-    @apply border border-blue-500 text-blue-500 font-medium py-2 px-4 rounded;
+    @apply border border-trust-400 text-trust-600 bg-white font-medium py-2 px-4 rounded-full shadow-sm;
 }
 
 .btn-outline:hover {
-    @apply bg-blue-500 text-white;
+    @apply bg-trust-500 text-white shadow-md -translate-y-px;
 }
 
 .btn:disabled {
-    @apply bg-blue-300 text-white cursor-not-allowed;
+    @apply bg-trust-300 text-white cursor-not-allowed shadow-none translate-y-0;
 }
 
 .btn-primary:disabled {
-    @apply bg-green-300 text-white cursor-not-allowed;
+    @apply bg-accent-300 text-white cursor-not-allowed shadow-none translate-y-0;
 }
 
 .btn-secondary:disabled {
-    @apply bg-gray-300 text-white cursor-not-allowed;
+    @apply bg-growth-400 text-white cursor-not-allowed shadow-none translate-y-0;
 }
 
 .btn-outline:disabled {
-    @apply border border-blue-300 text-blue-300 cursor-not-allowed;
+    @apply border border-trust-200 text-trust-300 bg-white cursor-not-allowed shadow-none translate-y-0;
 }

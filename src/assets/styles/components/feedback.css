@@ -1,13 +1,13 @@
 .warning {
-    @apply bg-yellow-100 text-yellow-700 font-medium p-4 rounded mb-4;
+    @apply bg-accent-yellow-300/30 text-accent-yellow-500 font-medium p-4 rounded-organic mb-4 ring-1 ring-accent-yellow-400/40;
 }
 
 .warning:hover {
-    @apply bg-yellow-200;
+    @apply bg-accent-yellow-300/40;
 }
 
 .error {
-    @apply bg-red-100 text-red-700 font-medium p-4 rounded mb-4;
+    @apply bg-red-100 text-red-700 font-medium p-4 rounded-organic mb-4 ring-1 ring-red-200;
 }
 
 .error:hover {
