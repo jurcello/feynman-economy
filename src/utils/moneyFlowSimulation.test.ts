@@ -72,13 +72,21 @@ describe('moneyFlowSimulation', () => {
         moneyFlowSimulation.addConnection(connection2)
         moneyFlowSimulation.addConnection(connection3)
 
-        const generatedFunctions = moneyFlowSimulation.loop(1);
+        const generatedFunctions = moneyFlowSimulation.loop(2);
 
         for (const func of generatedFunctions) {
             func();
         };
 
-        const expectedValues = {stash2: 7, stash3: 3};
-        expect({stash2: moneyDestination2.amount, stash3: moneyDestination3.amount}).toEqual(expectedValues);
+        const expectedValues = {
+            stash: 0,
+            stash2: 14,
+            stash3: 6
+        };
+        expect({
+            stash: moneyDestination.amount,
+            stash2: moneyDestination2.amount,
+            stash3: moneyDestination3.amount
+        }).toEqual(expectedValues);
     })
 })

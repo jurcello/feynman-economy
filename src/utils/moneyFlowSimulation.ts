@@ -34,9 +34,16 @@ export class MoneyFlowSimulation {
     private traverseForSource(source: Input|MoneyDestination): Array<() => void> {
         const functions: (() => void)[] = [];
         const filteredConnections = this.connections.filter(connection => connection.from === source);
+        let initialAmount = 0;
+        filteredConnections.forEach((connection: Connection, index:number) => {
+            functions.push(() => {
+                if (index === 0) {
+                    initialAmount = source.amount;
+                }
+                connection.applyWithInitial(initialAmount)()
+            })
+        })
         filteredConnections.forEach(connection => {
-            const func = connection.apply();
-            functions.push(func)
             functions.push(...this.traverseForSource(connection.to))
         })
         return functions;
@@ -90,6 +97,17 @@ export class Connection {
         }
         return () => {
             (this._from as MoneyDestination).moveTo(this._to, this._from.amount * this._fraction);
+        }
+    }
+
+    public applyWithInitial(initialAmount: number): () => void {
+        if (this._from instanceof Input) {
+            return () => {
+                this._to.addMoney(initialAmount * this._fraction);
+            }
+        }
+        return () => {
+            (this._from as MoneyDestination).moveTo(this._to, initialAmount * this._fraction);
         }
     }
 }
