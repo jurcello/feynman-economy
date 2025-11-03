@@ -210,8 +210,10 @@ onMounted(() => {
 
   // background image (if provided)
   updateBackgroundImage();
-
   if (showMousePosition.value) {
+    let currentMousePos: [number, number] | null = null;
+    let lastMouseDownPos: [number, number] | null = null;
+
     const mousePosText = svg
         .append('text')
         .attr('class', 'mouse-position')
@@ -221,11 +223,32 @@ onMounted(() => {
         .text('x: -, y: -');
 
     const mousemove = (event: any) => {
-      const [x, y] = d3.pointer(event);
+      currentMousePos = d3.pointer(event);
+      const [x, y] = currentMousePos;
       mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
+      const mouseDelta = lastMouseDownPos ? [x - lastMouseDownPos[0], y - lastMouseDownPos[1]] : [0, 0];
+      console.log('mouse delta', mouseDelta);
     };
     svg.on('mousemove', mousemove);
-    mouseMoveCleanup = () => svg?.on('mousemove', null);
+
+    const mousedown = (event: any) => {
+      console.log('mouse down');
+      lastMouseDownPos = currentMousePos;
+    }
+    svg.on('mousedown', mousedown);
+
+    const mouseup = (event: any) => {
+      console.log('mouse up');
+      lastMouseDownPos = null;
+    }
+    svg.on('mouseup', mouseup);
+
+
+    mouseMoveCleanup = () => {
+      svg?.on('mousemove', null);
+      svg?.on('mousedown', null);
+      svg?.on('mouseup', null);
+    }
   }
 
   // render destinations (image > title > nothing)
