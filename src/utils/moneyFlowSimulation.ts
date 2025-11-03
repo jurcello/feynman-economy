@@ -40,7 +40,7 @@ export class MoneyFlowSimulation {
                 if (index === 0) {
                     initialAmount = source.amount;
                 }
-                connection.applyWithInitial(initialAmount)()
+                connection.applyWithInitial(initialAmount)
             })
         })
         filteredConnections.forEach(connection => {
@@ -100,14 +100,11 @@ export class Connection {
         }
     }
 
-    public applyWithInitial(initialAmount: number): () => void {
+    public applyWithInitial(initialAmount: number):  void {
         if (this._from instanceof Input) {
-            return () => {
-                this._to.addMoney(initialAmount * this._fraction);
-            }
+            this._to.addMoney(initialAmount * this._fraction);
+            return;
         }
-        return () => {
-            (this._from as MoneyDestination).moveTo(this._to, initialAmount * this._fraction);
-        }
+        (this._from as MoneyDestination).moveTo(this._to, initialAmount * this._fraction);
     }
 }
