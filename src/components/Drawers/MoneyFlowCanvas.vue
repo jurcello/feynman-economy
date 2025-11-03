@@ -129,6 +129,17 @@ const renderDestinations = () => {
         .attr('x', x)
         .attr('y', y + 30);
     }
+    if (showMousePosition) {
+      console.log('appending circle');
+      g.append('circle')
+          .attr('class', 'mouse-handle')
+          .attr('fill', 'none')
+          .attr('stroke', 'black')
+          .attr('stroke-width', '2')
+          .attr('cx', x - 10)
+          .attr('cy', y + 20)
+          .attr('r', 5)
+    }
   });
 };
 
@@ -227,12 +238,14 @@ onMounted(() => {
       const [x, y] = currentMousePos;
       mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
       const mouseDelta = lastMouseDownPos ? [x - lastMouseDownPos[0], y - lastMouseDownPos[1]] : [0, 0];
-      console.log('mouse delta', mouseDelta);
+      if (lastMouseDownPos) {
+        console.log('mouse delta', mouseDelta);
+      }
     };
     svg.on('mousemove', mousemove);
 
     const mousedown = (event: any) => {
-      console.log('mouse down');
+      console.log('mouse down', event);
       lastMouseDownPos = currentMousePos;
     }
     svg.on('mousedown', mousedown);
