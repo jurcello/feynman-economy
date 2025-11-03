@@ -4,7 +4,7 @@
       :destinations="destinations"
       :width="600"
       :height="400"
-      :show-mouse-position="false"
+      :show-mouse-position="true"
   />
 </template>
 
