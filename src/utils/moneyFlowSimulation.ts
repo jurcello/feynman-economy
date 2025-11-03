@@ -89,17 +89,6 @@ export class Connection {
         return this._to;
     }
 
-    public apply(): () => void {
-        if (this._from instanceof Input) {
-            return () => {
-                this._to.addMoney(this._from.amount * this._fraction);
-            }
-        }
-        return () => {
-            (this._from as MoneyDestination).moveTo(this._to, this._from.amount * this._fraction);
-        }
-    }
-
     public applyWithInitial(initialAmount: number):  void {
         if (this._from instanceof Input) {
             this._to.addMoney(initialAmount * this._fraction);
