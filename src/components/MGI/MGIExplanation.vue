@@ -21,7 +21,7 @@
         :width="731"
         :height="527"
         :duration="animationDuration"
-        :show-mouse-position="true"
+        :enable-dragging="true"
       />
     </div>
     <!-- Simple indicators for block counts per destination -->

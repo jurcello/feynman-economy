@@ -13,16 +13,15 @@ const props = defineProps<{
   width: number;
   height: number;
   duration?: number;
-  showMousePosition?: boolean;
+  enableDragging?: boolean;
   backgroundImageUrl?: string;
 }>();
 
 const duration = computed(() => props.duration ?? 1000);
-const showMousePosition = computed(() => props.showMousePosition ?? false);
+const showMousePosition = computed(() => props.enableDragging ?? false);
 
 const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-let mouseMoveCleanup: (() => void) | null = null;
 
 function handleMouseDragging(g: d3.Selection<SVGGElement, unknown, null, undefined>, x:number, y:number, d: any) {
   const circle = g.append('circle')
@@ -45,8 +44,8 @@ function handleMouseDragging(g: d3.Selection<SVGGElement, unknown, null, undefin
         g.selectAll('text.pos-label').remove();
         g.append('text')
             .attr('class', 'pos-label')
-            .attr('x', posX + 12)
-            .attr('y', posY - 12)
+            .attr('x', posX + 6)
+            .attr('y', posY - 6)
             .attr('fill', '#222')
             .attr('font-size', 12)
             .text(`x: ${Math.round(posX)}, y: ${Math.round(posY)}`);
@@ -272,57 +271,13 @@ onMounted(() => {
 
   // background image (if provided)
   updateBackgroundImage();
-  if (showMousePosition.value) {
-    let currentMousePos: [number, number] | null = null;
-    let lastMouseDownPos: [number, number] | null = null;
-
-    const mousePosText = svg
-        .append('text')
-        .attr('class', 'mouse-position')
-        .attr('x', 10)
-        .attr('y', 20)
-        .attr('fill', '#333333')
-        .text('x: -, y: -');
-
-    const mousemove = (event: any) => {
-      currentMousePos = d3.pointer(event);
-      const [x, y] = currentMousePos;
-      mousePosText.text(`x: ${Math.round(x)}, y: ${Math.round(y)}`);
-      const mouseDelta = lastMouseDownPos ? [x - lastMouseDownPos[0], y - lastMouseDownPos[1]] : [0, 0];
-      if (lastMouseDownPos) {
-        console.log('mouse delta', mouseDelta);
-      }
-    };
-    svg.on('mousemove', mousemove);
-
-    const mousedown = (event: any) => {
-      console.log('mouse down', event);
-      lastMouseDownPos = currentMousePos;
-    }
-    svg.on('mousedown', mousedown);
-
-    const mouseup = (event: any) => {
-      console.log('mouse up');
-      lastMouseDownPos = null;
-    }
-    svg.on('mouseup', mouseup);
-
-
-    mouseMoveCleanup = () => {
-      svg?.on('mousemove', null);
-      svg?.on('mousedown', null);
-      svg?.on('mouseup', null);
-    }
-  }
-
-  // render destinations (image > title > nothing)
+    // render destinations (image > title > nothing)
   renderDestinations();
 
   redraw();
 });
 
 onUnmounted(() => {
-  mouseMoveCleanup?.();
   if (svg) {
     svg.selectAll('*').remove();
     svg.remove();

@@ -19,7 +19,7 @@
         :width="731"
         :height="527"
         :duration="animationDuration"
-        :show-mouse-position="false"
+        :enable-dragging="false"
         :background-image-url="background"
     />
   </div>
