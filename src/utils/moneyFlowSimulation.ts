@@ -22,9 +22,12 @@ export class MoneyFlowSimulation {
 
     public loop(iterations: number): Array<() => void> {
         const functions: (() => void)[] = [];
-        this._inputs.forEach(input => {
-            functions.push(...this.traverseForSource(input));
-        })
+        while (iterations > 0) {
+            this._inputs.forEach(input => {
+                functions.push(...this.traverseForSource(input));
+            })
+            iterations--;
+        }
         return functions;
     }
 
@@ -76,7 +79,7 @@ export class Connection {
             }
         }
         return () => {
-            this._from.moveTo(this._to, this._from.amount);
+            (this._from as MoneyDestination).moveTo(this._to, this._from.amount);
         }
     }
 }

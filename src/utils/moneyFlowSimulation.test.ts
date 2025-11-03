@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+import {describe, expect, it, vi, test} from "vitest";
 import {MoneyFlowSimulation, Input, Connection} from "@/utils/moneyFlowSimulation";
 import {MoneyDestination} from "@/utils/moneySquareUtils";
 
@@ -28,7 +28,12 @@ describe('moneyFlowSimulation', () => {
 
         expect(moneyFlowSimulation.connections[0]).toBe(connection);
     });
-    it('can create a list of functions corresponding to the flow', () => {
+    test.each([
+        { loops: 1, expectedStash: 0, expectedStash2: 10 },
+        { loops: 2, expectedStash: 0, expectedStash2: 20 },
+        { loops: 3, expectedStash: 0, expectedStash2: 30 },
+        { loops: 5, expectedStash: 0, expectedStash2: 50 },
+    ])('can create a list of functions corresponding to the flow with $loops loops', ({ loops, expectedStash, expectedStash2 }) => {
         const moneyFlowSimulation = new MoneyFlowSimulation();
         const input = new Input(10);
 
@@ -41,13 +46,13 @@ describe('moneyFlowSimulation', () => {
         moneyFlowSimulation.addConnection(connection)
         moneyFlowSimulation.addConnection(connection2)
 
-        const generatedFunctions = moneyFlowSimulation.loop(1);
+        const generatedFunctions = moneyFlowSimulation.loop(loops);
 
         for (const func of generatedFunctions) {
             func();
         };
 
-        expect(moneyDestination.amount).toEqual(0);
-        expect(moneyDestination2.amount).toEqual(10);
+        expect(moneyDestination.amount).toEqual(expectedStash);
+        expect(moneyDestination2.amount).toEqual(expectedStash2);
     });
 })
