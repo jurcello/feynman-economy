@@ -15,6 +15,8 @@
     <router-link to="/money-flow">Money Flow</router-link>
     |
     <router-link to="/financing-within-limits">Financing within limits</router-link>
+    |
+    <router-link to="/private-equity">private equity</router-link>
   </nav>
 </template>
 

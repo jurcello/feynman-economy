@@ -10,6 +10,7 @@ import PriceSettingCurveNew from "@/views/PriceSettingCurveNew.vue";
 import BarchartTest from "@/views/BarchartTest.vue";
 import MLBankBalance from "@/views/MLBankBalance.vue";
 import MoneyFlow from "@/views/MoneyFlow.vue";
+import PrivateEquity from "@/views/PrivateEquity.vue";
 import ROC from "@/views/ROC.vue";
 import Inflation from "@/views/Inflation.vue";
 import DemandPullInflationView from "@/views/DemandPullInflationView.vue";
@@ -86,6 +87,11 @@ const routes = [
     path: '/mgi',
     name: 'MGI',
     component: MGI
+  },
+  {
+    path: '/private-equity',
+    name: 'PrivateEquity',
+    component: PrivateEquity
   }
 ];
 
