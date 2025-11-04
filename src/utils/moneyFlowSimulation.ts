@@ -22,6 +22,7 @@ export class MoneyFlowSimulation {
     private _currentAmimationDuration: number = 400;
     private _flowFunctionInserts: FlowFunctionInsert[] = [];
     private _flowFunctionInsertIndex: number = 0;
+    private _loopCallback?: (loop: number) => void;
 
     public addInput(input: Input): MoneyFlowSimulation {
         this._inputs.push(input);
@@ -42,6 +43,11 @@ export class MoneyFlowSimulation {
     public setAnimationDuration(flowDuration: number): MoneyFlowSimulation {
         this._flowAnimationDuration = flowDuration;
         this._currentAmimationDuration = flowDuration;
+        return this;
+    }
+
+    public setLoopCallback(loopCallback: (loop: number) => void): MoneyFlowSimulation {
+        this._loopCallback = loopCallback;
         return this;
     }
 
@@ -80,6 +86,12 @@ export class MoneyFlowSimulation {
         this._currentAmimationDuration = this._flowAnimationDuration;
         const functions: Array<FunctionInfo> = [];
         for (let i = 0; i < iterations; i++) {
+            if (this._loopCallback) {
+                functions.push({
+                    function: () => this._loopCallback!(i),
+                    delay: this._currentAmimationDuration,
+                })
+            }
             // Get all functions that should be inserted at this loop
             while (
                 this._flowFunctionInserts.length > this._flowFunctionInsertIndex
@@ -88,7 +100,7 @@ export class MoneyFlowSimulation {
                 const flowFunctionInsert = this._flowFunctionInserts[this._flowFunctionInsertIndex];
                 functions.push({
                     function: flowFunctionInsert.function,
-                    delay: 20,
+                    delay: this._currentAmimationDuration,
                 });
                 if (flowFunctionInsert.newAnimationTime) {
                     this._currentAmimationDuration = flowFunctionInsert.newAnimationTime;

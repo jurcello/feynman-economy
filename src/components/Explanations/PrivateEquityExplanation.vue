@@ -1,5 +1,6 @@
 <template>
 <h1>private equity explanation</h1>
+  <p>The current month is: {{ currentMonth }}</p>
   <MoneyFlowCanvas
       :destinations="destinations"
       :width="600"
@@ -93,6 +94,13 @@ const speedUp1: FlowFunctionInsert = {
   },
   newAnimationTime: 200
 }
+const slowDown: FlowFunctionInsert = {
+  atLoop: 5,
+  function: () => {
+    animationDuration.value = 600;
+  },
+  newAnimationTime: 600
+}
 const speedUp2: FlowFunctionInsert = {
   atLoop: 6,
   function: () => {
@@ -106,6 +114,10 @@ moneyFlowSimulation
     .setAnimationDuration(animationDuration.value)
     .addFlowFunctionInsert(speedUp1)
     .addFlowFunctionInsert(speedUp2)
+    .addFlowFunctionInsert(slowDown)
+    .setLoopCallback((loop) => {
+      currentMonth.value = loop + 1;
+    })
     .addInput(input)
     .addConnection(cInputCompany)
     .addConnection(cCompanyRevenue)
@@ -118,8 +130,9 @@ const executeTimeline = () => {
   timeline.play();
 }
 
-
 const destinations = [company, revenue, wages, otherCosts, profits];
+
+const currentMonth = ref<number>(1);
 </script>
 
 <style scoped>
