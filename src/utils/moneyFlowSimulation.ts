@@ -51,16 +51,10 @@ export class MoneyFlowSimulation {
         const tl = gsap.timeline();
         const functionInfo = this.buildFunctionInfo(iterations);
         const firstFunction = functionInfo.shift();
-        tl.add(() => {
-            firstFunction?.function();
-            this._redrawFunction?.();
-        }, 0)
+        tl.add(firstFunction!.function, 0)
         functionInfo.forEach(info => {
             const position = `<${info.delay / 1000}`;
-            tl.add(() => {
-                info.function();
-                this._redrawFunction?.();
-            }, position)
+            tl.add(info.function, position)
         });
 
         return tl;
@@ -87,6 +81,7 @@ export class MoneyFlowSimulation {
                     initialAmount = source.amount;
                 }
                 connection.applyWithInitial(initialAmount)
+                this._redrawFunction?.();
             };
             functions.push({
                 function: moveFunction,
