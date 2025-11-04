@@ -8,11 +8,20 @@ type FunctionInfo = {
     delay: number
 }
 
+export type FlowFunctionInsert = {
+    function: () => void,
+    atLoop: number,
+    newAnimationTime?: number
+}
+
 export class MoneyFlowSimulation {
     private _inputs: Input[] = [];
     private _connections: Connection[] = [];
     private _redrawFunction?: () => void;
-    private _flowDuration: number = 400;
+    private _flowAnimationDuration: number = 400;
+    private _currentAmimationDuration: number = 400;
+    private _flowFunctionInserts: FlowFunctionInsert[] = [];
+    private _flowFunctionInsertIndex: number = 0;
 
     public addInput(input: Input): MoneyFlowSimulation {
         this._inputs.push(input);
@@ -24,8 +33,15 @@ export class MoneyFlowSimulation {
         return this;
     }
 
-    public setFlowDuration(flowDuration: number): MoneyFlowSimulation {
-        this._flowDuration = flowDuration;
+    public addFlowFunctionInsert(flowFunctionInsert: FlowFunctionInsert): MoneyFlowSimulation {
+        this._flowFunctionInserts.push(flowFunctionInsert);
+        this._flowFunctionInserts.sort((a, b) => a.atLoop - b.atLoop);
+        return this;
+    }
+
+    public setAnimationDuration(flowDuration: number): MoneyFlowSimulation {
+        this._flowAnimationDuration = flowDuration;
+        this._currentAmimationDuration = flowDuration;
         return this;
     }
 
@@ -61,12 +77,27 @@ export class MoneyFlowSimulation {
     }
 
     private buildFunctionInfo(iterations: number) {
+        this._currentAmimationDuration = this._flowAnimationDuration;
         const functions: Array<FunctionInfo> = [];
-        while (iterations > 0) {
+        for (let i = 0; i < iterations; i++) {
+            // Get all functions that should be inserted at this loop
+            while (
+                this._flowFunctionInserts.length > this._flowFunctionInsertIndex
+                && this._flowFunctionInserts[this._flowFunctionInsertIndex].atLoop === i
+                ) {
+                const flowFunctionInsert = this._flowFunctionInserts[this._flowFunctionInsertIndex];
+                functions.push({
+                    function: flowFunctionInsert.function,
+                    delay: 20,
+                });
+                if (flowFunctionInsert.newAnimationTime) {
+                    this._currentAmimationDuration = flowFunctionInsert.newAnimationTime;
+                }
+                this._flowFunctionInsertIndex++;
+            }
             this._inputs.forEach(input => {
                 functions.push(...this.traverseForSource(input));
             })
-            iterations--;
         }
         return functions;
     }
@@ -85,7 +116,7 @@ export class MoneyFlowSimulation {
             };
             functions.push({
                 function: moveFunction,
-                delay: this._flowDuration,
+                delay: this._currentAmimationDuration,
             })
         })
         filteredConnections.forEach(connection => {

@@ -20,10 +20,10 @@
 import {MoneyDestination, MoneyDestinationConfig} from "@/utils/moneySquareUtils";
 import MoneyFlowCanvas from "@/components/Drawers/MoneyFlowCanvas.vue";
 import {ref} from "vue";
-import {Connection, Input, MoneyFlowSimulation} from "@/utils/moneyFlowSimulation";
+import {Connection, FlowFunctionInsert, Input, MoneyFlowSimulation} from "@/utils/moneyFlowSimulation";
 
 const flowCanvas = ref<any>(null);
-const blockSize = 6;
+const blockSize = 3;
 
 const configCompany = new MoneyDestinationConfig({
   blockSize: blockSize,
@@ -71,7 +71,7 @@ const configProfits = new MoneyDestinationConfig({
 });
 const profits = new MoneyDestination('Profits', 0, configProfits);
 
-const input = new Input(10);
+const input = new Input(100);
 const cInputCompany = new Connection({from: input, to: company});
 const cCompanyRevenue = new Connection({from: company, to: revenue});
 const cRevenueWages = new Connection({from: revenue, to: wages, fraction: 0.4});
@@ -85,9 +85,27 @@ let redrawBlocks: () => void = () => {
 const animationDuration = ref<number>(500);
 
 const moneyFlowSimulation = new MoneyFlowSimulation();
+
+const speedUp1: FlowFunctionInsert = {
+  atLoop: 3,
+  function: () => {
+    animationDuration.value = 200;
+  },
+  newAnimationTime: 200
+}
+const speedUp2: FlowFunctionInsert = {
+  atLoop: 6,
+  function: () => {
+    animationDuration.value = 60;
+  },
+  newAnimationTime: 60
+}
+
 moneyFlowSimulation
     .addRedrawFunction(redrawBlocks)
-    .setFlowDuration(animationDuration.value)
+    .setAnimationDuration(animationDuration.value)
+    .addFlowFunctionInsert(speedUp1)
+    .addFlowFunctionInsert(speedUp2)
     .addInput(input)
     .addConnection(cInputCompany)
     .addConnection(cCompanyRevenue)
@@ -96,7 +114,7 @@ moneyFlowSimulation
     .addConnection(cRevenueProfits);
 
 const executeTimeline = () => {
-  const timeline = moneyFlowSimulation.generateTimeline(5);
+  const timeline = moneyFlowSimulation.generateTimeline(10);
   timeline.play();
 }
 
