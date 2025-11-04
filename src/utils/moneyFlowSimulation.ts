@@ -86,12 +86,6 @@ export class MoneyFlowSimulation {
         this._currentAmimationDuration = this._flowAnimationDuration;
         const functions: Array<FunctionInfo> = [];
         for (let i = 0; i < iterations; i++) {
-            if (this._loopCallback) {
-                functions.push({
-                    function: () => this._loopCallback!(i),
-                    delay: this._currentAmimationDuration,
-                })
-            }
             // Get all functions that should be inserted at this loop
             while (
                 this._flowFunctionInserts.length > this._flowFunctionInsertIndex
@@ -107,9 +101,19 @@ export class MoneyFlowSimulation {
                 }
                 this._flowFunctionInsertIndex++;
             }
+            const functionsToAdd: Array<FunctionInfo> = [];
             this._inputs.forEach(input => {
-                functions.push(...this.traverseForSource(input));
+                functionsToAdd.push(...this.traverseForSource(input));
             })
+            // ALter the first function if inserts are present
+            if (this._loopCallback) {
+                const originalFirstFunction = functionsToAdd[0].function;
+                functionsToAdd[0].function = () => {
+                    this._loopCallback!(i);
+                    originalFirstFunction();
+                }
+            }
+            functions.push(...functionsToAdd);
         }
         return functions;
     }
