@@ -1,6 +1,6 @@
 <template>
 <h1>private equity explanation</h1>
-  <p>The current month is: {{ currentMonth }}</p>
+  <p>The current month is: {{ formattedDate }}</p>
   <MoneyFlowCanvas
       :destinations="destinations"
       :width="600"
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import {MoneyDestination, MoneyDestinationConfig} from "@/utils/moneySquareUtils";
 import MoneyFlowCanvas from "@/components/Drawers/MoneyFlowCanvas.vue";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {Connection, FlowFunctionInsert, Input, MoneyFlowSimulation} from "@/utils/moneyFlowSimulation";
 
 const flowCanvas = ref<any>(null);
@@ -116,7 +116,9 @@ moneyFlowSimulation
     .addFlowFunctionInsert(speedUp2)
     .addFlowFunctionInsert(slowDown)
     .setLoopCallback((loop) => {
-      currentMonth.value = loop + 1;
+      const date = new Date(2024, 0, 1);
+      date.setMonth(date.getMonth() + loop);
+      currentDate.value = date;
     })
     .addInput(input)
     .addConnection(cInputCompany)
@@ -132,7 +134,15 @@ const executeTimeline = () => {
 
 const destinations = [company, revenue, wages, otherCosts, profits];
 
-const currentMonth = ref<number>(1);
+const currentDate = ref<Date>(new Date(2024, 0, 1));
+
+const formattedDate = computed(() => {
+  return currentDate.value.toLocaleString('nl-NL', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+});
 </script>
 
 <style scoped>
