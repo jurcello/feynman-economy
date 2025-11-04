@@ -1,15 +1,32 @@
 import {MoneyDestination} from "@/utils/moneySquareUtils";
+import gsap from "gsap";
+
+type Timeline = gsap.core.Timeline;
+
+type FunctionInfo = {
+    function: () => void,
+    delay: number
+}
 
 export class MoneyFlowSimulation {
     private _inputs: Input[] = [];
     private _connections: Connection[] = [];
+    private _redrawFunction?: () => void;
+    private _flowDuration: number = 400;
 
-    public addInput(input: Input) {
+    public addInput(input: Input): MoneyFlowSimulation {
         this._inputs.push(input);
+        return this;
     }
 
-    public addConnection(connection: Connection) {
+    public addConnection(connection: Connection): MoneyFlowSimulation {
         this._connections.push(connection);
+        return this;
+    }
+
+    public setFlowDuration(flowDuration: number): MoneyFlowSimulation {
+        this._flowDuration = flowDuration;
+        return this;
     }
 
     public get inputs(): Input[] {
@@ -20,8 +37,37 @@ export class MoneyFlowSimulation {
         return this._connections;
     }
 
+    public addRedrawFunction(redrawFunction: () => void): MoneyFlowSimulation {
+        this._redrawFunction = redrawFunction;
+        return this;
+    }
+
     public loop(iterations: number): Array<() => void> {
-        const functions: (() => void)[] = [];
+        const functionInfo = this.buildFunctionInfo(iterations);
+        return functionInfo.map(info => info.function);
+    }
+
+    public generateTimeline(iterations: number): Timeline {
+        const tl = gsap.timeline();
+        const functionInfo = this.buildFunctionInfo(iterations);
+        const firstFunction = functionInfo.shift();
+        tl.add(() => {
+            firstFunction?.function();
+            this._redrawFunction?.();
+        }, 0)
+        functionInfo.forEach(info => {
+            const position = `<${info.delay / 1000}`;
+            tl.add(() => {
+                info.function();
+                this._redrawFunction?.();
+            }, position)
+        });
+
+        return tl;
+    }
+
+    private buildFunctionInfo(iterations: number) {
+        const functions: Array<FunctionInfo> = [];
         while (iterations > 0) {
             this._inputs.forEach(input => {
                 functions.push(...this.traverseForSource(input));
@@ -31,16 +77,20 @@ export class MoneyFlowSimulation {
         return functions;
     }
 
-    private traverseForSource(source: Input|MoneyDestination): Array<() => void> {
-        const functions: (() => void)[] = [];
+    private traverseForSource(source: Input|MoneyDestination): Array<FunctionInfo> {
+        const functions: Array<FunctionInfo> = [];
         const filteredConnections = this.connections.filter(connection => connection.from === source);
         let initialAmount = 0;
         filteredConnections.forEach((connection: Connection, index:number) => {
-            functions.push(() => {
+            const moveFunction = () => {
                 if (index === 0) {
                     initialAmount = source.amount;
                 }
                 connection.applyWithInitial(initialAmount)
+            };
+            functions.push({
+                function: moveFunction,
+                delay: this._flowDuration,
             })
         })
         filteredConnections.forEach(connection => {
