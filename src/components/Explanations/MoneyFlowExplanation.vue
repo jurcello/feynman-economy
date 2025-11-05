@@ -20,6 +20,7 @@
         :height="527"
         :duration="animationDuration"
         :enable-dragging="false"
+        :universe-id="universeId"
         :background-image-url="background"
     />
   </div>
@@ -103,13 +104,13 @@ const configCosts = new MoneyDestinationConfig({
   scale: 0.6,
 });
 
-
-const company = new MoneyDestination("Company", 0, configCompany);
-const workers = new MoneyDestination("Workers", 0, configWorkers);
-const shareholders = new MoneyDestination("Shareholders", 0, configShareholders);
-const profit = new MoneyDestination("Profit", 0, configProfit);
-const economy = new MoneyDestination("Real economy", 0, configEconomy);
-const costs = new MoneyDestination("Costs", 0, configCosts);
+const universeId = 'universe1'
+const company = new MoneyDestination("Company", 0, universeId, configCompany);
+const workers = new MoneyDestination("Workers", 0, universeId, configWorkers);
+const shareholders = new MoneyDestination("Shareholders", 0, universeId, configShareholders);
+const profit = new MoneyDestination("Profit", 0, universeId, configProfit);
+const economy = new MoneyDestination("Real economy", 0, universeId, configEconomy);
+const costs = new MoneyDestination("Costs", 0, universeId, configCosts);
 
 const destinations = [company, workers, shareholders, profit, economy, costs];
 const world = new MoneyWorld(destinations);

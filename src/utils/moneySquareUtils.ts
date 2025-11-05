@@ -95,7 +95,7 @@ class MoneyDestination {
     constructor(
         public name: string,
         public amount: number,
-        private universeId: UniverseId,
+        private _universeId: UniverseId,
         config?: MoneyDestinationConfig
     ) {
         this.config = config || new MoneyDestinationConfig({
@@ -104,6 +104,10 @@ class MoneyDestination {
             blockGutter: 2,
         });
         this.blocks = this.createBlocks();
+    }
+
+    public get universeId(): UniverseId {
+        return this._universeId;
     }
 
     private createBlocks(): MoneyBlock[] {
@@ -122,7 +126,7 @@ class MoneyDestination {
 
         return new MoneyBlock({
             position,
-            universeId: this.universeId,
+            universeId: this._universeId,
             blockSize: this.config.blockSize,
             color: this.config.color,
         });

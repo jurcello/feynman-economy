@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
-import type { MoneyDestination } from '@/utils/moneySquareUtils';
+import type {MoneyDestination, UniverseId} from '@/utils/moneySquareUtils';
 import { MoneyBlock } from '@/utils/moneySquareUtils';
 import * as d3 from 'd3';
 import rough from 'roughjs';
@@ -14,6 +14,7 @@ const props = defineProps<{
   destinations: MoneyDestination[];
   width: number;
   height: number;
+  universeId: UniverseId;
   duration?: number;
   enableDragging?: boolean;
   backgroundImageUrl?: string;
@@ -221,7 +222,7 @@ const redraw = () => {
   if (!svg) return;
   svg
     .selectAll<SVGRectElement, any>('rect.money-block')
-    .data([...MoneyBlock.allBlocks], (d: any) => d.id)
+    .data([...MoneyBlock.getBlockArray(props.universeId)], (d: any) => d.id)
     .join(
       enter =>
         enter
@@ -275,7 +276,7 @@ const redrawRough = () => {
 
   roughContainer
       .selectAll<SVGGElement, any>('g.money-block')
-      .data([...MoneyBlock.allBlocks], (d: any) => d.id)
+      .data([...MoneyBlock.getBlockArray(props.universeId)], (d: any) => d.id)
       .join(
           enter => {
             const enterGroups = enter
