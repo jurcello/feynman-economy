@@ -9,7 +9,7 @@ import colorMappings from "@/balanceColorMappings";
 import {onMounted, ref, watch} from "vue";
 import {getTextColorWCAG} from "@/utils/color";
 import {translateCreditType, translateDebitType} from "@/utils/balanceTypeTranslations";
-import rough from 'roughjs/bundled/rough.esm';
+import rough from 'roughjs';
 
 const defaultDebitOrder: DebitTypes[] = [
   DebitTypes.cash,
@@ -68,12 +68,14 @@ const props = withDefaults(
       height: number;
       maxY?: number | null,
       showAmounts?: boolean,
+      sketchy?: boolean,
       debitDescription?: string | null,
       creditDescription?: string | null,
       debitOrder?: DebitTypes[] | null,
       creditOrder?: string[] | null,
     }>(), {
       showAmounts: true,
+      sketchy: false,
     });
 
 const chart = ref<HTMLElement | null>(null);
@@ -122,6 +124,7 @@ const createBalanceText = (description: string, amount: number, maxWidth: number
   ];
 };
 
+const balanceDrawFunction = props.sketchy ? drawRoughBalances : drawBalances;
 
 function shouldDrawText(height: number, numTextLine: number) {
   const minHeight = 25 + (numTextLine - 1) * 0.2;
@@ -518,8 +521,8 @@ onMounted(() => {
     if (props.balance.getTotalMoneyAggregates().total > currentDomainY) {
       y.domain([0, props.balance.getTotalMoneyAggregates().total * 1.5]);
     }
-    drawRoughBalances(svg, "debit", stackedDebit);
-    drawRoughBalances(svg, "credit", stackedCredit);
+    balanceDrawFunction(svg, "debit", stackedDebit);
+    balanceDrawFunction(svg, "credit", stackedCredit);
 
     let bottomLabelGroup = svg.select<SVGGElement>(".bottom-label-group");
     if (bottomLabelGroup.empty()) {

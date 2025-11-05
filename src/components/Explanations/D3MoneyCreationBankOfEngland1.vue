@@ -29,16 +29,16 @@
     <h2 class="mt-6 mb-6">Laten we kijken naar de balansen</h2>
     <div class="balances">
       <div class="balance" id="central-bank-balance">
-        <D3BalanceDrawer :balance="centralBank" :width="balanceWidth" :height="balanceHeight" :show-amounts="false" :max-y="200" />
+        <D3BalanceDrawer :sketchy="sketchy" :balance="centralBank" :width="balanceWidth" :height="balanceHeight" :show-amounts="false" :max-y="200" />
       </div>
       <div class="balance" id="commercial-bank-balance">
-        <D3BalanceDrawer :balance="commercialBank" :width="balanceWidth" :height="balanceHeight"
+        <D3BalanceDrawer :sketchy="sketchy" :balance="commercialBank" :width="balanceWidth" :height="balanceHeight"
             :show-amounts="false"
             :max-y="200"
         />
       </div>
       <div class="balance" id="person-balance">
-        <D3BalanceDrawer :balance="personBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="true" :max-y="200" />
+        <D3BalanceDrawer :sketchy="sketchy" :balance="personBalance" :width="balanceWidth" :height="balanceHeight" :show-amounts="true" :max-y="200" />
       </div>
     </div>
   </div>
@@ -114,6 +114,8 @@ import {ScrollTrigger} from "@/plugins/gsap";
 
 const balanceWidth = 300;
 const balanceHeight = 400;
+
+const sketchy = true;
 
 const initScrollytelling = () => {
   gsap.to('#balances-sheet', {
