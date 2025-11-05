@@ -36,7 +36,7 @@ const configCOGS = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 32, y: 95},
+  position: {x: 20, y: 158},
   showName: true,
   scale: 0.7
 });
@@ -46,7 +46,7 @@ const configWages = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 31, y: 143},
+  position: {x: 20, y: 224},
   showName: true,
   scale: 0.7
 });
@@ -56,7 +56,7 @@ const configStoreOps = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 32, y: 196},
+  position: {x: 20, y: 290},
   showName: true,
   scale: 0.7
 });
@@ -66,7 +66,7 @@ const configCapEx = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 27, y: 256},
+  position: {x: 20, y: 360},
   showName: true,
   scale: 0.7
 });
@@ -110,8 +110,8 @@ const cRevenueCOGS = new Connection({from: revenue, to: cogs, fraction: 0.70});
 const cRevenueStoreOps = new Connection({from: revenue, to: storeOps, fraction: 0.10});
 const cRevenueCapEx = new Connection({from: revenue, to: capEx, fraction: 0.03});
 const cRevenueProfits = new Connection({from: revenue, to: profits, fraction: 0.05});
-const cRevenueTaxes = new Connection({from: revenue, to: taxes, fraction: 0.35});
-const cRevenueRetained = new Connection({from: revenue, to: retained, fraction: 0.65});
+const cRevenueTaxes = new Connection({from: profits, to: taxes, fraction: 0.35});
+const cRevenueRetained = new Connection({from: profits, to: retained, fraction: 0.65});
 
 let redrawBlocks: () => void = () => {
   flowCanvas.value?.redraw?.();
@@ -133,11 +133,11 @@ const executeTimeline = () => {
       })
       .addInput(input)
       .addConnection(cInputRevenue)
-      .addConnection(cRevenueWages)
-      .addConnection(cRevenueProfits)
       .addConnection(cRevenueCOGS)
+      .addConnection(cRevenueWages)
       .addConnection(cRevenueStoreOps)
       .addConnection(cRevenueCapEx)
+      .addConnection(cRevenueProfits)
       .addConnection(cRevenueTaxes)
       .addConnection(cRevenueRetained);
 

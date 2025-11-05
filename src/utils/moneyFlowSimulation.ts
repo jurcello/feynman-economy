@@ -106,7 +106,7 @@ export class MoneyFlowSimulation {
             }
             const functionsToAdd: Array<FunctionInfo> = [];
             this._inputs.forEach(input => {
-                functionsToAdd.push(...this.traverseForSource(input));
+                functionsToAdd.push(...this.traverseForSource(input, input.amount));
             })
             // ALter the first function if inserts are present
             if (this._loopCallback) {
@@ -121,15 +121,11 @@ export class MoneyFlowSimulation {
         return functions;
     }
 
-    private traverseForSource(source: Input|MoneyDestination): Array<FunctionInfo> {
+    private traverseForSource(source: Input|MoneyDestination, initialAmount: number): Array<FunctionInfo> {
         const functions: Array<FunctionInfo> = [];
         const filteredConnections = this.connections.filter(connection => connection.from === source);
-        let initialAmount = 0;
         filteredConnections.forEach((connection: Connection, index:number) => {
             const moveFunction = () => {
-                if (index === 0) {
-                    initialAmount = source.amount;
-                }
                 connection.applyWithInitial(initialAmount)
                 this._redrawFunction?.();
             };
@@ -139,7 +135,7 @@ export class MoneyFlowSimulation {
             })
         })
         filteredConnections.forEach(connection => {
-            functions.push(...this.traverseForSource(connection.to))
+            functions.push(...this.traverseForSource(connection.to, Math.round(initialAmount * connection.fraction)))
         })
         return functions;
     }
@@ -185,10 +181,11 @@ export class Connection {
     }
 
     public applyWithInitial(initialAmount: number):  void {
+        const amount = Math.round(initialAmount * this._fraction);
         if (this._from instanceof Input) {
-            this._to.addMoney(initialAmount * this._fraction);
+            this._to.addMoney(amount);
             return;
         }
-        (this._from as MoneyDestination).moveTo(this._to, initialAmount * this._fraction);
+        (this._from as MoneyDestination).moveTo(this._to, amount);
     }
 }

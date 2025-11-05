@@ -246,7 +246,6 @@ const redraw = () => {
           ),
       update =>
         update.call(update => {
-              console.log('playing whoosh');
               return update
                   .transition()
                   .duration(duration.value)
