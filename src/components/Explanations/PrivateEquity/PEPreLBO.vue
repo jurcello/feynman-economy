@@ -5,7 +5,7 @@
       :width="600"
       :height="400"
       :duration="animationDuration"
-      :enable-dragging="true"
+      :enable-dragging="false"
       :universe-id="universe"
       ref="flowCanvas"
   />
@@ -13,6 +13,12 @@
 
 <script setup lang="ts">
 import {MoneyDestination, MoneyDestinationConfig, UniverseId} from "@/utils/moneySquareUtils";
+
+const props = withDefaults(defineProps<{
+  iterations?: number
+}>(), {
+  iterations: 1
+})
 import MoneyFlowCanvas from "@/components/Drawers/MoneyFlowCanvas.vue";
 import {ref, computed} from "vue";
 import {Connection, FlowFunctionInsert, Input, MoneyFlowSimulation} from "@/utils/moneyFlowSimulation";
@@ -34,7 +40,7 @@ const revenue = new MoneyDestination('Revenue', 0, universe, configRevenue);
 
 const configCOGS = new MoneyDestinationConfig({
   blockSize: blockSize,
-  blocksPerRow: 18,
+  blocksPerRow: 40,
   blockGutter: 1,
   position: {x: 20, y: 158},
   showName: true,
@@ -86,17 +92,27 @@ const configTaxes = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 318, y: 208},
+  position: {x: 312, y: 197},
   showName: true,
   scale: 0.7
 });
 const taxes = new MoneyDestination('Taxes', 0, universe, configTaxes);
 
+const configInterest = new MoneyDestinationConfig({
+  blockSize: blockSize,
+  blocksPerRow: 18,
+  blockGutter: 1,
+  position: {x: 413, y: 281},
+  showName: true,
+  scale: 0.7
+});
+const interest = new MoneyDestination('Interest', 0, universe, configInterest);
+
 const configRetained = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 433, y: 210},
+  position: {x: 437, y: 182},
   showName: true,
   scale: 0.7
 });
@@ -111,7 +127,8 @@ const cRevenueStoreOps = new Connection({from: revenue, to: storeOps, fraction: 
 const cRevenueCapEx = new Connection({from: revenue, to: capEx, fraction: 0.03});
 const cRevenueProfits = new Connection({from: revenue, to: profits, fraction: 0.05});
 const cRevenueTaxes = new Connection({from: profits, to: taxes, fraction: 0.35});
-const cRevenueRetained = new Connection({from: profits, to: retained, fraction: 0.65});
+const cRevenueInterest = new Connection({from: profits, to: interest, fraction: 0.05});
+const cRevenueRetained = new Connection({from: profits, to: retained, fraction: 0.60});
 
 let redrawBlocks: () => void = () => {
   flowCanvas.value?.redraw?.();
@@ -139,13 +156,14 @@ const executeTimeline = () => {
       .addConnection(cRevenueCapEx)
       .addConnection(cRevenueProfits)
       .addConnection(cRevenueTaxes)
+      .addConnection(cRevenueInterest)
       .addConnection(cRevenueRetained);
 
-  timeline = moneyFlowSimulation.generateTimeline(10);
+  timeline = moneyFlowSimulation.generateTimeline(props.iterations);
   timeline.play();
 }
 
-const destinations = [revenue, wages, profits, cogs, storeOps, capEx, taxes, retained];
+const destinations = [revenue, wages, profits, cogs, storeOps, capEx, taxes, interest, retained];
 
 const currentDate = ref<Date>(new Date(2024, 0, 1));
 

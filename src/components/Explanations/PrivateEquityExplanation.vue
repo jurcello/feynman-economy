@@ -17,11 +17,13 @@
       <div class="left">
         <PEPreLBO
             ref="preLBO"
+            :iterations="iterations"
         />
       </div>
       <div class="right">
         <PEPostLBO
             ref="postLBO"
+            :iterations="iterations"
         />
       </div>
     </div>
@@ -35,6 +37,7 @@ import PEPostLBO from "@/components/Explanations/PrivateEquity/PEPostLBO.vue";
 import {ref} from "vue";
 import CenteringContainer from "@/components/Design/CenteringContainer.vue";
 
+const iterations = 24;
 const preLBO = ref<InstanceType<typeof PEPreLBO>>();
 const postLBO = ref<InstanceType<typeof PEPostLBO>>();
 
