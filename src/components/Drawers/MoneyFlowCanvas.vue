@@ -10,18 +10,24 @@ import * as d3 from 'd3';
 import rough from 'roughjs';
 import {RoughSVG} from "roughjs/bin/svg";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   destinations: MoneyDestination[];
   width: number;
   height: number;
   universeId: UniverseId;
   duration?: number;
   enableDragging?: boolean;
+  sketchy?: boolean;
   backgroundImageUrl?: string;
-}>();
+}>(), {
+  duration: 1000,
+  enableDragging: false,
+  sketchy: true,
+});
 
-const duration = computed(() => props.duration ?? 1000);
+const duration = computed(() => props.duration);
 const showMousePosition = computed(() => props.enableDragging ?? false);
+const fontFamily = props.sketchy ? "Architects Daughter, cursive" : "Arial, sans-serif";
 
 const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
@@ -191,6 +197,7 @@ const renderDestinations = () => {
       g.append('text')
         .attr('class', 'title')
         .text(name)
+        .attr("font-family", fontFamily)
         .attr('x', x)
         .attr('y', y + 30);
     }

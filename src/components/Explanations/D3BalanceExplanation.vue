@@ -25,7 +25,7 @@
       <p>Dit is de balans als je net geboren wordt. Er staat nu nog niets op, dus je ziet alleen de beschrijvingen.</p>
     </div>
     <div>
-      <D3BalanceDrawer :balance="balance" :width="500" :height="400" :maxY="200"
+      <D3BalanceDrawer :sketchy="true" :balance="balance" :width="500" :height="400" :maxY="200"
           :debit-description="debitDescription"
           :credit-description="creditDescription"
       />
