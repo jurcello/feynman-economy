@@ -82,6 +82,10 @@ function handleMouseDragging(g: d3.Selection<SVGGElement, unknown, null, undefin
           .on('end', () => {
             // cleanup hover label after drag end
             g.selectAll('text.pos-label').remove();
+            console.log('Dumpinping data');
+            props.destinations.forEach((d: any) => {
+              console.log('Data for', d.name, JSON.stringify(d.config.position));
+            })
           })
   );
 }

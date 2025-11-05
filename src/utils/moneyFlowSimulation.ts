@@ -83,6 +83,9 @@ export class MoneyFlowSimulation {
     }
 
     private buildFunctionInfo(iterations: number) {
+        if (this._inputs.length === 0) {
+            throw new Error("No inputs added to MoneyFlowSimulation");
+        }
         this._currentAmimationDuration = this._flowAnimationDuration;
         const functions: Array<FunctionInfo> = [];
         for (let i = 0; i < iterations; i++) {

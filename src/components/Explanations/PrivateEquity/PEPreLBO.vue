@@ -5,7 +5,7 @@
       :width="600"
       :height="400"
       :duration="animationDuration"
-      :enable-dragging="false"
+      :enable-dragging="true"
       :universe-id="universe"
       ref="flowCanvas"
   />
@@ -22,58 +22,96 @@ const universe: UniverseId = 'universe1'
 const flowCanvas = ref<any>(null);
 const blockSize = 3;
 
-const configCompany = new MoneyDestinationConfig({
-  blockSize: blockSize,
-  blocksPerRow: 18,
-  blockGutter: 1,
-  position: {x: 278, y: 40},
-  showName: true,
-  scale: 0.7
-});
-const company = new MoneyDestination('Company', 0, universe, configCompany);
 const configRevenue = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 278, y: 114},
+  position: {x: 188, y: 7},
   showName: true,
   scale: 0.7
 });
 const revenue = new MoneyDestination('Revenue', 0, universe, configRevenue);
+
+const configCOGS = new MoneyDestinationConfig({
+  blockSize: blockSize,
+  blocksPerRow: 18,
+  blockGutter: 1,
+  position: {x: 32, y: 95},
+  showName: true,
+  scale: 0.7
+});
+const cogs = new MoneyDestination('COGS', 0, universe, configCOGS);
+
 const configWages = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 84, y: 285},
+  position: {x: 31, y: 143},
   showName: true,
   scale: 0.7
 });
 const wages = new MoneyDestination('Wages', 0, universe, configWages);
-const configOtherCosts = new MoneyDestinationConfig({
+
+const configStoreOps = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 269, y: 285},
+  position: {x: 32, y: 196},
   showName: true,
   scale: 0.7
 });
-const otherCosts = new MoneyDestination('Other Costs', 0, universe, configOtherCosts);
+const storeOps = new MoneyDestination('Store Operations', 0, universe, configStoreOps);
+
+const configCapEx = new MoneyDestinationConfig({
+  blockSize: blockSize,
+  blocksPerRow: 18,
+  blockGutter: 1,
+  position: {x: 27, y: 256},
+  showName: true,
+  scale: 0.7
+});
+const capEx = new MoneyDestination('Capital Expenditures', 0, universe, configCapEx);
+
 const configProfits = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
   blockGutter: 1,
-  position: {x: 441, y: 285},
+  position: {x: 399, y: 96},
   showName: true,
   scale: 0.7
 });
 const profits = new MoneyDestination('Profits', 0, universe, configProfits);
 
+const configTaxes = new MoneyDestinationConfig({
+  blockSize: blockSize,
+  blocksPerRow: 18,
+  blockGutter: 1,
+  position: {x: 318, y: 208},
+  showName: true,
+  scale: 0.7
+});
+const taxes = new MoneyDestination('Taxes', 0, universe, configTaxes);
+
+const configRetained = new MoneyDestinationConfig({
+  blockSize: blockSize,
+  blocksPerRow: 18,
+  blockGutter: 1,
+  position: {x: 433, y: 210},
+  showName: true,
+  scale: 0.7
+});
+const retained = new MoneyDestination('Retained Earnings', 0, universe, configRetained);
+
+
 const input = new Input(100);
-const cInputCompany = new Connection({from: input, to: company});
-const cCompanyRevenue = new Connection({from: company, to: revenue});
-const cRevenueWages = new Connection({from: revenue, to: wages, fraction: 0.4});
-const cRevenueOtherCosts = new Connection({from: revenue, to: otherCosts, fraction: 0.5});
-const cRevenueProfits = new Connection({from: revenue, to: profits, fraction: 0.1});
+const cInputRevenue = new Connection({from: input, to: revenue});
+const cRevenueWages = new Connection({from: revenue, to: wages, fraction: 0.12});
+const cRevenueCOGS = new Connection({from: revenue, to: cogs, fraction: 0.70});
+const cRevenueStoreOps = new Connection({from: revenue, to: storeOps, fraction: 0.10});
+const cRevenueCapEx = new Connection({from: revenue, to: capEx, fraction: 0.03});
+const cRevenueProfits = new Connection({from: revenue, to: profits, fraction: 0.05});
+const cRevenueTaxes = new Connection({from: revenue, to: taxes, fraction: 0.35});
+const cRevenueRetained = new Connection({from: revenue, to: retained, fraction: 0.65});
 
 let redrawBlocks: () => void = () => {
   flowCanvas.value?.redraw?.();
@@ -94,17 +132,20 @@ const executeTimeline = () => {
         currentDate.value = date;
       })
       .addInput(input)
-      .addConnection(cInputCompany)
-      .addConnection(cCompanyRevenue)
+      .addConnection(cInputRevenue)
       .addConnection(cRevenueWages)
-      .addConnection(cRevenueOtherCosts)
-      .addConnection(cRevenueProfits);
+      .addConnection(cRevenueProfits)
+      .addConnection(cRevenueCOGS)
+      .addConnection(cRevenueStoreOps)
+      .addConnection(cRevenueCapEx)
+      .addConnection(cRevenueTaxes)
+      .addConnection(cRevenueRetained);
 
   timeline = moneyFlowSimulation.generateTimeline(10);
   timeline.play();
 }
 
-const destinations = [company, revenue, wages, otherCosts, profits];
+const destinations = [revenue, wages, profits, cogs, storeOps, capEx, taxes, retained];
 
 const currentDate = ref<Date>(new Date(2024, 0, 1));
 
