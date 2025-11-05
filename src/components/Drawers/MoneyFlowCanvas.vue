@@ -7,6 +7,8 @@ import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import type { MoneyDestination } from '@/utils/moneySquareUtils';
 import { MoneyBlock } from '@/utils/moneySquareUtils';
 import * as d3 from 'd3';
+import rough from 'roughjs';
+import {RoughSVG} from "roughjs/bin/svg";
 
 const props = defineProps<{
   destinations: MoneyDestination[];
@@ -22,6 +24,7 @@ const showMousePosition = computed(() => props.enableDragging ?? false);
 
 const canvas = ref<HTMLElement | null>(null);
 let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+let rc: RoughSVG | null = null;
 
 function handleMouseDragging(g: d3.Selection<SVGGElement, unknown, null, undefined>, x:number, y:number, d: any) {
   const circle = g.append('circle')
@@ -144,14 +147,13 @@ const renderDestinations = () => {
     const lineY = y + 10; // draw a bit below the baseline
 
     // Draw the underline first so subsequent elements appear above if overlapping
-    g.append('line')
-      .attr('class', 'destination-underline')
-      .attr('x1', x)
-      .attr('y1', lineY)
-      .attr('x2', x + underlineWidth)
-      .attr('y2', lineY)
-      .attr('stroke', '#333333')
-      .attr('stroke-width', 2);
+    const roughLine = rc!.line(x, lineY, x + underlineWidth, lineY, {
+      stroke: '#333333',
+      strokeWidth: 1,
+      roughness: 1.2,
+      bowing: 0.8
+    });
+    g.node()?.appendChild(roughLine);
 
     if (imageUrl) {
       // create image element first
@@ -268,6 +270,10 @@ onMounted(() => {
     .append('svg')
     .attr('width', props.width)
     .attr('height', props.height);
+  const svgNode = svg.node();
+  if (svgNode) {
+    rc = rough.svg(svgNode);
+  }
 
   // background image (if provided)
   updateBackgroundImage();
