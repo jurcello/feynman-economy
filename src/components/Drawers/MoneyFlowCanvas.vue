@@ -149,7 +149,7 @@ const renderDestinations = () => {
     // Draw the underline first so subsequent elements appear above if overlapping
     const roughLine = rc!.line(x, lineY, x + underlineWidth, lineY, {
       stroke: '#333333',
-      strokeWidth: 1,
+      strokeWidth: 2,
       roughness: 1.2,
       bowing: 0.8
     });
@@ -262,6 +262,75 @@ const redraw = () => {
             .remove()
         )
     );
+};
+
+const redrawRough = () => {
+  if (!svg || !rc) return;
+
+  // Create a container for rough elements if it doesn't exist
+  let roughContainer = svg.select('g.rough-container');
+  if (roughContainer.empty()) {
+    roughContainer = svg.append('g').attr('class', 'rough-container');
+  }
+
+  roughContainer
+      .selectAll<SVGGElement, any>('g.money-block')
+      .data([...MoneyBlock.allBlocks], (d: any) => d.id)
+      .join(
+          enter => {
+            const enterGroups = enter
+                .append('g')
+                .attr('class', 'money-block')
+                .attr('transform', (d: any) => `translate(${d.position.x}, ${d.position.y})`)
+                .attr('opacity', 0);
+
+            // Create rough rectangles for new blocks at origin (0,0) within the group
+            enterGroups.each(function(d: any) {
+              const group = d3.select(this);
+              const roughRect = rc.rectangle(
+                  0, // Start at 0,0 since group handles positioning
+                  0,
+                  d.blockSize,
+                  d.blockSize,
+                  {
+                    fill: d.color,
+                    fillStyle: 'solid',
+                    stroke: d.color,
+                    strokeWidth: 1,
+                    roughness: 0.4,
+                    bowing: 1
+                  }
+              );
+              group.node()?.appendChild(roughRect);
+            });
+
+            return enterGroups
+                .call(enter =>
+                    enter
+                        .transition()
+                        .duration(duration.value)
+                        .attr('opacity', 1)
+                );
+          },
+          update =>
+              update.call(update => {
+                console.log('playing whoosh');
+
+                return update
+                    .transition()
+                    .duration(duration.value)
+                    .attr('transform', (d: any) => `translate(${d.position.x}, ${d.position.y})`);
+              }),
+          exit =>
+              exit.call(exit =>
+                  exit
+                      .transition()
+                      .duration(duration.value)
+                      .attr('opacity', 0)
+                      .attr('transform', (d: any) => `translate(${d.position.x - 40}, ${d.position.y + 80})`)
+                      .remove()
+              )
+      );
 };
 
 onMounted(() => {
