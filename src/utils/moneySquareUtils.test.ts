@@ -1,13 +1,22 @@
 import {describe, expect, it, vi} from "vitest";
-import {MoneyDestination, MoneyDestinationConfig, MoneyBlock, Position, MoneyWorld} from "@/utils/moneySquareUtils";
+import {
+    MoneyDestination,
+    MoneyDestinationConfig,
+    MoneyBlock,
+    Position,
+    MoneyWorld,
+    UniverseId
+} from "@/utils/moneySquareUtils";
+
+const universe: UniverseId = 'uni1';
 
 describe('MoneyDestination', () => {
     it('can be initialized', () => {
-        const moneyStash = new MoneyDestination('Stash', 50);
+        const moneyStash = new MoneyDestination('Stash', 50, universe);
         expect(moneyStash).toBeDefined()
     });
     it('gets a name and amount after initialization', () => {
-        const moneyStash = new MoneyDestination('Stash', 50);
+        const moneyStash = new MoneyDestination('Stash', 50, universe);
         const expected = {
             name: 'Stash',
             amount: 50,
@@ -19,7 +28,7 @@ describe('MoneyDestination', () => {
         expect(actual).toEqual(expected)
     });
     it('has a default MoneyDestinationConfig', () => {
-        const moneyStash = new MoneyDestination('Stash', 50);
+        const moneyStash = new MoneyDestination('Stash', 50, universe);
         const expected = new MoneyDestinationConfig({
             blockSize: 10,
             blocksPerRow: 10,
@@ -28,14 +37,14 @@ describe('MoneyDestination', () => {
         expect(moneyStash.config).toEqual(expected)
     });
     it('has 10 blocks created when it is initialized with an amount of 10', () => {
-        const moneyStash = new MoneyDestination('Stash', 10);
+        const moneyStash = new MoneyDestination('Stash', 10, universe);
 
         expect(moneyStash.blocks.length).toBe(10);
     });
 
     it('creates blocks that are instances of MoneyBlock which contain their position', () => {
         const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2});
-        const moneyStash = new MoneyDestination('Stash', 4, config)
+        const moneyStash = new MoneyDestination('Stash', 4, universe, config)
 
         const actualPositions = moneyStash.blocks.map(block => ({
             position: block.position,
@@ -53,7 +62,7 @@ describe('MoneyDestination', () => {
 
     it('creates blocks with blockSize matching the config', () => {
         const config = new MoneyDestinationConfig({blockSize: 15, blocksPerRow: 2, blockGutter: 2});
-        const moneyStash = new MoneyDestination('Stash', 4, config);
+        const moneyStash = new MoneyDestination('Stash', 4, universe, config);
 
         const actual = moneyStash.blocks.map(block => block.blockSize);
         const expected = Array(4).fill(15);
@@ -64,7 +73,7 @@ describe('MoneyDestination', () => {
     it('creates blocks with correct positions when MoneyDestination has a position', () => {
         const position: Position = {x: 10, y: 80};
         const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2, position});
-        const moneyStash = new MoneyDestination('Stash', 4, config)
+        const moneyStash = new MoneyDestination('Stash', 4, universe, config)
 
         const actualPositions = moneyStash.blocks.map(block => ({
             position: block.position,
@@ -83,7 +92,7 @@ describe('MoneyDestination', () => {
     it('adds one block with correct position when addMoney is called', () => {
         const position: Position = {x: 10, y: 80};
         const config = new MoneyDestinationConfig({blockSize: 10, blocksPerRow: 2, blockGutter: 2, position});
-        const moneyStash = new MoneyDestination('Stash', 4, config);
+        const moneyStash = new MoneyDestination('Stash', 4, universe, config);
 
         moneyStash.addMoney(1);
 
@@ -99,8 +108,8 @@ describe('MoneyDestination', () => {
     });
 
     it('can move an amount of money from one destination to another destination using the move to function', () => {
-        const source = new MoneyDestination('Source', 10);
-        const destination = new MoneyDestination('Destination', 5);
+        const source = new MoneyDestination('Source', 10, universe);
+        const destination = new MoneyDestination('Destination', 5, universe);
         const amountToMove = 3;
 
         // Test will fail as the moveTo function is not implemented yet
@@ -133,8 +142,8 @@ describe('MoneyDestination', () => {
             position: {x: 100, y: 100}
         });
 
-        const source = new MoneyDestination('Source', 1, sourceConfig);
-        const destination = new MoneyDestination('Destination', 0, destinationConfig);
+        const source = new MoneyDestination('Source', 1, universe, sourceConfig);
+        const destination = new MoneyDestination('Destination', 0, universe, destinationConfig);
 
         source.moveTo(destination, 1);
 
@@ -149,21 +158,21 @@ describe('MoneyDestination', () => {
     });
 
     it('keeps track of all blocks in the system through MoneyBlock.allBlocks', () => {
-        MoneyBlock.allBlocks.length = 0;
+        MoneyBlock.getBlockArray(universe).length = 0;
 
-        const source = new MoneyDestination('Source', 3);
-        const destination = new MoneyDestination('Destination', 2);
+        const source = new MoneyDestination('Source', 3, universe);
+        const destination = new MoneyDestination('Destination', 2, universe);
 
         source.moveTo(destination, 1);
 
         // The total number of blocks should remain the same after moving
-        expect(MoneyBlock.allBlocks.length).toBe(5);
+        expect(MoneyBlock.getBlockArray(universe).length).toBe(5);
     });
 
 
     it('preserves block id when moved to another destination', () => {
-        const source = new MoneyDestination('Source', 1);
-        const destination = new MoneyDestination('Destination', 0);
+        const source = new MoneyDestination('Source', 1, universe);
+        const destination = new MoneyDestination('Destination', 0, universe);
         const originalId = source.blocks[0].id;
 
         source.moveTo(destination, 1);
@@ -172,7 +181,7 @@ describe('MoneyDestination', () => {
     });
 
     it('destroys all blocks in a destination when destroyAllBlocks is called', () => {
-        const destination = new MoneyDestination('Destination', 5);
+        const destination = new MoneyDestination('Destination', 5, universe);
 
         destination.destroyAllBlocks();
         const expected = {blocks: 0, amount: 0};
@@ -181,12 +190,31 @@ describe('MoneyDestination', () => {
     });
 
     it('destroys blocks in a destination when destroyBlocks is called', () => {
-        const destination = new MoneyDestination('Destination', 5);
+        const destination = new MoneyDestination('Destination', 5, universe);
 
         destination.destroyBlocks(4);
         const expected = {blocks: 1, amount: 1};
         const actual = {blocks: destination.blocks.length, amount: destination.amount};
         expect(actual).toEqual(expected);
+    });
+
+    it('destinations belonging to different universes add their blocks to the right universe', () => {
+        const universe1: UniverseId = 'uni1';
+        const universe2: UniverseId = 'uni2';
+
+        const destination1 = new MoneyDestination('Destination1', 5, universe1);
+        const destination2 = new MoneyDestination('Destination2', 5, universe2);
+
+        destination2.addMoney(10);
+
+        const expected = {
+            universe1Blocks: 5,
+            universe2Blocks: 15,
+        }
+        const actual = {
+            universe1Blocks: MoneyBlock.getBlockArray(universe1).length,
+            universe2Blocks: MoneyBlock.getBlockArray(universe2).length,
+        }
     });
 
 })

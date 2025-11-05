@@ -7,10 +7,11 @@ export type MoneyBlockListener = (blocks: MoneyBlock[]) => void;
 
 class MoneyBlock {
     private _position: Position;
-    public static allBlocks: MoneyBlock[] = [];
+    private static allBlocks: Map<string, MoneyBlock[]> = new Map();
     public id: string = `block-${Date.now()}-${Math.random()}`;
     private _blockSize: number = 10;
     private _color: string = '#000000';
+    private _universeId: UniverseId;
 
     get blockSize(): number {
         return this._blockSize;
@@ -37,21 +38,30 @@ class MoneyBlock {
     }
 
 
-    constructor(params: { position: Position; blockSize?: number; color?: string }) {
+    constructor(params: { position: Position; universeId: UniverseId, blockSize?: number; color?: string }) {
         this._position = params.position;
+        this._universeId = params.universeId;
         this._blockSize = params.blockSize || 10;
         this._color = params.color || '#d4af37';
 
-        MoneyBlock.allBlocks.push(this);
+        MoneyBlock.getBlockArray(this._universeId).push(this);
     }
 
     public destroy(): void {
-        const index = MoneyBlock.allBlocks.indexOf(this);
+        const allBlocks = MoneyBlock.getBlockArray(this._universeId);
+        const index = allBlocks.indexOf(this);
         if (index !== -1) {
-            MoneyBlock.allBlocks.splice(index, 1);
+            allBlocks.splice(index, 1);
         }
     }
 
+    public static getBlockArray(universeId: UniverseId): MoneyBlock[] {
+        if (!MoneyBlock.allBlocks.has(universeId)) {
+            MoneyBlock.allBlocks.set(universeId, []);
+        }
+        const allBlocks = MoneyBlock.allBlocks.get(universeId);
+        return allBlocks!;
+    }
 }
 
 class MoneyDestinationConfig {
@@ -76,6 +86,8 @@ class MoneyDestinationConfig {
     }
 }
 
+export type UniverseId = string;
+
 class MoneyDestination {
     public config: MoneyDestinationConfig;
     public blocks: MoneyBlock[];
@@ -83,6 +95,7 @@ class MoneyDestination {
     constructor(
         public name: string,
         public amount: number,
+        private universeId: UniverseId,
         config?: MoneyDestinationConfig
     ) {
         this.config = config || new MoneyDestinationConfig({
@@ -109,6 +122,7 @@ class MoneyDestination {
 
         return new MoneyBlock({
             position,
+            universeId: this.universeId,
             blockSize: this.config.blockSize,
             color: this.config.color,
         });
