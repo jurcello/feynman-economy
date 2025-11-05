@@ -6,17 +6,19 @@
       :height="400"
       :duration="animationDuration"
       :enable-dragging="false"
+      :universe-id="universe"
       ref="flowCanvas"
   />
 </template>
 
 <script setup lang="ts">
-import {MoneyDestination, MoneyDestinationConfig} from "@/utils/moneySquareUtils";
+import {MoneyDestination, MoneyDestinationConfig, UniverseId} from "@/utils/moneySquareUtils";
 import MoneyFlowCanvas from "@/components/Drawers/MoneyFlowCanvas.vue";
 import {ref, computed} from "vue";
 import {Connection, FlowFunctionInsert, Input, MoneyFlowSimulation} from "@/utils/moneyFlowSimulation";
 import Timeline = gsap.core.Timeline;
 
+const universe: UniverseId = 'universe1'
 const flowCanvas = ref<any>(null);
 const blockSize = 3;
 
@@ -28,7 +30,7 @@ const configCompany = new MoneyDestinationConfig({
   showName: true,
   scale: 0.7
 });
-const company = new MoneyDestination('Company', 0, configCompany);
+const company = new MoneyDestination('Company', 0, universe, configCompany);
 const configRevenue = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
@@ -37,7 +39,7 @@ const configRevenue = new MoneyDestinationConfig({
   showName: true,
   scale: 0.7
 });
-const revenue = new MoneyDestination('Revenue', 0, configRevenue);
+const revenue = new MoneyDestination('Revenue', 0, universe, configRevenue);
 const configWages = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
@@ -46,7 +48,7 @@ const configWages = new MoneyDestinationConfig({
   showName: true,
   scale: 0.7
 });
-const wages = new MoneyDestination('Wages', 0, configWages);
+const wages = new MoneyDestination('Wages', 0, universe, configWages);
 const configOtherCosts = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
@@ -55,7 +57,7 @@ const configOtherCosts = new MoneyDestinationConfig({
   showName: true,
   scale: 0.7
 });
-const otherCosts = new MoneyDestination('Other Costs', 0, configOtherCosts);
+const otherCosts = new MoneyDestination('Other Costs', 0, universe, configOtherCosts);
 const configProfits = new MoneyDestinationConfig({
   blockSize: blockSize,
   blocksPerRow: 18,
@@ -64,7 +66,7 @@ const configProfits = new MoneyDestinationConfig({
   showName: true,
   scale: 0.7
 });
-const profits = new MoneyDestination('Profits', 0, configProfits);
+const profits = new MoneyDestination('Profits', 0, universe, configProfits);
 
 const input = new Input(100);
 const cInputCompany = new Connection({from: input, to: company});
