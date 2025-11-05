@@ -4,7 +4,7 @@
 }
 
 .scrolly-text-item {
-    @apply bg-white/80 backdrop-blur ring-1 ring-earth-100 rounded-organic p-3 mt-2 mb-[60vh] z-30 shadow-sm animate-fade;
+    @apply bg-white/80 backdrop-blur ring-1 ring-earth-100 rounded-md p-3 mt-2 mb-[60vh] z-30 shadow-sm animate-fade;
 }
 
 .explanation-items {

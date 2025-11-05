@@ -259,6 +259,7 @@ function drawRoughBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLEl
                 .attr("alignment-baseline", "hanging")
                 .attr("fill", (d: any) => getTextColorWCAG(color(d.key) as string))
                 .attr("font-size", "12px")
+                .attr("font-family", "Architects Daughter, cursive")
                 .attr("opacity", "0");
 
             textGroup.each(function (d: any) {
@@ -452,11 +453,13 @@ onMounted(() => {
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`) as d3.Selection<SVGGElement, unknown, null | HTMLElement, any>;
 
+  const fontFamily = props.sketchy ? "Architects Daughter, cursive" : "Arial, sans-serif";
   svg.append("g")
       .selectAll("text.title")
       .data([props.balance.name])
       .join("text")
       .attr("class", "title")
+      .attr("font-family", fontFamily)
       .text(d => d)
       .attr("x", WIDTH / 2)
       .attr("y", -15)
@@ -539,6 +542,7 @@ onMounted(() => {
         .attr("class", "bottom-label")
         .attr("x", (d: any) => x(d.type) as number + x.bandwidth() / 2)
         .attr("y", 15)
+        .attr("font-family", fontFamily)
         .attr("text-anchor", "middle")
         .attr("font-size", "12px")
   }

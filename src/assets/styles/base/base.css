@@ -1,5 +1,11 @@
 /***** Base Typography and Elements *****/
-
+@font-face {
+    font-family: 'Architects Daughter';
+    src: url('/fonts/ArchitectsDaughter-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 /* Global body styles */
 body {
     @apply font-sans text-slate-800 bg-gradient-to-b from-earth-50 via-white to-slate-50 leading-relaxed antialiased;
