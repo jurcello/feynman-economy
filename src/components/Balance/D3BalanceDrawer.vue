@@ -9,6 +9,7 @@ import colorMappings from "@/balanceColorMappings";
 import {onMounted, ref, watch} from "vue";
 import {getTextColorWCAG} from "@/utils/color";
 import {translateCreditType, translateDebitType} from "@/utils/balanceTypeTranslations";
+import rough from 'roughjs/bundled/rough.esm';
 
 const defaultDebitOrder: DebitTypes[] = [
   DebitTypes.cash,
@@ -125,6 +126,184 @@ const createBalanceText = (description: string, amount: number, maxWidth: number
 function shouldDrawText(height: number, numTextLine: number) {
   const minHeight = 25 + (numTextLine - 1) * 0.2;
   return height > minHeight;
+}
+
+function drawRoughBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
+  [p: string]: number
+}, string>[]) {
+  const roughSvg = rough.svg(svg.node()?.closest('svg')!);
+  const roughness = 1.5;
+  const bowing = 1;
+
+  const t = balanceType === 'debit' ? translateDebitType : translateCreditType;
+
+  svg.selectAll(`.${balanceType}`)
+      .data(stackedData)
+      .join(
+          enter => {
+            const enterData = enter.data();
+            const startY = enterData.length > 0 ? enterData[0][0][0] : 0;
+
+            const group = enter
+                .append("g")
+                .attr("class", balanceType);
+
+            // Create the rough rectangle at its final size but position it for animation
+            group.each(function (d: any) {
+              const finalHeight = y(d[0][0]) - y(d[0][1]);
+              const rect = roughSvg.rectangle(
+                  0, // Position relative to group
+                  0, // Position relative to group
+                  x.bandwidth(),
+                  finalHeight,
+                  {
+                    fill: color(d.key) as string,
+                    fillStyle: 'solid',
+                    roughness: roughness,
+                    bowing: bowing,
+                    stroke: 'black'
+                  }
+              );
+              d3.select(this).node()?.appendChild(rect);
+            });
+
+            // Position and scale the group for entrance animation
+            group
+                .attr("transform", (d: any) => {
+                  return `translate(${x(balanceType)}, ${y(startY)}) scale(1, 0)`;
+                })
+                .call(enter => enter.transition()
+                    .duration(750)
+                    .attr("transform", (d: any) => {
+                      return `translate(${x(balanceType)}, ${y(d[0][1])}) scale(1, 1)`;
+                    })
+                );
+
+            return group;
+          },
+          update => update
+              .each(function (d: any) {
+                // Update the rough rectangle if needed
+                const currentRect = d3.select(this).select('*');
+                if (currentRect.empty()) {
+                  const finalHeight = y(d[0][0]) - y(d[0][1]);
+                  const rect = roughSvg.rectangle(
+                      0,
+                      0,
+                      x.bandwidth(),
+                      finalHeight,
+                      {
+                        fill: color(d.key) as string,
+                        fillStyle: 'solid',
+                        roughness: roughness,
+                        bowing: bowing,
+                        stroke: 'black'
+                      }
+                  );
+                  d3.select(this).node()?.appendChild(rect);
+                } else {
+                  // Recreate rectangle with new dimensions and color
+                  d3.select(this).selectAll("*").remove();
+                  const finalHeight = y(d[0][0]) - y(d[0][1]);
+                  const rect = roughSvg.rectangle(
+                      0,
+                      0,
+                      x.bandwidth(),
+                      finalHeight,
+                      {
+                        fill: color(d.key) as string,
+                        fillStyle: 'solid',
+                        roughness: roughness,
+                        bowing: bowing,
+                        stroke: 'black'
+                      }
+                  );
+                  d3.select(this).node()?.appendChild(rect);
+                }
+              })
+              .call(update => update.transition()
+                  .duration(750)
+                  .attr("transform", (d: any) => {
+                    return `translate(${x(balanceType)}, ${y(d[0][1])}) scale(1, 1)`;
+                  })
+              ),
+          exit => exit
+              .call(exit => exit.transition()
+                  .duration(750)
+                  .attr("transform", (d: any) => {
+                    return `translate(${x(balanceType)}, ${y(0)}) scale(1, 0)`;
+                  })
+                  .remove()
+              )
+      );
+
+  // ... rest of the text label code remains the same ...
+  const calculateTextYPosition = (d: any) => {
+    const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
+    return y(d[0][0]) - (10 + (textLines.length - 1) * 15)
+  }
+
+  svg.selectAll(`.${balanceType}-label`)
+      .data(stackedData)
+      .join(
+          enter => {
+            const xPosition = x(balanceType) as number + x.bandwidth() / 2;
+            const textGroup = enter
+                .append("text")
+                .attr("class", `${balanceType}-label`)
+                .attr("x", xPosition)
+                .attr("text-anchor", "middle")
+                .attr("alignment-baseline", "hanging")
+                .attr("fill", (d: any) => getTextColorWCAG(color(d.key) as string))
+                .attr("font-size", "12px")
+                .attr("opacity", "0");
+
+            textGroup.each(function (d: any) {
+                  const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
+                  const height = y(d[0][0]) - y(d[0][1]);
+                  if (shouldDrawText(height, textLines.length)) {
+                    const textElement = d3.select(this);
+                    textElement.attr("y", (d: any) => calculateTextYPosition(d));
+
+                    textLines.forEach((line, i) => {
+                      textElement.append("tspan")
+                          .attr("x", x(balanceType) as number + x.bandwidth() / 2)
+                          .attr("dy", i === 0 ? 0 : "1.3em")
+                          .text(line);
+                    });
+                  }
+                }
+            )
+            return textGroup.call(enter => enter.transition()
+                .duration(750)
+                .delay((d, i) => i * 50 + 150)
+                .attr("opacity", "1")
+            )
+          },
+          update => update.each(function (d: any) {
+            const height = y(d[0][0]) - y(d[0][1]);
+            const textLines = createBalanceText(t(d.key), d[0].data[d.key], x.bandwidth() - 10);
+            if (shouldDrawText(height, textLines.length)) {
+              const textElement = d3.select(this);
+              textElement.selectAll("tspan").remove();
+
+              textLines.forEach((line, i) => {
+                textElement.append("tspan")
+                    .attr("x", x(balanceType) as number + x.bandwidth() / 2)
+                    .attr("dy", i === 0 ? 0 : "1.3em")
+                    .text(line);
+              });
+            }
+          }).call(update => update.transition()
+              .duration(750)
+              .attr("y", (d: any) => calculateTextYPosition(d))
+              .attr("opacity", (d: any) => {
+                const height = y(d[0][0]) - y(d[0][1]);
+                return height > 25 ? 1 : 0;
+              })
+          ),
+          exit => exit.remove()
+      )
 }
 
 function drawBalances(svg: d3.Selection<SVGGElement, unknown, null | HTMLElement, any>, balanceType: string, stackedData: d3.Series<{
@@ -339,8 +518,8 @@ onMounted(() => {
     if (props.balance.getTotalMoneyAggregates().total > currentDomainY) {
       y.domain([0, props.balance.getTotalMoneyAggregates().total * 1.5]);
     }
-    drawBalances(svg, "debit", stackedDebit);
-    drawBalances(svg, "credit", stackedCredit);
+    drawRoughBalances(svg, "debit", stackedDebit);
+    drawRoughBalances(svg, "credit", stackedCredit);
 
     let bottomLabelGroup = svg.select<SVGGElement>(".bottom-label-group");
     if (bottomLabelGroup.empty()) {
